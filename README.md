@@ -1,2 +1,2 @@
-# Community-Not3books
+# Community-Notebooks
 Repository for Jupyter Notebooks
