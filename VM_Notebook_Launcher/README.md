@@ -14,12 +14,14 @@ specify in the setEnvVars.sh file.
 5) Alternately, upload a notebook. If you upload an existing notebook, it will select the virtualenv it was
    created with if a matching name exists.
 6) The notebook server will start automatically when the VM is started up. CURRENTLY *YOU* must shut the
-   VM down from the console when you are done!
-7) You are also responsible for deleting the VM, releasing the static IP address, and deleting the firewall rule when you
-   retire the VM.
-8) You can launch your browser to the server anytime using the run_browser.sh command. It pulls the static IP and
-   port you specified from the setEnvVars.sh. Be sure to remember your password!
-8) The get_pass.py script this directory supports the startAndLaunch.sh script. It is basically the snippet of code in the
-   Jupyter server code base that generates password hashes. The install_script.sh is what is uploaded to the VM to
-   get the server installed and running. The only files that need to remain after you have created the VM are the
-   run_browser.sh and setEnvVars.sh scripts.
+   VM down when you are done! This can be done using the script stopVM.sh.
+7) With the VM shut down, you can run the script restartVM.sh to bring it back up again.
+8) *YOU* are also responsible for deleting the VM, releasing the static IP address, and deleting the firewall rule when you
+   retire the VM. For deleting the VM, use the script deleteVM.sh. To remove the firewall rule and release the static
+   IP address, run tearDownNetwork.sh.
+9) You can launch your browser to the server anytime using the run_browser.sh command (assuming the VM has been started
+   using restartVM.sh). It pulls the static IP and port you specified from the setEnvVars.sh.
+   Be sure to remember your password!
+10) The get_pass.py script this directory supports the startAndLaunch.sh script. It is basically the snippet of code in the
+    Jupyter server code base that generates password hashes. The install_script.sh is what is uploaded to the VM to
+    get the server installed and running.
