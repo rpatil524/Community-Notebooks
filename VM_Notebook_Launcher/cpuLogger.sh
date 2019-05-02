@@ -22,15 +22,18 @@
 # Requires the configuration script to be in the ${HOME}/bin directory
 #
 
-#
-# Set all the personal information in this file:
-#
+source ${HOME}/bin/setEnvVars.sh
 
-source ./setEnvVars.sh
+SERV_PROC=`sudo netstat -tlp | grep ":${SERV_PORT}" | grep -v "^tcp6" | awk '{print $7}' | sed 's#/.*##'`
 
-#
-# Restart the VM:
-#
+CHILD_PROCS=`ps -alx | awk '{print $3 " " $4}' | grep ${SERV_PROC} | awk '{print $1}' | grep -v ${SERV_PROC}`
+if [ -n "${CHILD_PROCS}" ]; then
+  for PROC in ${CHILD_PROCS}; do
+    TOPVAL=`top -b -n 1 -p ${PROC} | tail -n 1`
+	if [ ${TOPVAL} != '%CPU' ]; then
+	  echo ${TOPVAL}
+	fi
 
-echo "Starting up the server VM"
-gcloud compute instances start ${MACHINE_NAME} --zone ${ZONE} --project ${PROJECT}
+  done
+fi
+

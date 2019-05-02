@@ -48,6 +48,19 @@ echo "Static external IP address reserved:"
 echo $EXTR_ADDR
 
 #
+# We need to have Stackdriver monitoring API enabled in the project so we can monitor the VM and shut it down if
+# it is idle for an extended period of time:
+#
+
+NEED_API=monitoring.googleapis.com
+MONITOR_API=`gcloud services list --project ${PROJECT} | awk '{print $1}' | grep ${NEED_API}`
+if [ -z "${MONITOR_API}" ]; then
+  echo "Enabling Google Stackdriver monitoring API for project to track and shutdown idle VMs"
+  gcloud services enable ${NEED_API} --project ${PROJECT}
+fi
+
+
+#
 # Spin up the VM:
 # TODO: Issues with larger disks!
 # If you want a machine with more that 10GB, you need to specify a larger disk size.
@@ -58,9 +71,13 @@ echo $EXTR_ADDR
 #
 # At least with Debian 9, I am seeing "/dev/sda1 30G  1.7G   27G   6%" on a fresh machine.
 #
+# Note the monitoring scope, which we need to do the idle monitoring
+#
 
 echo "Starting up the server VM"
-gcloud compute instances create "${MACHINE_NAME}" --description "${MACHINE_DESC}" --zone "${ZONE}" --machine-type ${MACHINE_TYPE} --image-project debian-cloud --image-family "debian-9" --boot-disk-size ${DISK_SIZE} --project ${PROJECT} --scopes="bigquery,storage-rw" --address ${EXTR_ADDR}  --tags ${FIREWALL_TAG}
+gcloud compute instances create "${MACHINE_NAME}" --description "${MACHINE_DESC}" --zone "${ZONE}" \
+  --machine-type ${MACHINE_TYPE} --image-project debian-cloud --image-family "debian-9" --boot-disk-size ${DISK_SIZE} \
+  --project ${PROJECT} --scopes="bigquery,storage-rw,monitoring" --address ${EXTR_ADDR}  --tags ${FIREWALL_TAG}
 
 #
 # Get the password from the user, get it up to the machine:
@@ -90,12 +107,30 @@ gcloud compute scp port.txt ${USER_AND_MACHINE}: --zone ${ZONE} --project ${PROJ
 rm port.txt
 
 #
+# Get the setEnvVars file up to the machine so it can use it:
+#
+
+echo "Uploading config info to the VM"
+gcloud compute scp setEnvVars.sh ${USER_AND_MACHINE}: --zone ${ZONE} --project ${PROJECT}
+
+#
 # Get the install script and run script up to the machine:
 #
 
 echo "Uploading installation script to the VM"
 gcloud compute scp install_script.sh ${USER_AND_MACHINE}: --zone ${ZONE} --project ${PROJECT}
 gcloud compute ssh --project ${PROJECT} --zone ${ZONE} ${USER_AND_MACHINE} --command 'chmod u+x install_script.sh'
+
+#
+# Get the idle monitor scripts and idle shutdown script up to the machine:
+#
+
+echo "Uploading idle monitor and shutdown scripts"
+gcloud compute scp cpuLogger.sh ${USER_AND_MACHINE}: --zone ${ZONE} --project ${PROJECT}
+gcloud compute scp idle_checker.py ${USER_AND_MACHINE}: --zone ${ZONE} --project ${PROJECT}
+gcloud compute scp idle_log_wrapper.sh ${USER_AND_MACHINE}: --zone ${ZONE} --project ${PROJECT}
+gcloud compute scp idle_shutdown.py ${USER_AND_MACHINE}: --zone ${ZONE} --project ${PROJECT}
+gcloud compute scp shutdown_wrapper.sh ${USER_AND_MACHINE}: --zone ${ZONE} --project ${PROJECT}
 
 #
 # Run the install script:

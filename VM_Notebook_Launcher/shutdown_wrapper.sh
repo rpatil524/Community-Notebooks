@@ -14,23 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 #
-# Uses netstat and top to determine if child processes of the Jupyter Notebook server have any
-# CPU activity. Note that tiny amounts of activity could still present as 0.0 CPU, so it is
-# useful to recall this for  e.g. 60 seconds.
-# Requires the configuration script to be in the ${HOME}/bin directory
+# Wrapper for the script that determines if the VM should be shutdown for being idle
 #
 
-#
-# Set all the personal information in this file:
-#
+source ${HOME}/bin/setEnvVars.sh
 
-source ./setEnvVars.sh
+while true; do
+    DO_SHUTDOWN=`python3 idle_shutdown.py ${HOME} idlelogs 1 ${PROJECT} ${MACHINE_NAME} ${SERV_PORT}`
+    if [ -n "${DO_SHUTDOWN}" ]; then
+        echo "Shutdown report: ${DO_SHUTDOWN}"
+        echo "Shutting down"
+        sudo poweroff
+    fi
+    sleep 300
+done
 
-#
-# Restart the VM:
-#
-
-echo "Starting up the server VM"
-gcloud compute instances start ${MACHINE_NAME} --zone ${ZONE} --project ${PROJECT}

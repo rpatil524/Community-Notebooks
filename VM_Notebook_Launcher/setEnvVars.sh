@@ -16,7 +16,7 @@
 
 USER_NAME=your_user_name
 MACHINE_NAME=${USER_NAME}-unique-machine-name-1
-FIREWALL_TAG=restricted-jupyter
+FIREWALL_TAG=${USER_NAME}-restricted-jupyter
 FIREWALL_RULE_NAME=${USER_NAME}_jupyter_firewall_rule
 # Choose one format and change to your IP range for your desktop:
 FIREWALL_IP_RANGE=10.0.0.1

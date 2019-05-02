@@ -16,21 +16,10 @@
 
 
 #
-# Uses netstat and top to determine if child processes of the Jupyter Notebook server have any
-# CPU activity. Note that tiny amounts of activity could still present as 0.0 CPU, so it is
-# useful to recall this for  e.g. 60 seconds.
-# Requires the configuration script to be in the ${HOME}/bin directory
+# Wrapper around the idle_checker script, which runs in an infinite loop. This handles passing the
+# stdout to multilog, which is designed to create a fixed set of logs so old results are tossed.
 #
 
-#
-# Set all the personal information in this file:
-#
+source ${HOME}/bin/setEnvVars.sh
 
-source ./setEnvVars.sh
-
-#
-# Restart the VM:
-#
-
-echo "Starting up the server VM"
-gcloud compute instances start ${MACHINE_NAME} --zone ${ZONE} --project ${PROJECT}
+python3 idle_checker.py ${PROJECT} ${MACHINE_NAME} 600 300 | multilog t s200000 n10 ${HOME}/idlelogs
