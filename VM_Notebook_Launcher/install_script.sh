@@ -43,7 +43,7 @@ sudo apt-get install -y daemontools
 # For monitoring, we use pandas:
 #
 
-python3 -m pip install pandas
+python3 -m pip install -y pandas
 
 #
 # Get jupyter installed:
@@ -129,6 +129,7 @@ mv idle_checker.py ${HOME}/bin
 mv idle_log_wrapper.sh ${HOME}/bin
 mv idle_shutdown.py ${HOME}/bin
 mv shutdown_wrapper.sh ${HOME}/bin
+mv setEnvVars.sh ${HOME}/bin
 
 #
 # Supervisor. Apparently, the apt-get gets us the system init.d install, while we
