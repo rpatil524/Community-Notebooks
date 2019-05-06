@@ -791,7 +791,7 @@ def csv_to_bq(schema, csv_uri, dataset_id, targ_table, do_batch):
     return True
 
 
-def concat_all_files(all_files, one_big_tsv, program_prefix, extra_cols, file_info_func):
+def concat_all_files(all_files, one_big_tsv, program_prefix, extra_cols, file_info_func, split_more_func):
     """
     Concatenate all Files
     Gather up all files and glue them into one big one. The file name and path often include features
@@ -841,6 +841,8 @@ def concat_all_files(all_files, one_big_tsv, program_prefix, extra_cols, file_in
                             for i in range(len(extra_cols)):
                                 split_line.append(file_info_list[i])
                         if not line.startswith(header_id) or first:
+                            if split_more_func is not None:
+                                split_line = split_more_func(split_line, hdr_line, first)
                             outfile.write('\t'.join(split_line))
                             outfile.write('\n')
                         first = False
