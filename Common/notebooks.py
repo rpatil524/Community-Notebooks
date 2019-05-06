@@ -27,6 +27,7 @@ import urllib.parse as up
 import time
 import zipfile
 import gzip
+import threading
 from json import loads as json_loads, dumps as json_dumps
 
 
@@ -581,6 +582,69 @@ def build_pull_list_with_indexd(manifest_file, indexd_max, indexd_url, local_fil
             pull_list_file.write(gs_urls[0] + '\n')
 
     return
+
+
+class BucketPuller(object):
+    """Multithreaded  bucket puller"""
+    def __init__(self, thread_count):
+        self._lock = threading.Lock()
+        self._threads = []
+        self._total_files = 0
+        self._read_files = 0
+        self._thread_count = thread_count
+        self._bar_bump = 0
+
+    def __str__(self):
+        return "BucketPuller"
+
+    def reset(self):
+        self._threads.clear()
+        self._total_files = 0
+        self._read_files = 0
+        self._bar_bump = 0
+
+    def pull_from_buckets(self, pull_list, local_files_dir):
+        """
+          List of all project IDs
+        """
+        self._total_files = len(pull_list)
+        self._bar_bump = self._total_files // 100
+        if self._bar_bump == 0:
+            self._bar_bump = 1
+        size = self._total_files // self._thread_count
+        size = size if self._total_files % self._thread_count == 0 else size + 1
+        chunks = [pull_list[pos:pos + size] for pos in range(0, self._total_files, size)]
+        for i in range(0, self._thread_count):
+            th = threading.Thread(target=self._pull_func, args=(self, chunks[i], local_files_dir))
+            self._threads.append(th)
+
+        for i in range(0, self._thread_count):
+            self._threads[i].start()
+
+        for i in range(0, self._thread_count):
+            self._threads[i].join()
+
+        return
+
+    def _pull_func(self, pull_list, local_files_dir):
+        storage_client = storage.Client()
+        for url in pull_list:
+            path_pieces = up.urlparse(url)
+            dir_name = os.path.dirname(path_pieces.path)
+            make_dir = "{}{}".format(local_files_dir, dir_name)
+            os.makedirs(make_dir, exist_ok=True)
+            bucket = storage_client.bucket(path_pieces.netloc)
+            blob = bucket.blob(path_pieces.path[1:])  # drop leading / from blob name
+            full_file = "{}{}".format(local_files_dir, path_pieces.path)
+            blob.download_to_filename(full_file)
+            self._bump_progress()
+
+    def _bump_progress(self):
+
+        with self._lock:
+            self._read_files += 1
+            if (self._read_files % self._bar_bump) == 0:
+                print_progress_bar(self._read_files, self._total_files)
 
 
 def pull_from_buckets(pull_list, local_files_dir):
