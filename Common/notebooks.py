@@ -624,6 +624,7 @@ class BucketPuller(object):
         for i in range(0, self._thread_count):
             self._threads[i].join()
 
+        print_progress_bar(self._read_files, self._total_files)
         return
 
     def _pull_func(self, pull_list, local_files_dir):
