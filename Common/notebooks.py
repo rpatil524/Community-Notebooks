@@ -615,7 +615,7 @@ class BucketPuller(object):
         size = size if self._total_files % self._thread_count == 0 else size + 1
         chunks = [pull_list[pos:pos + size] for pos in range(0, self._total_files, size)]
         for i in range(0, self._thread_count):
-            th = threading.Thread(target=self._pull_func, args=(self, chunks[i], local_files_dir))
+            th = threading.Thread(target=self._pull_func, args=(chunks[i], local_files_dir))
             self._threads.append(th)
 
         for i in range(0, self._thread_count):
