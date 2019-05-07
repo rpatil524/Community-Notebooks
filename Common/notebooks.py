@@ -898,6 +898,23 @@ def build_combined_schema(scraped, augmented, typing_tups, holding_list, holding
 
     return True
 
+def typing_tups_to_schema_list(typing_tups, holding_list):
+    #
+    # Need to create a typed list for the initial TSV import:
+    #
+
+    typed_schema = []
+    for tup in typing_tups:
+        no_desc = {
+            "name": tup[0],
+            "type": tup[1],
+            "description": "No description"
+        }
+        typed_schema.append(no_desc)
+    with open(holding_list, mode='w') as schema_hold_list:
+        schema_hold_list.write(json_dumps(typed_schema))
+
+    return True
 
 def update_schema(target_dataset, dest_table, schema_dict_loc):
     """
