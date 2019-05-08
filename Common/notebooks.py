@@ -857,10 +857,12 @@ def concat_all_files(all_files, one_big_tsv, program_prefix, extra_cols, file_in
 
 def build_combined_schema(scraped, augmented, typing_tups, holding_list, holding_dict):
     """
-    Merge schema descriptions with ISB-added descriptions with inferred type data
+    Merge schema descriptions (if any) and ISB-added descriptions with inferred type data
     """
-    with open(scraped, mode='r') as scraped_hold_list:
-        schema_list = json_loads(scraped_hold_list.read())
+    schema_list = []
+    if scraped is not None:
+        with open(scraped, mode='r') as scraped_hold_list:
+            schema_list = json_loads(scraped_hold_list.read())
 
     with open(augmented, mode='r') as augment_list:
         augment_list = json_loads(augment_list.read())
