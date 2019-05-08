@@ -760,6 +760,7 @@ def csv_to_bq(schema, csv_uri, dataset_id, targ_table, do_batch):
     job_config.schema = schema_list
     job_config.skip_leading_rows = 1
     job_config.source_format = bigquery.SourceFormat.CSV
+    job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
     # Can make the "CSV" file a TSV file using this:
     job_config.field_delimiter = '\t'
 
