@@ -43,13 +43,13 @@ sudo apt-get install -y daemontools
 # For monitoring, we use pandas:
 #
 
-python3 -m pip install -y pandas
+python3 -m pip install pandas
 
 #
 # Get jupyter installed:
 #
 
-python3 -m pip install -y jupyter
+python3 -m pip install jupyter
 
 #
 # Was seeing issues on first install (early 2019), these fixed problems. Are they still needed?
