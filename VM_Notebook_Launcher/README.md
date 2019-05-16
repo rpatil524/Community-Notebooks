@@ -3,7 +3,8 @@ This set of scripts allows you to set up a personal Juypter Notebook server runn
 similar in function to Google Cloud Datalab, this approach does not require you to run a gcloud command on your
 desktop. Once it is up and running, there is no more desktop code component. The notebook server requires a password you
 provide as part of the setup, and also installs a GCP firewall rule to only accept traffic from the IP range you
-specify in the setEnvVars.sh file.
+specify in the setEnvVars.sh file. Note that since Google Compute Engines only support IPV4 traffic, you cannot use IPV6 
+with this setup.
 
 1) Edit the `setEnvVars.sh` file to personalize your installation
 2) Run `./startAndLaunch.sh`
