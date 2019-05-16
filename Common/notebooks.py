@@ -967,6 +967,23 @@ def delete_table_bq_job(target_dataset, delete_table):
     return True
 
 
+def confirm_google_vm():
+    metadata_url = "http://metadata.google.internal/computeMetadata/v1/instance/id"
+    meta_header = {"Metadata-Flavor": "Google"}
+
+    try:
+        resp = requests.request("GET", metadata_url, headers=meta_header)
+    except Exception as ex:
+        print("Not a Google VM: {}".format(ex))
+        return False
+
+    if resp.status_code == 200:
+        return True
+    else:
+        print("Not a Google VM: {}".format(resp.status_code))
+        return False
+
+
 def print_progress_bar(iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█'):
     """
     Ripped from Stack Overflow.
