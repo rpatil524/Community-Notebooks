@@ -22,9 +22,9 @@ Contents:
 
 - RegulomeExplorer - notebooks inspired by the TCGA http://explorer.cancerregulome.org/
 
-- Beta - Drafts and Prototypes.
-
 - VM_Notebook_launcher - set of bash scripts to automate setup, and tear down, of VMs running jupyter.
+
+- Beta - Drafts and Prototypes.
 
 
 Visit the WebApp:
