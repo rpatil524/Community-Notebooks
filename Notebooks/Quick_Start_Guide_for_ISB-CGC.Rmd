@@ -1,6 +1,6 @@
 ---
 title: "Quick Start Guide for ISB-CGC"
-output: pdf_document
+output: rmarkdown::github_document
 ---
 
 [ISB-CGC](https://isb-cgc.appspot.com/)
@@ -157,8 +157,10 @@ FROM
 LIMIT
   5"
 # Use BigQuery to run the SQL query on the Clincal table from the TCGA_bioclin_v0 dataset
-result <- query_exec(sql, project=project, use_legacy_sql = FALSE)
-result
+# which then may be downloadedinto a tibble.
+result <- bq_project_query(project, sql)
+result <- bq_table_download(result)
+print(result)
 ```
 
 Now that wasn't so difficult! Have fun exploring and analyzing the ISB-CGC Data!
