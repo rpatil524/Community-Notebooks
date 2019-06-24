@@ -1,8 +1,6 @@
 ---
 title: "Quick Start Guide for ISB-CGC"
-output:
-  html_document: default
-  pdf_document: default
+output: rmarkdown::github_document
 ---
 
 [ISB-CGC](https://isb-cgc.appspot.com/)
@@ -28,6 +26,7 @@ This Quick Start Guide is intended give an overview of the data available, a wal
 * Example of Accessing Data with Python
 * Where to go next
 
+## Overview of ISB-CGC
 ## Overview of ISB-CGC
 The ISB-CGC provides both interactive and programmatic access to
 data hosted by institutes such as the Genomic Data Commons (GDC) of the National Cancer
@@ -112,7 +111,7 @@ control list (ACL) for the controlled data. At this time, this access must be re
 The ISB-CGC Web Interface is an [interactive web-based application](https://isb-cgc.appspot.com/) to access and explore the rich TCGA, TARGET, CCLE, and COSMIC datasets with more datasets being added regularly. Through the WebApp you can create Cohorts, lists of Favorite Genes, miRNA, and Variables. The Cohorts and Variables can be used in Workbooks to allow you to quickly analyze and export datasets by mixing and matching the selections. The ISB-CGC Web Interface also allows you to view and analyze available pathology and radiology images associated with selected cohort data.
 
 # Google Cloud Platform and BigQuery Overview
-The [Google Cloud Platform Console](https://console.cloud.google.com/) is the web-based interface to  your GCP Project. From the Console, you can check the overall status of your project, create and delete Cloud Storage buckets, upload and download files, spin up and shut down VMs, add members to your project, acces the [Cloud Shell command line](https://cloud.google.com/shell/docs/), etc. Click [here](https://raw.githubusercontent.com/isb-cgc/readthedocs/master/docs/include/intro_to_Console.pdf) to download a quick tour from ISB-CGC of the GCP Console. You'll want to remember that any costs that you incur are charged under your *"current"* project, so you will want to make sure you are on the correct one if you are part of multiple projects. [Here](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/DIYWorkshop.html#google-cloud-platform-console) is how to check which project is your *currnet* project.
+The [Google Cloud Platform Console](https://console.cloud.google.com/) is the web-based interface to  your GCP Project. From the Console, you can check the overall status of your project, create and delete Cloud Storage buckets, upload and download files, spin up and shut down VMs, add members to your project, acces the [Cloud Shell command line](https://cloud.google.com/shell/docs/), etc. Click [here](https://raw.githubusercontent.com/isb-cgc/readthedocs/master/docs/include/intro_to_Console.pdf) to download a quick tour from ISB-CGC of the GCP Console. You'll want to remember that any costs that you incur are charged under your *current* project, so you will want to make sure you are on the correct one if you are part of multiple projects. [Here](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/DIYWorkshop.html#google-cloud-platform-console) is how to check which project is your *current* project.
 
 "BigQuery is a serverless, highly-scalable, and cost-effective cloud data warehouse with an in-memory BI Engine and machine learning built in." [*Source*](https://cloud.google.com/bigquery/) ISB-CGC has uploaded multiple cancer genomic datasets into BigQuery tables that are open-source such as TCGA and TARGET Clinical, Biospecimen and Molecular Data along with dataset megadata. This data can be accessed from the Google Cloud Platform Console web-UI, programmatically with R, and programmatically with python through Cloud Datalab or Colab.
 
@@ -134,18 +133,18 @@ library(dplyr)
 ### View Datasets and Tables in BigQuery
 Let us look at the available data sets within the ISB-CGC. 
 
-But first we will need to authorize our access. This will come up with a question if you want to cache your credentials between R sessions, in the R Console type your response and press enter. Then a new browser tab will open to authorize the use of your Google Account. Follow the prompts on the site and then copy the code back into the R Console and press enter. If you do not cache your credentials or have restarted your computer, you will be asked to do this at the start of a session.
-```{r}
+But first we will need to authorize our access by running a code block that connects to BigQuery. This will come up with a question if you want to cache your credentials between R sessions, in the R Console type your response and press enter. Then a new browser tab will open to authorize the use of your Google Account. Follow the prompts on the site and then copy the code back into the R Console and press enter. If you do not cache your credentials or have restarted your computer, you will be asked to do this at the start of a session.
+```{r View the Available Datasets}
 # Let us view which datasets are availabe from ISB-CGC through BigQuery
 list_datasets("isb-cgc") # isb-cgc is the project name
 ```
-```{r}
+```{r View the Tables in a Dataset}
 # Let us look which tables are in the TCGA_bioclin_v0 dataset
 list_tables("isb-cgc", "TCGA_bioclin_v0") # the convention is project name then dataset
 ```
 
 
-```{r}
+```{r View Data in the Table}
 project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
 theTable <- "isb-cgc.TCGA_bioclin_v0.Clinical" # The convention for calling a table is project.dataset.table
 # Create the SQL query
@@ -158,8 +157,10 @@ FROM
 LIMIT
   5"
 # Use BigQuery to run the SQL query on the Clincal table from the TCGA_bioclin_v0 dataset
-result <- query_exec(sql, project=project, use_legacy_sql = FALSE)
-result
+# which then may be downloadedinto a tibble.
+result <- bq_project_query(project, sql)
+result <- bq_table_download(result)
+print(result)
 ```
 
 Now that wasn't so difficult! Have fun exploring and analyzing the ISB-CGC Data!
