@@ -181,8 +181,10 @@ for (field in columns) {
 cat("\n Found ", numInteresting, "potentially interesting features: \n", iList)
 ```
 
+The above helps us narrow down on which fields are likely to be the most useful, but if you have a specific interest, for example in menopause or HPV status, you can still look at those in more detail very easily: 
+
 ```{r}
-# Using pipes and dbplyr to Query:
+# Using pipes and dplyr to Query:
 menopause_stat_query <- tcga_clinical %>%
   filter(!is.na(menopause_status)) %>%
   count(menopause_status) %>%
@@ -199,7 +201,7 @@ menopause_stat
 We might wonder which specific tumor types have menopause information:
 
 ```{r}
-# Using pipes and dbplyr to Query:
+# Using pipes and dplyr to Query:
 menopause_type_query <- tcga_clinical %>%
   filter(!is.na(menopause_status)) %>%
   count(project_short_name) %>%
@@ -214,7 +216,7 @@ menopause_type
 ```
 
 ```{r}
-# Using pipes and dbplyr to Query:
+# Using pipes and dplyr to Query:
 hpv_stat_query <- tcga_clinical %>%
   filter(!is.na(hpv_status)) %>%
   count(hpv_status, hpv_calls) %>%
@@ -230,6 +232,10 @@ hpv_stat <- hpv_stat_query %>%
   collect()
 hpv_stat
 ```
+
+## TCGA Annotations
+
+An additional factor to consider, when creating a cohort is that there may be additional information that might lead one to exclude a particular patient from a cohort.  In certain instances, patients have been redacted or excluded from analyses for reasons such as prior treatment, etc, but since different researchers may have different criteria for using or excluding certain patients or certain samples from their analyses, an overview of the annoations can be found [here](https://docs.gdc.cancer.gov/Encyclopedia/pages/Annotations_TCGA/).  These annotations have also been uploaded into a BigQuery table and can be used in conjuction with the other BigQuery tables.
 
 # Create a Cohort from Two Tables
 
@@ -285,4 +291,3 @@ early_onset_breast_cancer <- early_onset_breast_cancer_query %>%
 
 head(early_onset_breast_cancer, 5)
 ```
-
