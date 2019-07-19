@@ -90,7 +90,7 @@ tobacco_query1 <- "SELECT tobacco_smoking_history,
                GROUP BY tobacco_smoking_history
                ORDER BY n DESC"
 # Run the query
-tobacco1 <- bq_project_query(billing, sql_query2, quiet = TRUE) 
+tobacco1 <- bq_project_query(billing, tobacco_query1, quiet = TRUE) 
 # Create a dataframe with the results from the query
 tobacco1 <- bq_table_download(tobacco1, quiet = TRUE)
 # Show the dataframe
