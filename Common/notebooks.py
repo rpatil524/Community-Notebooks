@@ -1008,3 +1008,51 @@ def print_progress_bar(iteration, total, prefix = '', suffix = '', decimals = 1,
     if iteration == total:
         print()
     return
+
+def transfer_schema(target_dataset, dest_table, source_dataset, source_table):
+    """
+    Transfer description of schema from e.g. table to view
+
+    Note, to get this working on a fresh Google VM, I do this:
+
+    sudo apt-get install python3-venv
+    python3 -m venv bqEnv
+    source bqEnv/bin/activate
+    python3 -m pip install google-api-python-client
+    python3 -m pip install google-cloud-storage
+    python3 -m pip install google-cloud-bigquery
+
+    TDS = "view_data_set"
+    DTAB = "view_name"
+    SDS = "table_data_set"
+    STAB = "table_name"
+    transfer_schema(TDS, DTAB, SDS, STAB)
+
+    """
+
+    client = bigquery.Client()
+    src_table_ref = client.dataset(source_dataset).table(source_table)
+    trg_table_ref = client.dataset(target_dataset).table(dest_table)
+    src_table = client.get_table(src_table_ref)
+    trg_table = client.get_table(trg_table_ref)
+    src_schema = src_table.schema
+    trg_schema = []
+    for src_sf in src_schema:
+        trg_sf = bigquery.SchemaField(src_sf.name, src_sf.field_type, description=src_sf.description)
+        trg_schema.append(trg_sf)
+    trg_table.schema = trg_schema
+    client.update_table(trg_table, ["schema"])
+    return True
+
+def list_schema(source_dataset, source_table):
+    """
+    List schema
+    """
+
+    client = bigquery.Client()
+    src_table_ref = client.dataset(source_dataset).table(source_table)
+    src_table = client.get_table(src_table_ref)
+    src_schema = src_table.schema
+    for src_sf in src_schema:
+        print(src_sf.name, src_sf.field_type, src_sf.description)
+    return True
