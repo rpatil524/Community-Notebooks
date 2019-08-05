@@ -5,6 +5,17 @@ output:
     df_print: paged
 ---
 
+```
+# ISB-CGC Community Notebooks
+
+Title:   How to visualize results from BigQuery
+Author:  David L Gibbs
+Created: 2019-07-17
+Purpose: Demonstrate how visualize the results from a query.
+
+***
+```
+
 #How to visualize results from BigQuery
 
 In this example, we'll perform a few easy queries, and use the ggplot library to visualize the results.

@@ -3,6 +3,16 @@ title: "Quick Start Guide for ISB-CGC"
 output: rmarkdown::github_document
 ---
 
+# ISB-CGC Community Notebooks
+
+```
+Title:   How to create cohorts
+Author:  Lauren Hagen
+Created: 2019-06-20
+Purpose: Painless intro to working in the cloud
+```
+***
+
 [ISB-CGC](https://isb-cgc.appspot.com/)
 
 This Quick Start Guide is intended give an overview of the data available, a walk-though of the steps of setting up your accounts, and get started with a basic example in R.

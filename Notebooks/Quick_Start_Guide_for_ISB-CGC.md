@@ -1,3 +1,13 @@
+# ISB-CGC Community Notebooks
+
+```
+Title:   Quick Start Guide to ISB-CGC
+Author:  Lauren Hagen
+Created: 2019-06-20
+Purpose: Painless intro to working in the cloud
+```
+***
+
 Quick Start Guide for ISB-CGC
 ================
 
