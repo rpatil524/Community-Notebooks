@@ -27,6 +27,11 @@ Contents:
 - Beta - Drafts and Prototypes.
 
 
+Documentation:
+
+- [isb-cgc readthedocs] (https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowTos.html?highlight=how%20tos/)
+
+
 Visit the WebApp:
 http://isb-cgc.org
 
