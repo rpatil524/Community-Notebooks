@@ -29,7 +29,7 @@ Contents:
 
 Documentation:
 
-- [isb-cgc readthedocs](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowTos.html?highlight=how%20tos/)
+- [isb-cgc readthedocs](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowTos.html)
 
 
 Visit the WebApp:
