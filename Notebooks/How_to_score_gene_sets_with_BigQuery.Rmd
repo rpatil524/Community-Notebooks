@@ -6,10 +6,10 @@ output: rmarkdown::github_document
 
 ```
 Title:   Gene Set Scoring using hg38 mutation tables
-Author:  David L Gibbs
+Author:  Lauren Hagen
 Created: 2019-08-02
 Purpose: To demonstrate how to join two tables in BigQuery to compare the expression of a set of genes  between two groups.
-Notes:   This notebook was adapted by Lauren Hagen. This notebook was adapted from the January 2018 Query of the Month
+Notes:   This notebook was adapted from work by David L Gibbs, January 2018 Query of the Month
 ```
 ***
 
