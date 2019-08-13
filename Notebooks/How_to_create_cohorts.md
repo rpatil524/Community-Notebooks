@@ -1,6 +1,16 @@
 How to Create Cohorts
 ================
 
+# ISB-CGC Community Notebooks
+
+    Title:   How to create cohorts
+    Author:  Sheila Reynolds
+    Created: 2019-06-20
+    Purpose: Painless intro to working in the cloud
+    Notes:   This notebook was updated by Lauren Hagen. The original notebook is located at https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
+
+-----
+
 # Creating TCGA cohorts
 
 This notebook will show you how to create a TCGA cohort using the
@@ -38,20 +48,6 @@ in R:
 ``` r
 library(bigrquery)
 library(dplyr)
-```
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 library(dbplyr)
 ```
 
@@ -243,6 +239,25 @@ tobacco_query2 %>%
 # Create a dataframe with the results from the query 
 tobacco2 <- tobacco_query2 %>% 
   collect()
+```
+
+    ## 
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [-]  1s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [\]  2s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [|]  2s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [/]  2s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [-]  3s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [\]  3s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [|]  3s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [/]  4s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [-]  4s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [\]  4s
+    Running job 'isb-cgc-02-0001.job_1ZHrMB8-AeIYWNlLBagUEFwfkIbA.US' [|]  4s
+    ## Complete
+    ## Billed: 10.49 MB
+    ## Downloading 6 rows in 1 pages.
+
+``` r
 # Show the resulting dataframe
 tobacco2
 ```
@@ -388,6 +403,15 @@ menopause_stat_query %>%
 # Show the results of the Query
 menopause_stat <- menopause_stat_query %>% 
   collect()
+```
+
+    ## Complete
+
+    ## Billed: 10.49 MB
+
+    ## Downloading 4 rows in 1 pages.
+
+``` r
 menopause_stat
 ```
 
@@ -423,6 +447,15 @@ menopause_type_query %>%
 # Show the results of the Query
 menopause_type <- menopause_type_query %>% 
   collect()
+```
+
+    ## Complete
+
+    ## Billed: 10.49 MB
+
+    ## Downloading 4 rows in 1 pages.
+
+``` r
 menopause_type
 ```
 
@@ -461,6 +494,17 @@ hpv_stat_query %>%
 # Show the results of the Query
 hpv_stat <- hpv_stat_query %>% 
   collect()
+```
+
+    ## 
+    Running job 'isb-cgc-02-0001.job_e37kHhLSbHYcEvUwRx0fkUtseH-u.US' [-]  1s
+    Running job 'isb-cgc-02-0001.job_e37kHhLSbHYcEvUwRx0fkUtseH-u.US' [\]  1s
+    Running job 'isb-cgc-02-0001.job_e37kHhLSbHYcEvUwRx0fkUtseH-u.US' [|]  1s
+    ## Complete
+    ## Billed: 10.49 MB
+    ## Downloading 5 rows in 1 pages.
+
+``` r
 hpv_stat
 ```
 
@@ -559,7 +603,17 @@ early_onset_breast_cancer_query <- select_on_annotations %>%
 # Run the query and save to a tibble
 early_onset_breast_cancer <- early_onset_breast_cancer_query %>%
   collect()
+```
 
+    ## 
+    Running job 'isb-cgc-02-0001.job_ln9fSf2ASF35_iAzolW87o3tj4Is.US' [-]  1s
+    Running job 'isb-cgc-02-0001.job_ln9fSf2ASF35_iAzolW87o3tj4Is.US' [\]  1s
+    Running job 'isb-cgc-02-0001.job_ln9fSf2ASF35_iAzolW87o3tj4Is.US' [|]  1s
+    ## Complete
+    ## Billed: 20.97 MB
+    ## Downloading 327 rows in 1 pages.
+
+``` r
 head(early_onset_breast_cancer, 5)
 ```
 
@@ -567,8 +621,8 @@ head(early_onset_breast_cancer, 5)
     ## # Groups:   case_barcode, category [5]
     ##   category case_barcode
     ##   <chr>    <chr>       
-    ## 1 <NA>     TCGA-3C-AALI
-    ## 2 <NA>     TCGA-AR-A1AQ
-    ## 3 <NA>     TCGA-BH-A0DK
-    ## 4 <NA>     TCGA-C8-A12W
-    ## 5 <NA>     TCGA-C8-A9FZ
+    ## 1 <NA>     TCGA-E2-A158
+    ## 2 <NA>     TCGA-E2-A15I
+    ## 3 <NA>     TCGA-PL-A8LX
+    ## 4 <NA>     TCGA-AO-A126
+    ## 5 <NA>     TCGA-A2-A3XU

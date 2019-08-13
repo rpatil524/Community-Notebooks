@@ -7,10 +7,10 @@ output: rmarkdown::github_document
 
 ```
 Title:   How to create cohorts
-Author:  Sheila Reynolds
+Author:  Lauren Hagen
 Created: 2019-06-20
-Purpose: Painless intro to working in the cloud
-Notes:   This notebook was updated by Lauren Hagen. The original notebook is located at https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
+Purpose: Basic overview of creating cohorts
+Notes:   This notebook was adapted from work by Shiela Reynolds, 'How to Create TCGA Cohorts part 1' https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
 ```
 ***
 
