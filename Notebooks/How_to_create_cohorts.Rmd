@@ -19,14 +19,15 @@ Notes:   This notebook was adapted from work by Shiela Reynolds, 'How to Create 
 This notebook will show you how to create a TCGA cohort using the publicly available TCGA BigQuery tables that the [ISB-CGC](http://isb-cgc.org) project has produced based on the open-access [TCGA](http://cancergenome.nih.gov/) data available at the [Data Portal](https://tcga-data.nci.nih.gov/tcga/).  You will need to have access to a Google Cloud Platform (GCP) project in order to use BigQuery.  If you don't already have one, you can sign up for a [free-trial](https://cloud.google.com/free-trial/).
 
 We are not attempting to provide a thorough BigQuery or IPython tutorial here, as a wealth of such information already exists.  Here are some links to some resources that you might find useful: 
+
 * [BigQuery](https://cloud.google.com/bigquery/what-is-bigquery)
 * the BigQuery [web UI](https://console.cloud.google.com/bigquery) 
-    * where you can run queries interactively
+    +  where you can run queries interactively
 * [Jupyter Notebooks](http://jupyter.org/)
 * [Google Cloud Datalab](https://cloud.google.com/datalab/) 
-    * interactive cloud-based platform for analyzing data built on the Jupyter Notebooks
+    + interactive cloud-based platform for analyzing data built on the Jupyter Notebooks
 * [Google Colaboratory](https://colab.research.google.com/)
-    * Free Jupyter Notebook environment that runs in your browser
+    + Free Jupyter Notebook environment that runs in your browser
 
 There are also many tutorials and samples available on github (see, in particular, the [datalab](https://github.com/GoogleCloudPlatform/datalab) repo, the [Google Genomics](  https://github.com/googlegenomics) project), and our own [Community Notebooks](https://github.com/isb-cgc/Community-Notebooks).
 
