@@ -31,7 +31,7 @@ In short, (I’ll explain later), the gene set score comes from an average of T-
 
 At the end of it, the full query processes 29.8GB in 10.1s and costs ~$0.15.
 
-First, we will need to import the required libraries and create a client variable. For more information see ['Quick Start Guide to ISB-CGC'](INSERT LINK) and alternative authentication methods can be found [here](https://googleapis.github.io/google-cloud-python/latest/core/auth.html).
+First, we will need to import the required libraries and create a client variable. For more information see ['Quick Start Guide to ISB-CGC'](https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_for_ISB-CGC.md) and alternative authentication methods can be found [here](https://googleapis.github.io/google-cloud-python/latest/core/auth.html).
 
 ```{r Load Libraries}
 library(bigrquery)
