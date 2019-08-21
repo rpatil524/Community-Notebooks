@@ -59,8 +59,8 @@ At the end of it, the full query processes 29.8GB in 10.1s and costs
 
 First, we will need to import the required libraries and create a client
 variable. For more information see [‘Quick Start Guide to
-ISB-CGC’](INSERT%20LINK) and alternative authentication methods can be
-found
+ISB-CGC’](https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_for_ISB-CGC.md)
+and alternative authentication methods can be found
 [here](https://googleapis.github.io/google-cloud-python/latest/core/auth.html).
 
 ``` r
@@ -106,8 +106,8 @@ PARP1_result
     ##    project_short_name     n
     ##    <chr>              <int>
     ##  1 TCGA-UCEC             46
-    ##  2 TCGA-COAD             22
-    ##  3 TCGA-STAD             22
+    ##  2 TCGA-STAD             22
+    ##  3 TCGA-COAD             22
     ##  4 TCGA-BRCA             17
     ##  5 TCGA-SKCM             16
     ##  6 TCGA-BLCA             15
@@ -155,16 +155,16 @@ query1_result
     ## # A tibble: 530 x 1
     ##    sample_barcode  
     ##    <chr>           
-    ##  1 TCGA-A5-A0VP-01A
-    ##  2 TCGA-AJ-A5DW-01A
-    ##  3 TCGA-AP-A1DK-01A
-    ##  4 TCGA-AX-A2HC-01A
-    ##  5 TCGA-B5-A1MR-01A
-    ##  6 TCGA-E6-A1LX-01A
-    ##  7 TCGA-EO-A22X-01A
-    ##  8 TCGA-QF-A5YS-01A
-    ##  9 TCGA-2E-A9G8-01A
-    ## 10 TCGA-A5-A0G1-01A
+    ##  1 TCGA-A5-A1OF-01A
+    ##  2 TCGA-A5-A2K5-01A
+    ##  3 TCGA-AP-A1E0-01A
+    ##  4 TCGA-AX-A1C5-01A
+    ##  5 TCGA-B5-A1MW-01A
+    ##  6 TCGA-B5-A1MX-01A
+    ##  7 TCGA-D1-A2G0-01A
+    ##  8 TCGA-DF-A2KU-01A
+    ##  9 TCGA-E6-A1LX-01A
+    ## 10 TCGA-EO-A22X-01A
     ## # ... with 520 more rows
 
 This query returns 530 tumor sample barcodes with at least one known
@@ -398,14 +398,14 @@ head(tStatsPerGene_results)
 ```
 
     ## # A tibble: 6 x 7
-    ##   symbol   grp1_n grp2_n grp1_mean grp2_mean meandiff  tstat
-    ##   <chr>     <int>  <int>     <dbl>     <dbl>    <dbl>  <dbl>
-    ## 1 CYP2E1       41    489      3.48      3.65  -0.174  -2.73 
-    ## 2 GPR174       41    489      3.52      2.99   0.532   2.56 
-    ## 3 UBE2D2       41    489      6.03      5.99   0.0434  8.15 
-    ## 4 HLA-DRB1     41    489      6.59      6.63  -0.0402 -0.947
-    ## 5 DTX3L        41    489      5.34      5.51  -0.167  -8.43 
-    ## 6 KIF20B       41    489      4.73      4.70   0.0387  3.51
+    ##   symbol   grp1_n grp2_n grp1_mean grp2_mean meandiff tstat
+    ##   <chr>     <int>  <int>     <dbl>     <dbl>    <dbl> <dbl>
+    ## 1 MAP2K1       41    489     5.51       5.41   0.103  22.7 
+    ## 2 KMT2C        41    489     4.94       4.92   0.0225  1.67
+    ## 3 CCR7         41    489     4.41       4.30   0.114   2.91
+    ## 4 SIX4         41    489     4.89       4.93  -0.0408 -4.37
+    ## 5 PRKAG3       41    489     0.743      1.74  -0.995  -3.80
+    ## 6 HIST1H4A     41    489     3.95       3.39   0.564   2.97
 
 We are now going to plot the t-statistic using ggplot2 library.
 
@@ -414,14 +414,14 @@ ggplot(data=tStatsPerGene_results) +
   geom_point(mapping = aes(x = tstat, y = abs(meandiff), color=abs(tstat)))
 ```
 
-![](Gene_Set_Scoring_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](How_to_score_gene_sets_with_BigQuery_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ``` r
 ggplot(data=tStatsPerGene_results) +
   geom_density(mapping = aes(x=tstat))
 ```
 
-![](Gene_Set_Scoring_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](How_to_score_gene_sets_with_BigQuery_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 OK\! We have a distribution of T statistics. The question is whether
 there’s some hidden structure to these values. Are there gene sets with
@@ -529,9 +529,9 @@ ggplot(geneSetScores_results,aes(x=avgAbsDiff, y=score, color=n_genes, size=n_ge
   geom_text(data=subset(geneSetScores_results, score >= score[3]),hjust=0,nudge_x = 0.005)
 ```
 
-![](Gene_Set_Scoring_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> So,
-we see that ‘Retinoblastoma (RB) in Cancer’ is in the top spot with a
-score way above the \#2 position. Why might that be? Well, PARP1 is
+![](How_to_score_gene_sets_with_BigQuery_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+So, we see that ‘Retinoblastoma (RB) in Cancer’ is in the top spot with
+a score way above the \#2 position. Why might that be? Well, PARP1 is
 involved in DNA damage repair, specifically through the non-homologous
 endjoining (NHEJ) mechanism. Samples that are deficient in PARP1 are
 going to have a hard time repairing DNA breaks, which makes cancer more

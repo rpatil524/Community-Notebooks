@@ -1,6 +1,16 @@
 How to Create Cohorts
 ================
 
+# ISB-CGC Community Notebooks
+
+    Title:   How to create cohorts
+    Author:  Lauren Hagen
+    Created: 2019-06-20
+    Purpose: Basic overview of creating cohorts
+    Notes:   This notebook was adapted from work by Shiela Reynolds, 'How to Create TCGA Cohorts part 1' https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
+
+-----
+
 # Creating TCGA cohorts
 
 This notebook will show you how to create a TCGA cohort using the
@@ -14,15 +24,17 @@ BigQuery. If you don’t already have one, you can sign up for a
 
 We are not attempting to provide a thorough BigQuery or IPython tutorial
 here, as a wealth of such information already exists. Here are some
-links to some resources that you might find useful: \*
-[BigQuery](https://cloud.google.com/bigquery/what-is-bigquery) \* the
-BigQuery [web UI](https://console.cloud.google.com/bigquery) \* where
-you can run queries interactively \* [Jupyter
-Notebooks](http://jupyter.org/) \* [Google Cloud
-Datalab](https://cloud.google.com/datalab/) \* interactive cloud-based
-platform for analyzing data built on the Jupyter Notebooks \* [Google
-Colaboratory](https://colab.research.google.com/) \* Free Jupyter
-Notebook environment that runs in your browser
+links to some resources that you might find useful:
+
+  - [BigQuery](https://cloud.google.com/bigquery/what-is-bigquery)
+  - the BigQuery [web UI](https://console.cloud.google.com/bigquery)
+      - where you can run queries interactively
+  - [Jupyter Notebooks](http://jupyter.org/)
+  - [Google Cloud Datalab](https://cloud.google.com/datalab/)
+      - interactive cloud-based platform for analyzing data built on the
+        Jupyter Notebooks
+  - [Google Colaboratory](https://colab.research.google.com/)
+      - Free Jupyter Notebook environment that runs in your browser
 
 There are also many tutorials and samples available on github (see, in
 particular, the
@@ -38,29 +50,8 @@ in R:
 ``` r
 library(bigrquery)
 library(dplyr)
-```
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 library(dbplyr)
 ```
-
-    ## 
-    ## Attaching package: 'dbplyr'
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     ident, sql
 
 Then let us set up some of the variables we will be using in this
 notebook:
@@ -82,6 +73,11 @@ dataset:
 ``` r
 # Let us look which tables are in the TCGA_bioclin_v0 dataset
 tables<-list_tables("isb-cgc", "TCGA_bioclin_v0") # the convention is project name then dataset
+```
+
+    ## Auto-refreshing stale OAuth token.
+
+``` r
 tables
 ```
 
@@ -243,6 +239,15 @@ tobacco_query2 %>%
 # Create a dataframe with the results from the query 
 tobacco2 <- tobacco_query2 %>% 
   collect()
+```
+
+    ## Complete
+
+    ## Billed: 0 B
+
+    ## Downloading 6 rows in 1 pages.
+
+``` r
 # Show the resulting dataframe
 tobacco2
 ```
@@ -388,6 +393,15 @@ menopause_stat_query %>%
 # Show the results of the Query
 menopause_stat <- menopause_stat_query %>% 
   collect()
+```
+
+    ## Complete
+
+    ## Billed: 0 B
+
+    ## Downloading 4 rows in 1 pages.
+
+``` r
 menopause_stat
 ```
 
@@ -423,6 +437,15 @@ menopause_type_query %>%
 # Show the results of the Query
 menopause_type <- menopause_type_query %>% 
   collect()
+```
+
+    ## Complete
+
+    ## Billed: 0 B
+
+    ## Downloading 4 rows in 1 pages.
+
+``` r
 menopause_type
 ```
 
@@ -452,8 +475,8 @@ hpv_stat_query %>%
     ## FROM (SELECT `hpv_status`, `hpv_calls`, count(*) AS `n`
     ## FROM (SELECT *
     ## FROM `Clinical`
-    ## WHERE (NOT(((`hpv_status`) IS NULL)))) `dbplyr_001`
-    ## GROUP BY `hpv_status`, `hpv_calls`) `dbplyr_002`
+    ## WHERE (NOT(((`hpv_status`) IS NULL)))) `dbplyr_016`
+    ## GROUP BY `hpv_status`, `hpv_calls`) `dbplyr_017`
     ## WHERE (`n` > 20.0)
     ## ORDER BY `n` DESC
 
@@ -461,6 +484,17 @@ hpv_stat_query %>%
 # Show the results of the Query
 hpv_stat <- hpv_stat_query %>% 
   collect()
+```
+
+    ## 
+    Running job 'isb-cgc-02-0001.job_Ai6itInj6GrLUNd9raQSuP8wtO0X.US' [-]  1s
+    Running job 'isb-cgc-02-0001.job_Ai6itInj6GrLUNd9raQSuP8wtO0X.US' [\]  1s
+    Running job 'isb-cgc-02-0001.job_Ai6itInj6GrLUNd9raQSuP8wtO0X.US' [|]  1s
+    ## Complete
+    ## Billed: 10.49 MB
+    ## Downloading 5 rows in 1 pages.
+
+``` r
 hpv_stat
 ```
 
@@ -559,7 +593,17 @@ early_onset_breast_cancer_query <- select_on_annotations %>%
 # Run the query and save to a tibble
 early_onset_breast_cancer <- early_onset_breast_cancer_query %>%
   collect()
+```
 
+    ## 
+    Running job 'isb-cgc-02-0001.job_si8mdSHLvgoH0LABoemGJcr7fNot.US' [-]  1s
+    Running job 'isb-cgc-02-0001.job_si8mdSHLvgoH0LABoemGJcr7fNot.US' [\]  1s
+    Running job 'isb-cgc-02-0001.job_si8mdSHLvgoH0LABoemGJcr7fNot.US' [|]  1s
+    ## Complete
+    ## Billed: 20.97 MB
+    ## Downloading 327 rows in 1 pages.
+
+``` r
 head(early_onset_breast_cancer, 5)
 ```
 
@@ -567,8 +611,8 @@ head(early_onset_breast_cancer, 5)
     ## # Groups:   case_barcode, category [5]
     ##   category case_barcode
     ##   <chr>    <chr>       
-    ## 1 <NA>     TCGA-3C-AALI
-    ## 2 <NA>     TCGA-AR-A1AQ
-    ## 3 <NA>     TCGA-BH-A0DK
-    ## 4 <NA>     TCGA-C8-A12W
-    ## 5 <NA>     TCGA-C8-A9FZ
+    ## 1 <NA>     TCGA-AQ-A04L
+    ## 2 <NA>     TCGA-AR-A1AI
+    ## 3 <NA>     TCGA-BH-A1ES
+    ## 4 <NA>     TCGA-BH-A1EW
+    ## 5 <NA>     TCGA-C8-A1HG
