@@ -6,7 +6,7 @@ This repository holds notebooks that use Google cloud tools like BigQuery to ill
 
 We try to design notebooks that are narrow in scope and answer a single question (like an FAQ).
 
-A great (and easy!) way to try it out, is to jump over to https://colab.research.google.com, hit the 'github' tab in the dialog, and paste in https://github.com/isb-cgc/Community-Notebooks! The selected notebook will open in a free python environment. Please note that in many cases, you'll need a Google cloud project, such as for using BigQuery. But with a project, there is ample free compute availble each month. For R notebooks, you'll probably want to open them in Rstudio.
+A great (and easy!) way to try it out, is to jump over to https://colab.research.google.com, hit the 'github' tab in the dialog, and paste in https://github.com/isb-cgc/Community-Notebooks! The selected notebook will open in a free python environment. Please note that in many cases, you'll need a Google cloud project, such as for using BigQuery. But with a project, there is ample free compute available each month. For R notebooks, you'll probably want to open them in Rstudio.
 
 
 To download this repository:
