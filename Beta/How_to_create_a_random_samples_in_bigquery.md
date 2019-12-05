@@ -13,11 +13,12 @@ How to Create a Random Sample in BigQuery
 In this notebook, we will be using BigQuery to create random samples for
 predicting an outcome with test and training data sets such as in
 machine learning. In this notebook, we assume that you have set up your
-GCP and accessed the ISB-CGC WebApp, if not, please visit the [How To
+GCP and accessed the ISB-CGC WebApp. If not, please visit the [How To
 Get Started on
 ISB-CGC](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowToGetStartedonISB-CGC.html)
 or the [Community Notebook
-Repository](https://github.com/isb-cgc/Community-Notebooks).
+Repository](https://github.com/isb-cgc/Community-Notebooks) for guides
+on how to get started.
 
 We will go over two methods to create the subset data: - `RAND()`
 Function - `MOD()` and `FARM_FINGERPRINT` Functions
@@ -27,35 +28,31 @@ BigQuery library and create a GCP variable.
 
 ``` r
 library(bigrquery)
-```
-
-    ## Warning: package 'bigrquery' was built under R version 3.6.1
-
-``` r
 project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
 ```
 
 ## `RAND()` Function for Randomly Splitting data
 
 A simple way to create a random sample with BigQuery is to use the
-`RAND()` function. The `RAND()` function will create a seemingly random
-number and then the query can select to create a random sample of rows.
+`RAND()` function. The `RAND()` function creates a seemingly random set
+of numbers and then the query can select to create a random sample of
+rows.
 
-The final query creates a cohort from a BigQuery table, then generates
-random sample from the cohort, and finally joins the random sample to
-the main cohort with the rows labeled for the random sample.
+We will create two queries with the `RAND()` function. The first will
+return a random sample of the data and the second will return all of a
+cohort with the rows labeled for which subset they belong to.
 
-To explain this query, we are going to start out with a simple query to
-create the cohort. Cohorts can be created previously in the WebApp or
-though other means instead of within this query. For more information on
-creating cohorts, please see the [ISB-CGC Web Interface (Web App)
+We are going to start with a simple query to create a cohort. Cohorts
+can be created previously in the WebApp or through other means instead
+of within this query. For more information on creating cohorts, please
+see the [ISB-CGC Web Interface (Web App)
 documentation](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Web-UI.html)
 and the [Community Notebook
 Repository](https://github.com/isb-cgc/Community-Notebooks).
 
 ``` r
 # Create a query with the cohort information
-# This can be replaced with direction to your own cohort stored in BigQuery
+# This can be replaced with your own cohort
 cohort_query <- "SELECT case_barcode, project_short_name, case_gdc_id
             FROM `isb-cgc.TARGET_bioclin_v0.Clinical`
             WHERE project_short_name = 'TARGET-NBL'"
@@ -73,7 +70,7 @@ str(cohort)
     ##  $ case_gdc_id       : chr  "fef92ed0-242b-5564-ad92-6b35c21c3bd5" "fef13b6c-d5e9-5ffa-9f55-2404f2f99eeb" "feb97edc-ce83-5fd5-94e3-261ce244ac52" "fe831368-c7ce-5e2b-b0fd-c35216a7761d" ...
 
 The next part of the query is creating the random sample. This line can
-be adjusted to pull any percentage of the data table into a random
+be adjusted to return any percent of the data table into a random
 sample. For this example, it is set to create a random sample of \~25%
 of the data.
 
@@ -100,14 +97,14 @@ sample <- bq_table_download(sample, quiet = TRUE)
 str(sample)
 ```
 
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    319 obs. of  4 variables:
-    ##  $ case_barcode      : chr  "TARGET-30-PATSRD" "TARGET-30-PATTEF" "TARGET-30-PARABN" "TARGET-30-PAHYWN" ...
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    318 obs. of  4 variables:
+    ##  $ case_barcode      : chr  "TARGET-30-PASWIJ" "TARGET-30-PANBMJ" "TARGET-30-PARABN" "TARGET-30-PAPRXW" ...
     ##  $ project_short_name: chr  "TARGET-NBL" "TARGET-NBL" "TARGET-NBL" "TARGET-NBL" ...
-    ##  $ case_gdc_id       : chr  "fef92ed0-242b-5564-ad92-6b35c21c3bd5" "fef13b6c-d5e9-5ffa-9f55-2404f2f99eeb" "fc9d0307-a5f5-51c4-ad9e-6e9ed60f0eba" "fc286828-a4f4-586a-9d19-5070ebd76da3" ...
+    ##  $ case_gdc_id       : chr  "fe0b727f-3843-5b70-b9c1-8a207b837fc4" "fdfb389d-eb9a-5014-b391-9cd5f908720d" "fc9d0307-a5f5-51c4-ad9e-6e9ed60f0eba" "fc3288a3-ad98-5be3-ab70-e02bf4b8fc7c" ...
     ##  $ table_num         : int  1 1 1 1 1 1 1 1 1 1 ...
 
 This query is nice if we just wanted to grab a smaller sample of the
-cohort to do some initial analysis on before moving to larger data set
+cohort to do some initial analysis before moving to a larger data set
 but it is not useful if you want to create two separate subsets of data
 for training a model and then testing the model. The final query joins
 the new random sample table back with the main table and preserving the
@@ -144,15 +141,15 @@ str(dataset)
 ```
 
     ## Classes 'tbl_df', 'tbl' and 'data.frame':    1180 obs. of  4 variables:
-    ##  $ case_barcode      : chr  "TARGET-30-PANBMJ" "TARGET-30-PARGKK" "TARGET-30-PAMYVA" "TARGET-30-PAMVLG" ...
+    ##  $ case_barcode      : chr  "TARGET-30-PATHKB" "TARGET-30-PATCEM" "TARGET-30-PAISSH" "TARGET-30-PATFTN" ...
     ##  $ project_short_name: chr  "TARGET-NBL" "TARGET-NBL" "TARGET-NBL" "TARGET-NBL" ...
-    ##  $ case_gdc_id       : chr  "fdfb389d-eb9a-5014-b391-9cd5f908720d" "ec0f13c9-dd39-5eb2-ad44-2e07ce0cb634" "eab4fe38-df0f-5b07-8788-c85716489c2c" "e36b1eb3-b357-540e-b67c-18adc670c6c7" ...
-    ##  $ table_num         : int  2 2 2 2 1 2 2 1 2 2 ...
+    ##  $ case_gdc_id       : chr  "fba62f88-d514-5edb-a1fb-0e05fe967191" "d183c0ca-3de1-5522-9f25-427ef4f62998" "c72527a8-e976-5de2-a015-0f4af62e3041" "944b68d2-c55d-53f1-a940-fae1e59a224e" ...
+    ##  $ table_num         : int  2 2 2 2 2 2 2 2 1 2 ...
 
-Each query will have it’s own random sample because each time `RAND()`
-is run, it generates a new set of random numbers. This could be a
-problem if you want reproducible results each time you run the query.
-Another way to solve this problem is to use `FARM_FINGERPRINT()` wtih
+Each query will have a different set of random samples because each time
+`RAND()` is run, it generates a new set of random numbers. This could be
+a problem if you want reproducible results each time you run the query.
+Another way to solve this problem is to use `FARM_FINGERPRINT()` with
 `MOD()` which we will cover next.
 
 ## `MOD()` and `FARM_FINGERPRINT` Functions
@@ -276,5 +273,6 @@ str(mod_5)
     ##  $ case_gdc_id       : chr  "fef92ed0-242b-5564-ad92-6b35c21c3bd5" "fef13b6c-d5e9-5ffa-9f55-2404f2f99eeb" "feb97edc-ce83-5fd5-94e3-261ce244ac52" "fe831368-c7ce-5e2b-b0fd-c35216a7761d" ...
     ##  $ subset            : int  1 0 0 2 2 1 2 2 1 2 ...
 
-The subsets can then be filtered out and manipulated in R. Please let us
-know if you have questions by emailing <feedback@isb-cgc.org>.
+The subsets can then be filtered out and manipulated in python. Have fun
+random sampling the data\! Please let us know if you have questions by
+emailing us at <feedback@isb-cgc.org>.
