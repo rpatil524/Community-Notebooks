@@ -1,15 +1,14 @@
-# ISB-CGC Community Notebooks
-
-```
-Title:   Quick Start Guide to ISB-CGC
-Author:  Lauren Hagen
-Created: 2019-06-20
-Purpose: Painless intro to working in the cloud
-```
-***
-
 Quick Start Guide for ISB-CGC
 ================
+
+# ISB-CGC Community Notebooks
+
+    Title:   How to create cohorts
+    Author:  Lauren Hagen
+    Created: 2019-06-20
+    Purpose: Painless intro to working in the cloud
+
+-----
 
 [ISB-CGC](https://isb-cgc.appspot.com/)
 
@@ -41,16 +40,13 @@ get started with a basic example in R.
 
 ## Overview of ISB-CGC
 
-## Overview of ISB-CGC
-
 The ISB-CGC provides both interactive and programmatic access to data
-hosted by institutes such as the Genomic Data Commons (GDC) of the
-National Cancer Institute (NCI) and the Wellcome Trust Sanger Institute
-while leveraging many aspects of the Google Cloud Platform. You can also
-import your own data to analyze it side by side with the datasets from
-ISB-CGC and share your data when you see fit. For more information, a
-Quick Introduction to the ISB-CGC Platform can be downloaded
-[here](https://github.com/isb-cgc/readthedocs/raw/master/docs/include/workshop-intro-Aug2016.pdf).
+hosted by institutes such as the [Genomic Data Commons
+(GDC)](https://gdc.cancer.gov/) of the [National Cancer Institute
+(NCI)](https://www.cancer.gov/) and the [Wellcome Trust Sanger
+Institute](https://www.sanger.ac.uk/) while leveraging many aspects of
+the Google Cloud Platform. You can also import your own data to analyze
+it side by side with the datasets and share your data when you see fit.
 
 ### Introduction to ISB-CGC Video
 
@@ -61,55 +57,57 @@ Series](https://isb-cgc.appspot.com/videotutorials/)
 
 ## About the Data on ISB-CGC
 
-The main data that ISB-CGC hosts is the Cancer Genome Atlas (TCGA) data
-which was a large-scale multi-disciplinary collaboration started by the
-National Cancer Institute (NCI) and the National Human Genome Research
-Institute (NHGRI). Some of the hosted data types and files include
-RNA-Seq FASTQ, DNA-Seq and RNA-Seq BAM Files, Genome-Wide SNP6 array CEL
-files, and Variant-calls in VCF files. ISB-CGC now also hosts a number
-of other datasets including Therapeutically Applicable Research to
-Generate Effective Treatments (TARGET) data and Cancer Cell Line
-Encyclopedia (CCLE) data. ISB-CGC is adding more data sets all the time,
-so if you have suggestions for a datasets to be added please email:
-<feedback@isb-cgc.org>
+The main data that is hosted on the cloud is [The Cancer Genome Atlas
+(TCGA)](https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga)
+data which was a large-scale multi-disciplinary collaboration started by
+the [National Cancer Institute (NCI)](https://www.cancer.gov/) and the
+[National Human Genome Research Institute
+(NHGRI)](https://www.genome.gov/). Some of the hosted data types and
+files include RNA-Seq FASTQ, DNA-Seq and RNA-Seq BAM Files, Genome-Wide
+SNP6 array CEL files, and Variant-calls in VCF files along with a number
+of other datasets including data from [Therapeutically Applicable
+Research to Generate Effective Treatments
+(TARGET)](https://ocg.cancer.gov/programs/target) and [Cancer Cell Line
+Encyclopedia (CCLE)](https://depmap.org/portal/ccle/) programs. ISB-CGC
+hosts several tables in BigQuery with data from the TCGA, TARGET, and
+CCLE along with reference tables and [Catalogue Of Somatic Mutations In
+Cancer (COSMIC)](https://cancer.sanger.ac.uk/cosmic) data sets from the
+[Wellcome Trust Sanger Institute](https://www.sanger.ac.uk/). ISB-CGC is
+adding more data sets all the time, so if you have suggestions for a
+datasets to be added please email: <feedback@isb-cgc.org>
 
-For more information, please visit: [Cloud-Hosted Data
-Sets](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Hosted-Data.html),
-[Data Types in Cloud
-Storage](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/data/data2/data_in_GCS.html),
+For more information, please visit: [Programs and Data
+Sets](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Hosted-Data.html)
 and [Data in
-BigQuery](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/data/data2/data_in_BQ.html)
+BigQuery](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/BigQuery/data_in_BQ.html)
 
 ## Overview of How to Access Data
 
 There are several ways to access the Data that is hosted by ISB-CGC.
 
-  - APIs
-      - ISB-CGC WebApp
-          - Provides a graphical interface to the ISB\*CGC metadata
-            stored in CloudSQL, and consists of several “endpoints”,
-            implemented using Google Cloud Endpoints.
-          - Does not require knowledge of programming languages
-      - ISB-CGC APIs
-      - Provides programmatic access to data and metadata stored in
-        CloudSQL
-      - Google Cloud Platform
-          - Allows you to use GCP APIs such as BigQuery, Cloud Datalab,
-            Colaboratory
-          - Allows you to host your own data on the Cloud
-  - BigQuery
-      - A GCP Allows you to use SQL to access some data
+  - [ISB-CGC WebApp](https://isb-cgc.appspot.com/)
+      - Provides a graphical interface to metadata
+      - Does not require knowledge of programming languages
+  - [ISB-CGC APIs](https://api-dot-isb-cgc.appspot.com/v4/swagger/)
+      - Provides programmatic access to metadata
+  - [Google Cloud Platform](https://cloud.google.com/)
+  - Allows you to use GCP APIs such as BigQuery, Cloud Datalab,
+    Colaboratory
+  - Allows you to host your own data on the Cloud
+  - [BigQuery](https://cloud.google.com/bigquery/)
+  - A GCP Allows you to use SQL to access some data
   - Supported Programming Languages
-      - SQL
-          - Can be used directly in BigQuery
-      - Python
-          - [gsutil tool](https://cloud.google.com/storage/docs/gsutil)
-            is a Python tool to access data via the command line
-          - Jupyter Notebooks
-              - Google Colabratory or Cloud Datalab use Jupyter as a
-                base
-      - R
-          - RStudio
+  - SQL
+  - Can be used directly in BigQuery
+  - [Python](https://www.python.org/)
+  - [gsutil tool](https://cloud.google.com/storage/docs/gsutil) is a
+    Python tool to access data via the command line
+  - [Jupyter Notebooks](https://jupyter.org/)
+  - [Google Colabratory](https://colab.research.google.com/)
+  - [Cloud Datalab](https://cloud.google.com/datalab/)
+  - [R](https://www.r-project.org/)
+  - [RStudio](https://rstudio.com/)
+  - [RStudio.Cloud](https://rstudio.cloud/)
   - Command Line Interfaces
       - Cloud Shell via Project Console
       - [CLOUD SDK](https://cloud.google.com/sdk/)
@@ -241,8 +239,15 @@ Load Libraries Required for using BigQuery in R
 
 ``` r
 library(bigrquery)
+```
+
+    ## Warning: package 'bigrquery' was built under R version 3.6.1
+
+``` r
 library(dplyr)
 ```
+
+    ## Warning: package 'dplyr' was built under R version 3.6.1
 
     ## 
     ## Attaching package: 'dplyr'
@@ -273,13 +278,13 @@ asked to do this at the start of a session.
 list_datasets("isb-cgc") # isb-cgc is the project name
 ```
 
-    ##  [1] "CCLE_bioclin_v0"     "GDC_metadata"        "GTEx_v7"            
-    ##  [4] "QotM"                "TARGET_bioclin_v0"   "TARGET_hg38_data_v0"
-    ##  [7] "TCGA_bioclin_v0"     "TCGA_hg19_data_v0"   "TCGA_hg38_data_v0"  
-    ## [10] "Toil_recompute"      "ccle_201602_alpha"   "genome_reference"   
-    ## [13] "hg19_data_previews"  "hg38_data_previews"  "metadata"           
-    ## [16] "platform_reference"  "tcga_201607_beta"    "tcga_cohorts"       
-    ## [19] "tcga_seq_metadata"
+    ##  [1] "CCLE_bioclin_v0"     "CCLE_hg19_data_v0"   "GDC_metadata"       
+    ##  [4] "GTEx_v7"             "QotM"                "TARGET_bioclin_v0"  
+    ##  [7] "TARGET_hg38_data_v0" "TCGA_bioclin_v0"     "TCGA_hg19_data_v0"  
+    ## [10] "TCGA_hg38_data_v0"   "Toil_recompute"      "ccle_201602_alpha"  
+    ## [13] "genome_reference"    "hg19_data_previews"  "hg38_data_previews" 
+    ## [16] "metadata"            "platform_reference"  "tcga_201607_beta"   
+    ## [19] "tcga_cohorts"        "tcga_seq_metadata"
 
 ``` r
 # Let us look which tables are in the TCGA_bioclin_v0 dataset
