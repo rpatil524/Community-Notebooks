@@ -3,6 +3,9 @@ R How to Find GDC File Locations
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks
+Repository](https://github.com/isb-cgc/Community-Notebooks)\!
+
     Title:   How to Find GDC File Locations
     Author:  Lauren Hagen
     Created: 2019-08-13

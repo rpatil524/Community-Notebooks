@@ -3,6 +3,9 @@ Quick Start Guide for ISB-CGC
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks
+Repository](https://github.com/isb-cgc/Community-Notebooks)\!
+
     Title:   How to create cohorts
     Author:  Lauren Hagen
     Created: 2019-06-20
@@ -10,7 +13,7 @@ Quick Start Guide for ISB-CGC
 
 -----
 
-[ISB-CGC](https://isb-cgc.appspot.com/)
+Visit our WebApp at [ISB-CGC.org](https://isb-cgc.appspot.com/)\!
 
 This Quick Start Guide is intended give an overview of the data
 available, a walk-though of the steps of setting up your accounts, and
@@ -239,26 +242,8 @@ Load Libraries Required for using BigQuery in R
 
 ``` r
 library(bigrquery)
-```
-
-    ## Warning: package 'bigrquery' was built under R version 3.6.1
-
-``` r
 library(dplyr)
 ```
-
-    ## Warning: package 'dplyr' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
 
 ### View Datasets and Tables in BigQuery
 
@@ -308,7 +293,19 @@ LIMIT
 # Use BigQuery to run the SQL query on the Clincal table from the TCGA_bioclin_v0 dataset
 # which then may be downloadedinto a tibble.
 result <- bq_project_query(project, sql)
+```
+
+    ## Complete
+
+    ## Billed: 0 B
+
+``` r
 result <- bq_table_download(result)
+```
+
+    ## Downloading 5 rows in 1 pages.
+
+``` r
 print(result)
 ```
 
