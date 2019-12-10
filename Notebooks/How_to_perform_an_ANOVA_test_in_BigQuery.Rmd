@@ -5,6 +5,8 @@ output: rmarkdown::github_document
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks Repository](https://github.com/isb-cgc/Community-Notebooks)!
+
 ```
 Title:   One-Way ANOVA Test in BigQuery
 Author:  Lauren Hagen

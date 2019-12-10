@@ -2,7 +2,10 @@
 title: "Gene Set Scoring using hg38 mutation tables"
 output: rmarkdown::github_document
 ---
+
 # ISB-CGC Community Notebooks
+
+Check out more notebooks at our [Community Notebooks Repository](https://github.com/isb-cgc/Community-Notebooks)!
 
 ```
 Title:   Gene Set Scoring using hg38 mutation tables

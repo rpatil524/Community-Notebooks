@@ -3,6 +3,9 @@ How to create a complex cohort
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks
+Repository](https://github.com/isb-cgc/Community-Notebooks)\!
+
     Title:   How to create a complex cohort
     Author:  Lauren Hagen
     Created: 2019-08-12

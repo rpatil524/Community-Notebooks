@@ -3,6 +3,9 @@ One-Way ANOVA Test in BigQuery
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks
+Repository](https://github.com/isb-cgc/Community-Notebooks)\!
+
     Title:   One-Way ANOVA Test in BigQuery
     Author:  Lauren Hagen
     Created: 2019-08-02
@@ -44,26 +47,8 @@ found
 
 ``` r
 library(bigrquery)
-```
-
-    ## Warning: package 'bigrquery' was built under R version 3.6.1
-
-``` r
 library(dplyr)
 ```
-
-    ## Warning: package 'dplyr' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
 
 Then let us set up the billing variables we will be using in this
 notebook:
@@ -227,15 +212,6 @@ FROM
 ``` r
 # To see the R console output with query processing information, turn queit to FALSE
 anova_result <- bq_project_query(billing, anova_query, quiet = TRUE)
-```
-
-    ## Waiting for authentication in browser...
-
-    ## Press Esc/Ctrl + C to abort
-
-    ## Authentication complete.
-
-``` r
 # Transform the query result into a tibble
 anova_result <- bq_table_download(anova_result, quiet = TRUE)
 anova_result
@@ -319,16 +295,16 @@ dat
     ## # A tibble: 375 x 3
     ##    sample_barcode   group_name  expr
     ##    <chr>            <chr>      <dbl>
-    ##  1 TCGA-A8-A084-01A INS         2.49
-    ##  2 TCGA-E2-A108-01A SNP         3.17
-    ##  3 TCGA-EW-A6SD-01A SNP         3.45
-    ##  4 TCGA-AR-A1AR-01A DEL         2.84
-    ##  5 TCGA-D8-A1J9-01A SNP         3.11
-    ##  6 TCGA-AO-A03V-01A SNP         3.23
-    ##  7 TCGA-D8-A13Y-01A DEL         2.64
-    ##  8 TCGA-D8-A27N-01A SNP         3.04
-    ##  9 TCGA-BH-A0EE-01A DEL         2.42
-    ## 10 TCGA-AC-A8OQ-01A SNP         2.86
+    ##  1 TCGA-AR-A24P-01A SNP         3.12
+    ##  2 TCGA-BH-A0RX-01A SNP         3.03
+    ##  3 TCGA-BH-A1FD-01A SNP         3.36
+    ##  4 TCGA-A8-A08R-01A INS         2.74
+    ##  5 TCGA-LL-A73Y-01A SNP         2.77
+    ##  6 TCGA-GM-A2DD-01A SNP         3.37
+    ##  7 TCGA-E2-A155-01A SNP         2.98
+    ##  8 TCGA-E2-A1LG-01A DEL         3.41
+    ##  9 TCGA-BH-A1FE-01A SNP         3.23
+    ## 10 TCGA-PE-A5DE-01A SNP         3.14
     ## # ... with 365 more rows
 
 ``` r
