@@ -7,7 +7,7 @@ output:
 
 ```
 # ISB-CGC Community Notebooks
-
+# Check out more notebooks at our [Community Notebooks Repository](https://github.com/isb-cgc/Community-Notebooks)!
 Title:   How to visualize results from BigQuery
 Author:  David L Gibbs
 Created: 2019-07-17
