@@ -10,6 +10,8 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2019-06-20
     Purpose: Painless intro to working in the cloud
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_for_ISB-CGC.md
+    Notes: 
 
 -----
 
@@ -91,6 +93,9 @@ There are several ways to access the Data that is hosted by ISB-CGC.
   - [ISB-CGC WebApp](https://isb-cgc.appspot.com/)
       - Provides a graphical interface to metadata
       - Does not require knowledge of programming languages
+  - [ISB-CGC BigQuery Table Searcher](https://isb-cgc.appspot.com/bq_meta_search/)
+      - Provides a table search for available ISB-CGC BigQuery Tables
+      - Does NOT require a login for Google or ISB-CGC to access
   - [ISB-CGC APIs](https://api-dot-isb-cgc.appspot.com/v4/swagger/)
       - Provides programmatic access to metadata
   - [Google Cloud Platform](https://cloud.google.com/)
