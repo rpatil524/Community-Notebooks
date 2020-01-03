@@ -10,6 +10,8 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2019-08-13
     Purpose: Demonstrate how to find GDC file locations using manifests available in BigQuery
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_Find_GDC_File_Locations.md
+    Notes: 
 
 -----
 
@@ -22,7 +24,7 @@ tables are useful because several of the available data sets in GDC are
 not yet available in the ISB-CGC WebApp or as BigQuery tables. This also
 means that the data sets can’t be used with the ISB-CGC API’s. The
 metadata tables can help you find which data sets are available in GDC
-along with their locations and available file and sequencing types.
+along with their locations and available file and sequencing types. The available metadata tables along with other data sets and tables from ISB-CGC can be explored without login with the [ISB-CGC BigQuery Table Searcher](https://isb-cgc.appspot.com/bq_meta_search/).
 
 This notebook has been designed to keep itself up to date when new
 metadata tables releases as new data sets are added to GDC or updated
