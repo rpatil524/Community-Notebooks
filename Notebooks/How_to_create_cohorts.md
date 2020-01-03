@@ -10,6 +10,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2019-06-20
     Purpose: Basic overview of creating cohorts
+    URL: https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_create_cohorts.md
     Notes:   This notebook was adapted from work by Shiela Reynolds, 'How to Create TCGA Cohorts part 1' https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
 
 -----
@@ -23,7 +24,7 @@ open-access [TCGA](http://cancergenome.nih.gov/) data available at the
 [Data Portal](https://tcga-data.nci.nih.gov/tcga/). You will need to
 have access to a Google Cloud Platform (GCP) project in order to use
 BigQuery. If you don’t already have one, you can sign up for a
-[free-trial](https://cloud.google.com/free-trial/).
+[free-trial](https://cloud.google.com/free-trial/). You can also explore the available tables and data sets before commiting to creating a GCP project though the [ISB-CGC BigQuery Table Searcher](isb-cgc.appspot.com/bq_meta_search/).
 
 We are not attempting to provide a thorough BigQuery or IPython tutorial
 here, as a wealth of such information already exists. Here are some
