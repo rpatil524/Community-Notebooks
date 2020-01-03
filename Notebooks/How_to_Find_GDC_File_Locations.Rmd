@@ -12,7 +12,7 @@ Title:   How to Find GDC File Locations
 Author:  Lauren Hagen
 Created: 2019-08-13
 Purpose: Demonstrate how to find GDC file locations using manifests available in BigQuery
-URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_Find_GDC_File_Locations.ipynb
+URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_Find_GDC_File_Locations.Rmd
 Notes: 
 ```
 ***
