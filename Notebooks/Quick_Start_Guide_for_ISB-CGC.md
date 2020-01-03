@@ -10,6 +10,8 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2019-06-20
     Purpose: Painless intro to working in the cloud
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_for_ISB-CGC.md
+    Notes: 
 
 -----
 
@@ -91,6 +93,9 @@ There are several ways to access the Data that is hosted by ISB-CGC.
   - [ISB-CGC WebApp](https://isb-cgc.appspot.com/)
       - Provides a graphical interface to metadata
       - Does not require knowledge of programming languages
+  - [ISB-CGC BigQuery Table Searcher](https://isb-cgc.appspot.com/bq_meta_search/)
+      - Provides a table search for available ISB-CGC BigQuery Tables
+      - Does NOT require a login for Google or ISB-CGC to access
   - [ISB-CGC APIs](https://api-dot-isb-cgc.appspot.com/v4/swagger/)
       - Provides programmatic access to metadata
   - [Google Cloud Platform](https://cloud.google.com/)
@@ -129,8 +134,9 @@ There are several ways to access the Data that is hosted by ISB-CGC.
 <!-- end list -->
 
   - Required to use all of the data, tools and the Google Cloud
-  - New accounts get a one-time [300 Google
-    Credit](https://cloud.google.com/free/)
+  - New accounts recieve a one-time allotment of [$300 in Google Credit](https://cloud.google.com/free/)
+    - Google also offers a [Free Tier](https://cloud.google.com/free/) which grants 1 TB of queries a month
+    - Additionally, ISB-CGC offers [$300 in free Cloud Credits](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowtoRequestCloudCredits.html)
 
 <!-- end list -->
 
