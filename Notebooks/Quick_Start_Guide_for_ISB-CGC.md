@@ -134,8 +134,9 @@ There are several ways to access the Data that is hosted by ISB-CGC.
 <!-- end list -->
 
   - Required to use all of the data, tools and the Google Cloud
-  - New accounts get a one-time [300 Google
-    Credit](https://cloud.google.com/free/)
+  - New accounts recieve a one-time allotment of [$300 in Google Credit](https://cloud.google.com/free/)
+    - Google also offers a [Free Tier](https://cloud.google.com/free/) which grants 1 TB of queries a month
+    - Additionally, ISB-CGC offers [$300 in free Cloud Credits](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowtoRequestCloudCredits.html)
 
 <!-- end list -->
 
