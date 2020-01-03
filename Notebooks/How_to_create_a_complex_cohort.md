@@ -10,6 +10,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2019-08-12
     Purpose: More complex overview of creating cohorts
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_create_a_complex_cohort.md
     Notes:   This notebook was adapted from work by Shiela Reynolds, 'How to Create TCGA Cohorts part 3' https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
 
 -----
@@ -44,8 +45,7 @@ studyName = "TCGA-BRCA"
 More information the the BRCA study can be found
 [here](https://portal.gdc.cancer.gov/projects/TCGA-BRCA). In this
 notebook, we are going to wind up making use of all of the available
-data types, so let’s have a look at the entire **`TCGA_hg38_data_v0`**
-dataset:
+data types, so let's have a look at the entire **`TCGA_hg38_data_v0`** dataset in the query below. The tables and data sets available from ISB-CGC in BigQuery can also be explored without login with the [ISB-CGC BigQuery Table Searcher](https://isb-cgc.appspot.com/bq_meta_search/).
 
 ``` r
 project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
