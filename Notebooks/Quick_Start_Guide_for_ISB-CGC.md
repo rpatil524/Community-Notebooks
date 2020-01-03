@@ -6,7 +6,7 @@ Quick Start Guide for ISB-CGC
 Check out more notebooks at our [Community Notebooks
 Repository](https://github.com/isb-cgc/Community-Notebooks)\!
 
-    Title:   How to create cohorts
+    Title:   Quick Start Guide for ISB-CGC
     Author:  Lauren Hagen
     Created: 2019-06-20
     Purpose: Painless intro to working in the cloud

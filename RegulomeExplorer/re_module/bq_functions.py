@@ -160,7 +160,26 @@ def  clinical_features( feature2_name ) :
                 
     return struct_columns 
                 
+def get_feature1_table( study , feature1_name ) :
 
+    table1= """
+table1 AS (
+SELECT  symbol, data, ParticipantBarcode,
+        (RANK() OVER (PARTITION BY symbol ORDER BY data ASC)) + (COUNT(*) OVER ( PARTITION BY symbol, CAST(data as STRING)) - 1)/2.0 AS rnkdata 
+FROM ( 
+   SELECT 
+         Symbol AS symbol, AVG( LOG10( normalized_count + 1 )) AS data, ParticipantBarcode,
+         COUNT( SampleBarcode)  as nsample 
+   FROM  `pancancer-atlas.Filtered.EBpp_AdjustPANCAN_IlluminaHiSeq_RNASeqV2_genExp_filtered` 
+   WHERE Study = '{0}' AND Symbol in UNNEST(@PARAMETERLIST) AND normalized_count IS NOT NULL
+   GROUP BY 
+         ParticipantBarcode, symbol
+   )
+)
+""".format( study ) 
+    
+    return( table1 )
+    
 def get_feature2_table( study , feature2_name ) :
 
    feat =  bqtable_data( feature2_name )
@@ -388,11 +407,13 @@ def makeWidgets():
       disabled=False
       )
 
+    
+  FeatureList1 = [ 'Gene Expression', 'Somatic Copy Number'] ;
 
-  FeatureList = [ 'Gene Expression', 'Somatic Mutation Spearman','Somatic Mutation t-test', 'Somatic Copy Number', 'Clinical Numeric', 'Clinical Categorical'] ;
+  FeatureList2 = [ 'Gene Expression', 'Somatic Mutation Spearman','Somatic Mutation t-test', 'Somatic Copy Number', 'Clinical Numeric', 'Clinical Categorical'] ;
 
-  feature2 = widgets.Dropdown(
-      options=FeatureList,
+  feature1 = widgets.Dropdown(
+      options=FeatureList1,
       value='Gene Expression',
       description='',
       disabled=False
@@ -405,26 +426,36 @@ def makeWidgets():
       disabled=False
       )
 
+  feature2 = widgets.Dropdown(
+      options=FeatureList2,
+      value='Gene Expression',
+      description='',
+      disabled=False
+      )
+
+  
   size = widgets.IntSlider(value=25, 
                            min=5, 
                            max=50,
                            description=''
                           )  # the n most variable genes
     
+  feature1_title = widgets.HTML('<em>Select Feature1 </em>')  
+  display(widgets.HBox([ feature1_title, feature1 ]))
+
+  genes_title = widgets.HTML('<em>Feature1 labels </em>')
+  display(widgets.HBox([ genes_title, gene_names  ]))
+
+  feature2_title = widgets.HTML('<em>Select Feature2 </em>')  
+  display(widgets.HBox([ feature2_title, feature2 ]))
 
   study_title = widgets.HTML('<em>Select a study </em>')
   display(widgets.HBox([study_title, study]))
-
-  feature_title = widgets.HTML('<em>Select a molecular feature </em>')  
-  display(widgets.HBox([ feature_title, feature2 ]))
-
-  genes_title = widgets.HTML('<em>Type gene names </em>')
-  display(widgets.HBox([ genes_title, gene_names  ]))
-
+    
   size_title = widgets.HTML('<em>Minimum number of samples</em>')
   display(widgets.HBox([size_title, size]))
     
-  return([study, feature2, gene_names, size ])
+  return([study, feature1, feature2, gene_names, size ])
 
 
 def makeWidgetsPair() : 
