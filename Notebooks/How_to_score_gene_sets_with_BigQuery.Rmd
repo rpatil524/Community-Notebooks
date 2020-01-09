@@ -12,6 +12,7 @@ Title:   Gene Set Scoring using hg38 mutation tables
 Author:  Lauren Hagen
 Created: 2019-08-02
 Purpose: To demonstrate how to join two tables in BigQuery to compare the expression of a set of genes  between two groups.
+URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_score_gene_sets_with_BigQuery.Rmd
 Notes:   This notebook was adapted from work by David L Gibbs, January 2018 Query of the Month
 ```
 ***
@@ -45,7 +46,10 @@ library(ggplot2)
 
 Then let us set up the billing variables we will be using in this notebook:
 ```{r Set Up Variables}
-billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+billing <- 'your_project_number' # Insert your project ID in the ''
+if (billing == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
 ```
 
 Let’s get started on creating the full query. First, which tissue type should we focus on? Let’s choose PARP1 as an interesting gene – it encodes an enzyme involved in DNA damage repair and is also the target of some therapeutic drugs – and use the Somatic Mutation table to choose a cancer type:

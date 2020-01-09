@@ -49,10 +49,12 @@ data types, so let's have a look at the entire **`TCGA_hg38_data_v0`** dataset i
 
 ``` r
 project <- 'your_project_number' # Insert your project ID in the ''
-theDataset <- 'TCGA_hg38_data_v0'
 if (project == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }
+
+# Set the Data Set
+theDataset <- 'TCGA_hg38_data_v0'
 ```
 
 ``` r

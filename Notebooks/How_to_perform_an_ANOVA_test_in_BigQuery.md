@@ -10,6 +10,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2019-08-02
     Purpose: Demonstrate an ANOVA test within BigQuery
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_perform_an_ANOVA_test_in_BigQuery.md
     Notes:   This notebook was adapted from work by David L Gibbs, September 2017 Query of the Month
 
 -----
@@ -41,7 +42,7 @@ samples (normalized).
 
 First, we will need to import the required libraries and create a client
 variable. For more information see [‘Quick Start Guide to
-ISB-CGC’](INSERT%20LINK) and alternative authentication methods can be
+ISB-CGC’](https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_for_ISB-CGC.md) and alternative authentication methods can be
 found
 [here](https://googleapis.github.io/google-cloud-python/latest/core/auth.html).
 
@@ -54,7 +55,10 @@ Then let us set up the billing variables we will be using in this
 notebook:
 
 ``` r
-billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+billing <- 'your_project_number' # Insert your project ID in the ''
+if (billing == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
 ```
 
 Let’s look at the query:
