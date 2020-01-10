@@ -48,7 +48,12 @@ notebook, we are going to wind up making use of all of the available
 data types, so let's have a look at the entire **`TCGA_hg38_data_v0`** dataset in the query below. The tables and data sets available from ISB-CGC in BigQuery can also be explored without login with the [ISB-CGC BigQuery Table Searcher](https://isb-cgc.appspot.com/bq_meta_search/).
 
 ``` r
-project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+project <- 'your_project_number' # Insert your project ID in the ''
+if (project == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
+
+# Set the Data Set
 theDataset <- 'TCGA_hg38_data_v0'
 ```
 

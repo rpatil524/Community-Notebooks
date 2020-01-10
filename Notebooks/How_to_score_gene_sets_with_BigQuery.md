@@ -10,6 +10,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2019-08-02
     Purpose: To demonstrate how to join two tables in BigQuery to compare the expression of a set of genes  between two groups.
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_score_gene_sets_with_BigQuery.md
     Notes:   This notebook was adapted from work by David L Gibbs, January 2018 Query of the Month
 
 -----
@@ -77,7 +78,10 @@ Then let us set up the billing variables we will be using in this
 notebook:
 
 ``` r
-billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+billing <- 'your_project_number' # Insert your project ID in the ''
+if (billing == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
 ```
 
 Let’s get started on creating the full query. First, which tissue type

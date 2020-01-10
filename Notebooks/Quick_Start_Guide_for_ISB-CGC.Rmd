@@ -162,7 +162,10 @@ list_tables("isb-cgc", "TCGA_bioclin_v0") # the convention is project name then 
 
 
 ```{r View Data in the Table}
-project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+project <- 'your_project_number' # Insert your project ID in the ''
+if (project == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
 theTable <- "isb-cgc.TCGA_bioclin_v0.Clinical" # The convention for calling a table is project.dataset.table
 # Create the SQL query
 sql <- "SELECT

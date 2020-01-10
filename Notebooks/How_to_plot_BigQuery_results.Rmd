@@ -1,8 +1,6 @@
 ---
 title: "How to plot BigQuery results"
-output:
-  html_document:
-    df_print: paged
+output: rmarkdown::github_document
 ---
 
 ```
@@ -12,7 +10,8 @@ Title:   How to visualize results from BigQuery
 Author:  David L Gibbs
 Created: 2019-07-17
 Purpose: Demonstrate how visualize the results from a query.
-
+URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_plot_BigQuery_results.Rmd
+Notes:   
 ***
 ```
 
@@ -65,7 +64,10 @@ Getting setup
 ```{r}
 library(bigrquery)
 library(ggplot2)
-billing <- 'isb-cgc-02-0001' ### Replace with your project ID!! ### 
+billing <- 'your_project_number' ### Replace with your project ID!! ### 
+if (billing == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
 ```
 
 ## Making barplots
