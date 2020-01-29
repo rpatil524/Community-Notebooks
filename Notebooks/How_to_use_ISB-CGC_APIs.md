@@ -52,12 +52,14 @@ Some useful tutorials and quick start guides on APIs are:
     Python](https://realpython.com/api-integration-in-python/)
   - [Python API Tutorial: Getting Started with
     APIs](https://www.dataquest.io/blog/python-api-tutorial/)
+  - [Accessing APIs from R (and a little R
+    programming)](https://www.r-bloggers.com/accessing-apis-from-r-and-a-little-r-programming/)
 
 ### What is SwaggerUI?
 
 [SwaggerUI](https://swagger.io/tools/swagger-ui/) is a user interface
 that allows users to try out the APIs and view their documentation
-easiely. A tutorial on how to use the ISB-CGC APIs on the SwaggerUI can
+easily. A tutorial on how to use the ISB-CGC APIs on the SwaggerUI can
 be found
 [here](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/progapi/progAPI-v4/Programmatic-Demo.html#apis-demo).
 
@@ -88,7 +90,7 @@ library(httr)
 
 ## Use cases for ISB-CGC APIs
 
-The ISB-CGC APIs can be used for an number of different tasks for
+The ISB-CGC APIs can be used for a number of different tasks for
 interacting with the Google Cloud Platform and BigQuery. It can be used
 to subset data into cohorts or to access cohorts that have been created
 using the WebApp. It can also be used to interact with the user’s GCP to
@@ -107,22 +109,22 @@ about_req <- GET("https://api-dot-isb-cgc.appspot.com/v4/about")
 ```
 
 Now that we have the request response, we are going to check that we
-didn’t recieve an error code or if the request was successful. If the
+didn’t receive an error code or if the request was successful. If the
 request was successful, then the status code will come back as 200 but
 if something went wrong then the status code may be something 404 or
-503. If you have recieved any error codes, you can check out Google’s
+503. If you have received any error codes, you can check out Google’s
 [Troubleshooting response errors
 guide](https://cloud.google.com/endpoints/docs/openapi/troubleshoot-response-errors).
 
 ``` r
-# Check that the wasn't an error with the request
+# Check that there wasn't an error with the request
 if (about_req$status_code != "200") {
   # Print the error code if something went wrong
   print(about_req$status_code)
 }
 ```
 
-Finally, we will print out the information that we have recieved from
+Finally, we will print out the information that we have received from
 the API. This response returns as a response object. You can access
 different parts of the with helper methods such as `content()` to access
 the body of the request.
@@ -133,7 +135,7 @@ about_req
 ```
 
     ## Response [https://api-dot-isb-cgc.appspot.com/v4/about]
-    ##   Date: 2020-01-29 00:28
+    ##   Date: 2020-01-29 16:57
     ##   Status: 200
     ##   Content-Type: application/json
     ##   Size: 304 B
@@ -154,7 +156,7 @@ content(about_req)
     ## [1] "Welcome to the ISB-CGC API, Version 4."
 
 ``` r
-# Finally, we will print the display the message and the description
+# Finally, we will print the message and the description
 content(about_req)$message
 ```
 
@@ -169,9 +171,9 @@ content(about_req)$documentation
 That wasn’t difficult at all\! Next we will cover a few of the other
 information APIs.
 
-## Example: `/data/availabile` Endpoint
+## Example: `/data/available` Endpoint
 
-The `/data/availabile` Endpoint is designed to return the data sets and
+The `/data/available` Endpoint is designed to return the data sets and
 programs available on the WebApp along with the projects or studies that
 are within those data sets and programs. This endpoint returns a more
 complicated response object which can be accessed as if it was a
@@ -181,7 +183,7 @@ then view if there was an error code within the response.
 ``` r
 # First submit the 'get' request to the API
 programs_req <- GET("https://api-dot-isb-cgc.appspot.com/v4/data/available")
-# Check that the wasn't an error with the request
+# Check that there wasn't an error with the request
 if (programs_req$status_code != "200") {
   # Print the error code if something went wrong
   print(programs_req$status_code)
@@ -270,7 +272,7 @@ Authorization:
 
 1.  Create Google Cloud Project set up\*
 2.  Register with the ISB-CGC WebApp\*
-3.  Create a Creditial File on your local machine by using the
+3.  Create a Credential File on your local machine by using the
     [isb\_auth.py
     script](https://github.com/isb-cgc/ISB-CGC-API/blob/master/scripts/isb_auth.py)
     from the [ISB-CGC-API
@@ -341,7 +343,7 @@ Finally, we can make a `get` request to the `cohorts` ISB-CGC API.
 ``` r
 #add_headers(Authorization="bearer <your api key>")
 cohort_req <- GET("https://api-dot-isb-cgc.appspot.com/v4/cohorts", add_headers(Authorization=head))
-# Check that the wasn't an error with the request
+# Check that there wasn't an error with the request
 if (cohort_req$status_code != "200") {
   # Print the error code if something went wrong
   print(cohort_req$status_code)
@@ -354,7 +356,7 @@ cohort_req
 ```
 
     ## Response [https://api-dot-isb-cgc.appspot.com/v4/cohorts]
-    ##   Date: 2020-01-29 00:28
+    ##   Date: 2020-01-29 16:57
     ##   Status: 200
     ##   Content-Type: application/json
     ##   Size: 644 B
