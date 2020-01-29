@@ -3,10 +3,15 @@ How to Use ISB-CGC APIs
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks
+Repository](https://github.com/isb-cgc/Community-Notebooks)\!
+
     Title:   How to Use ISB-CGC APIs
     Author:  Lauren Hagen
     Created: 2019-09-16
-    Purpose: Introduction to using ISB-CGC APIs with Python
+    Purpose: Introduction to using ISB-CGC APIs with R
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_use_ISB-CGC_APIs.Rmd
+    Notes:
 
 # How to Use ISB-CGC APIs
 
@@ -128,7 +133,7 @@ about_req
 ```
 
     ## Response [https://api-dot-isb-cgc.appspot.com/v4/about]
-    ##   Date: 2020-01-29 00:20
+    ##   Date: 2020-01-29 00:28
     ##   Status: 200
     ##   Content-Type: application/json
     ##   Size: 304 B
@@ -349,7 +354,7 @@ cohort_req
 ```
 
     ## Response [https://api-dot-isb-cgc.appspot.com/v4/cohorts]
-    ##   Date: 2020-01-29 00:20
+    ##   Date: 2020-01-29 00:28
     ##   Status: 200
     ##   Content-Type: application/json
     ##   Size: 644 B

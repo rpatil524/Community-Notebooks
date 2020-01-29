@@ -5,11 +5,15 @@ output: rmarkdown::github_document
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks Repository](https://github.com/isb-cgc/Community-Notebooks)!
+
 ```
 Title:   How to Use ISB-CGC APIs
 Author:  Lauren Hagen
 Created: 2019-09-16
-Purpose: Introduction to using ISB-CGC APIs with Python
+Purpose: Introduction to using ISB-CGC APIs with R
+URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_use_ISB-CGC_APIs.Rmd
+Notes:
 ```
 
 # How to Use ISB-CGC APIs
