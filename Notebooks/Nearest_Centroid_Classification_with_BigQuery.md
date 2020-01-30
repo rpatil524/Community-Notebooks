@@ -41,7 +41,7 @@ library(caret)
 ```
 
 ``` r
-billing <- 'your_project_number' # Insert your project ID in the ''
+billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
 if (billing == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }
@@ -206,7 +206,10 @@ test AS (
 
 This next section of the query will find the euclidean distance for each
 case in the testing data set<sup>3</sup>. The euclidean distance can be
-found by the following equation<sup>4</sup>:
+found by the following
+equation<sup>4</sup>:
+
+<img src="https://render.githubusercontent.com/render/math?math=d(q,p) = \sqrt{(q_1-p_1)^2+(q_2-p_2)^2+...+(q_n-p_n)^2}">
 
 \[d(q,p) = \sqrt{(q_1-p_1)^2+(q_2-p_2)^2+...+(q_n-p_n)^2}\]
 
@@ -277,7 +280,10 @@ nc
 ## Find Accuracy of the Model
 
 To find the accuracy of the model, we weil use a confusion matrix and
-then will calculate the accuracy with the following formula<sup>3</sup>:
+then will calculate the accuracy with the following
+formula<sup>3</sup>:
+
+<img src="https://render.githubusercontent.com/render/math?math=Accuracy = \frac{M_{ii}}{\sum_{j}M_{ji}}">
 
 \[Accuracy = \frac{M_{ii}}{\sum_{j}M_{ji}}\]
 
