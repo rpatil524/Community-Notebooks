@@ -6,7 +6,7 @@ Nearest Centroid Classification with BigQuery
 Check out more notebooks at our [Community Notebooks
 Repository](https://github.com/isb-cgc/Community-Notebooks)\!
 
-    Title:   How to Use BigQuery to Preform Nearest Centroid Classification
+    Title:   How to Preform Nearest Centroid Classification with BigQuery
     Author:  Lauren Hagen
     Created: 2019-12-17
     URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Nearest_Centroid_Classification_with_BigQuery.ipynb
