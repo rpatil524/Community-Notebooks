@@ -9,7 +9,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Title:   How to Preform Nearest Centroid Classification with BigQuery
     Author:  Lauren Hagen
     Created: 2019-12-17
-    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Nearest_Centroid_Classification_with_BigQuery.ipynb
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_preform_Nearest_Centroid_Classification_with_BigQuery.md
     Purpose: Demostrate using BigQuery to categorize patients based on gene expression using the Nearest Centroid Classification.
     Notes: 
 
