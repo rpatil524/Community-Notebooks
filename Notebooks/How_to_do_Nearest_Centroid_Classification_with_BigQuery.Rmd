@@ -1,5 +1,5 @@
 ---
-title: "Nearest Centroid Classification with BigQuery"
+title: "How to do Nearest Centroid Classification with BigQuery"
 output: rmarkdown::github_document
 ---
 
