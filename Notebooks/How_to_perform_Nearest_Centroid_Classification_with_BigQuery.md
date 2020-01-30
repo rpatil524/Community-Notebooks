@@ -1,4 +1,4 @@
-Nearest Centroid Classification with BigQuery
+How to do Nearest Centroid Classification with BigQuery
 ================
 
 # ISB-CGC Community Notebooks
@@ -9,8 +9,8 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Title:   How to Perform Nearest Centroid Classification with BigQuery
     Author:  Lauren Hagen
     Created: 2019-12-17
-    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_perform_Nearest_Centroid_Classification_with_BigQuery.md
-    Purpose: Demostrate using BigQuery to categorize patients based on gene expression using the Nearest Centroid Classification.
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_perform_Nearest_Centroid_Classification_with_BigQuery.Rmd
+    Purpose: Demonstrate using BigQuery to categorize patients based on gene expression using the Nearest Centroid Classification.
     Notes: 
 
 # Introduction
@@ -20,17 +20,17 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
 This notebook is to demonstrate how to use BigQuery to categorize
 patients based on gene expression using the Nearest Centroid Classifier.
 We will be using the Kidney renal papillary cell carcinoma (KIRP) study
-from the The Cancer Genome Atlas (TCGA) as an example data set and will
-use the RNA Sequence Gene Expression Data.
+from The Cancer Genome Atlas (TCGA) as an example data set and will use
+the RNA Sequence Gene Expression Data.
 
-## What is Nearest Centroid Classifier?
+## What is the Nearest Centroid Classifier?
 
-Nearest Centroid Classifier assigns a label based on the nearest mean
-(centroid) of the training samples that the observation is closest
+The Nearest Centroid Classifier assigns a label based on the nearest
+mean (centroid) of the training samples that the observation is closest
 to<sup>1</sup>. This classifier is an example of supervised learning and
 does not create a model for use later<sup>2</sup>.
 
-Before we get started we will need to load the BigQuery module,
+Before we get started, we will need to load the BigQuery module,
 authenticate ourselves, create a client variable, and load necessary
 libraries.
 
@@ -96,12 +96,12 @@ top_genes_result
 
 # Nearest Centroids in BigQuery
 
-## What we are going to use Nearest Centroids for?
+## What are we going to use Nearest Centroids for?
 
 We will be attempting to predict the clinical stage for a case based on
-a certain subset of genes and their expression levels.
+a specific subset of genes and their expression levels.
 
-First we will filter the TCGA clinical table for our target disease
+First, we will filter the TCGA clinical table for our target disease
 (KIRP) and not include the cases where the clinical stage is missing. We
 need there to be no missing clinical stage features due to the nature of
 k nearest algorithms.
@@ -121,7 +121,7 @@ WITH
   ), "
 ```
 
-Next we will want to get the gene expressions for the genes that we are
+Next, we will want to get the gene expressions for the genes that we are
 going to use to attempt to identify the clinical stage. We will filter
 for the 3 genes that we want, then we will label each case with whether
 it will be in the training or testing group. For more information on
