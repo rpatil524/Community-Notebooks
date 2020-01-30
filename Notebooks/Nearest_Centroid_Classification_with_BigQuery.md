@@ -41,7 +41,7 @@ library(caret)
 ```
 
 ``` r
-billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+billing <- 'your_project_number' # Insert your project ID in the ''
 if (billing == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }
