@@ -28,7 +28,10 @@ BigQuery library and create a GCP variable.
 
 ``` r
 library(bigrquery)
-project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+project <- 'your_project_number' # Insert your project ID in the ''
+if (project == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
 ```
 
 ## `RAND()` Function for Randomly Splitting data
