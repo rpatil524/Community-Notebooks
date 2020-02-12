@@ -13,9 +13,9 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Notes:   Original notebook adpated for R by Lauren Hagen
     Repo:    https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_make_a_heatmap_using_BigQuery.Rmd
 
-In this notebook, we will cover how to use BigQuery to pull some data
-(in the cloud so data transfer is free\!), make a correlation (or
-distance) matrix, and visualize that result in a heatmap.
+In this notebook, we will cover how to use BigQuery to pull some data,
+make a correlation (or distance) matrix, and visualize that result in a
+heatmap.
 
 It’s also possible to compute the correlations *inside* BigQuery, which
 is a good use of the technology, but for simplicity’s sake, we’ll use R.
@@ -45,44 +45,12 @@ if (project == 'your_project_number') {
 }
 ```
 
-We will also need to load the heatmap packages and
-    dplyr.
+We will also need to load the heatmap packages and dplyr.
 
 ``` r
 library(tidyverse)
-```
-
-    ## Warning: package 'tidyverse' was built under R version 3.6.2
-
-    ## -- Attaching packages ------------------------------------------------------------------------------------------------------------ tidyverse 1.3.0 --
-
-    ## v ggplot2 3.2.1     v purrr   0.3.3
-    ## v tibble  2.1.3     v dplyr   0.8.3
-    ## v tidyr   1.0.0     v stringr 1.4.0
-    ## v readr   1.3.1     v forcats 0.4.0
-
-    ## Warning: package 'ggplot2' was built under R version 3.6.2
-
-    ## Warning: package 'tibble' was built under R version 3.6.2
-
-    ## Warning: package 'tidyr' was built under R version 3.6.2
-
-    ## Warning: package 'purrr' was built under R version 3.6.2
-
-    ## Warning: package 'dplyr' was built under R version 3.6.1
-
-    ## -- Conflicts --------------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
-    ## x dplyr::filter() masks stats::filter()
-    ## x dplyr::lag()    masks stats::lag()
-
-``` r
 library(stringr)
 library(pheatmap)
-```
-
-    ## Warning: package 'pheatmap' was built under R version 3.6.2
-
-``` r
 library(RColorBrewer)
 ```
 

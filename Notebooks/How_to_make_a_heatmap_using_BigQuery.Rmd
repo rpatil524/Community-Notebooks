@@ -38,7 +38,7 @@ if (project == 'your_project_number') {
 
 We will also need to load the heatmap packages and dplyr.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(stringr)
 library(pheatmap)
