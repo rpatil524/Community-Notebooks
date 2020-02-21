@@ -10,7 +10,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  David L Gibbs
     Created: 2019-12-02
     Purpose: Demonstrate how to make a correlation matrix and create a heatmap visualization.
-    Notes:   Original notebook adpated for R by Lauren Hagen
+    Notes:   Original notebook adapted for R by Lauren Hagen
     Repo:    https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_make_a_heatmap_using_BigQuery.Rmd
 
 In this notebook, we will cover how to use BigQuery to pull some data,
