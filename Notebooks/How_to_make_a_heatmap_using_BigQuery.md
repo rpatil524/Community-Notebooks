@@ -10,22 +10,19 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  David L Gibbs
     Created: 2019-12-02
     Purpose: Demonstrate how to make a correlation matrix and create a heatmap visualization.
-    Notes:   Original notebook adpated for R by Lauren Hagen
+    Notes:   Original notebook adapted for R by Lauren Hagen
     Repo:    https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_make_a_heatmap_using_BigQuery.Rmd
 
 In this notebook, we will cover how to use BigQuery to pull some data,
 make a correlation (or distance) matrix, and visualize that result in a
 heatmap.
 
-It’s also possible to compute the correlations *inside* BigQuery, which
-is a good use of the technology, but for simplicity’s sake, we’ll use R.
+It is also possible to compute the correlations *inside* BigQuery, which
+is a good use of the technology, but for simplicity’s sake, we will use R.
 
-These methods are commonly used in cancer data analysis (see practically
-all TCGA studies), but can be applied to any type of data. Here we will
-be using TCGA gene expression data from two studies, KIRC (kidney
-cancer) and GBM (brain cancer).
+The methods are used in cancer data analysis (see practically all TCGA studies) but can apply to any data. Here we will be using TCGA gene expression data from two studies, KIRC (kidney cancer) and GBM (brain cancer).
 
-In this work, we’ll see if the two tissue types separate into clusters.
+In this work, we will see if the two tissue types separate into clusters.
 
 # Google Auth & Load packages
 
@@ -186,7 +183,7 @@ Cool\! The tissue types separated out, and it looks like KIRC (blue bar)
 clusters into two groups.
 
 There are several packages to give more options for creating heatmaps.
-We are going to explore `pheatmap` from the `pheatmap` package but there
+We are going to explore `pheatmap` from the `pheatmap` package, but there
 is also `heatmap.2` from the `gplots` package and `superheat` from the
 `superheat` package.
 
