@@ -274,7 +274,7 @@ list_tables("isb-cgc", "TCGA_bioclin_v0") # the convention is project name then 
     ## [1] "Annotations" "Biospecimen" "Clinical"    "clinical_v1"
 
 ``` r
-project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+project <- 'your_project_number' # Insert your project ID in the ''
 if (project == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }
