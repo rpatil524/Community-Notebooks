@@ -23,7 +23,7 @@ This Quick Start Guide is intended give an overview of the data available, a wal
 
 ## Access Requirements
 * Google Account to access ISB-CGC
-* [Google Cloud Account](console.cloud.google.com)
+* [Google Cloud Project](https://console.cloud.google.com)
 * Some knowledge of SQL
 
 ## Access Suggestions
@@ -64,21 +64,21 @@ There are several ways to access the Data that is hosted by ISB-CGC.
 * [ISB-CGC APIs](https://api-dot-isb-cgc.appspot.com/v4/swagger/)
   * Provides programmatic access to metadata
 * [Google Cloud Platform](https://cloud.google.com/)
- * Allows you to use GCP APIs such as BigQuery, Cloud Datalab, Colaboratory
- * Allows you to host your own data on the Cloud
+  * Allows you to use GCP APIs such as BigQuery, Cloud Datalab, Colaboratory
+  * Allows you to host your own data on the Cloud
 * [BigQuery](https://cloud.google.com/bigquery/)
- * A GCP Allows you to use SQL to access some data
+  * A GCP Allows you to use SQL to access some data
 * Supported Programming Languages
- * SQL
-  * Can be used directly in BigQuery
- * [Python](https://www.python.org/)
-  * [gsutil tool](https://cloud.google.com/storage/docs/gsutil) is a Python tool to access data via the command line
-  * [Jupyter Notebooks](https://jupyter.org/)
-  * [Google Colabratory](https://colab.research.google.com/)
-  * [Cloud Datalab](https://cloud.google.com/datalab/)
- * [R](https://www.r-project.org/)
-  * [RStudio](https://rstudio.com/)
-  * [RStudio.Cloud](https://rstudio.cloud/)
+  * SQL
+    * Can be used directly in BigQuery
+  * [Python](https://www.python.org/)
+    * [gsutil tool](https://cloud.google.com/storage/docs/gsutil) is a Python tool to access data via the command line
+    * [Jupyter Notebooks](https://jupyter.org/)
+    * [Google Colabratory](https://colab.research.google.com/)
+    * [Cloud Datalab](https://cloud.google.com/datalab/)
+  * [R](https://www.r-project.org/)
+    * [RStudio](https://rstudio.com/)
+    * [RStudio.Cloud](https://rstudio.cloud/)
 * Command Line Interfaces
   * Cloud Shell via Project Console
   * [CLOUD SDK](https://cloud.google.com/sdk/)
@@ -101,7 +101,7 @@ web-app). Upon successful authentication, user dbGaP authorization will be verif
 These two steps are required before the user’s Google identity is added to the access
 control list (ACL) for the controlled data. At this time, this access must be renewed every
 24 hours.
-+ Please view [Accessing Controlled-Access Data](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/webapp/Gaining-Access-To-Contolled-Access-Data.html) if you need help with this step.
++ Please view [Accessing Controlled-Access Data](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Gaining-Access-To-Controlled-Access-Data.html) if you need help with this step.
 
 4. Register your GCP project in the ISB-CGC WebApp
 + Please view [Registering your Google Cloud Project Service Account](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/webapp/Gaining-Access-To-Contolled-Access-Data.html#requirements-for-registering-a-google-cloud-project-service-account) if you need help with this step.
@@ -128,16 +128,9 @@ control list (ACL) for the controlled data. At this time, this access must be re
 The ISB-CGC Web Interface is an [interactive web-based application](https://isb-cgc.appspot.com/) to access and explore the rich TCGA, TARGET, CCLE, and COSMIC datasets with more datasets being added regularly. Through the WebApp you can create Cohorts, lists of Favorite Genes, miRNA, and Variables. The Cohorts and Variables can be used in Workbooks to allow you to quickly analyze and export datasets by mixing and matching the selections. The ISB-CGC Web Interface also allows you to view and analyze available pathology and radiology images associated with selected cohort data.
 
 # Google Cloud Platform and BigQuery Overview
-The [Google Cloud Platform Console](https://console.cloud.google.com/) is the web-based interface to  your GCP Project. From the Console, you can check the overall status of your project, create and delete Cloud Storage buckets, upload and download files, spin up and shut down VMs, add members to your project, acces the [Cloud Shell command line](https://cloud.google.com/shell/docs/), etc. Click [here](https://raw.githubusercontent.com/isb-cgc/readthedocs/master/docs/include/intro_to_Console.pdf) to download a quick tour from ISB-CGC of the GCP Console. You'll want to remember that any costs that you incur are charged under your *current* project, so you will want to make sure you are on the correct one if you are part of multiple projects. [Here](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/DIYWorkshop.html#google-cloud-platform-console) is how to check which project is your *current* project.
+The [Google Cloud Platform Console](https://console.cloud.google.com/) is the web-based interface to  your GCP Project. From the Console, you can check the overall status of your project, create and delete Cloud Storage buckets, upload and download files, spin up and shut down VMs, add members to your project, acces the [Cloud Shell command line](https://cloud.google.com/shell/docs/), etc. Click [here](https://raw.githubusercontent.com/isb-cgc/readthedocs/master/docs/include/intro_to_Console.pdf) to download a quick tour from ISB-CGC of the GCP Console. You'll want to remember that any costs that you incur are charged under your *current* project, so you will want to make sure you are on the correct one if you are part of multiple projects.
 
-"BigQuery is a serverless, highly-scalable, and cost-effective cloud data warehouse with an in-memory BI Engine and machine learning built in." [*Source*](https://cloud.google.com/bigquery/) ISB-CGC has uploaded multiple cancer genomic datasets into BigQuery tables that are open-source such as TCGA and TARGET Clinical, Biospecimen and Molecular Data along with dataset megadata. This data can be accessed from the Google Cloud Platform Console web-UI, programmatically with R, and programmatically with python through Cloud Datalab or Colab.
-
-More indepth walk throughs:
-
-* [Walkthrough of Google BigQuery](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/progapi/bigqueryGUI/WalkthroughOfGoogleBigQuery.html)
-* [Introduction to GCE (Google Compute Engine)](https://docs.google.com/presentation/d/13ORIDboGC27uCMf_C9w9WIi0cK9tGO7cqgp6vwA2miE/edit?usp=sharing)
-* [Google Genomics “Pipelines” Service](https://docs.google.com/presentation/d/1_rRvlhNuA0_SQuO2SOru7ttjPvzlygW3ALILcQ-JEjg/edit?usp=sharing)
-* [ISB-CGC Pipelines Framework](https://docs.google.com/presentation/d/1akqoZImzei2D47O8rcWrcEzsWPYxUtL-2-eUdiBzzgo/edit?usp=sharing) and [github repository of pipelines](https://github.com/isb-cgc/ISB-CGC-pipelines)
+"BigQuery is a serverless, highly-scalable, and cost-effective cloud data warehouse with an in-memory BI Engine and machine learning built in." [*Source*](https://cloud.google.com/bigquery/) ISB-CGC has uploaded multiple cancer genomic datasets into BigQuery tables that are open-source such as TCGA and TARGET Clinical, Biospecimen and Molecular Data along with dataset megadata. This data can be accessed from the Google Cloud Platform Console web-UI, programmatically with R, and programmatically with python through Cloud Datalab or Colab. Check out our [Community Notebook Repository](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowTos.html) for example notebooks.
 
 ## Example of Accessing Data with R
 
@@ -151,22 +144,24 @@ library(dplyr)
 Let us look at the available data sets within the ISB-CGC. 
 
 But first we will need to authorize our access by running a code block that connects to BigQuery. This will come up with a question if you want to cache your credentials between R sessions, in the R Console type your response and press enter. Then a new browser tab will open to authorize the use of your Google Account. Follow the prompts on the site and then copy the code back into the R Console and press enter. If you do not cache your credentials or have restarted your computer, you will be asked to do this at the start of a session.
+
 ```{r View the Available Datasets}
 # Let us view which datasets are availabe from ISB-CGC through BigQuery
 list_datasets("isb-cgc") # isb-cgc is the project name
 ```
+
 ```{r View the Tables in a Dataset}
 # Let us look which tables are in the TCGA_bioclin_v0 dataset
 list_tables("isb-cgc", "TCGA_bioclin_v0") # the convention is project name then dataset
 ```
 
-
 ```{r View Data in the Table}
-project <- 'your_project_number' # Insert your project ID in the ''
+project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
 if (project == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }
 theTable <- "isb-cgc.TCGA_bioclin_v0.Clinical" # The convention for calling a table is project.dataset.table
+
 # Create the SQL query
 sql <- "SELECT
   program_name,
@@ -176,10 +171,15 @@ FROM
   `isb-cgc.TCGA_bioclin_v0.Clinical`
 LIMIT
   5"
+
 # Use BigQuery to run the SQL query on the Clincal table from the TCGA_bioclin_v0 dataset
 # which then may be downloadedinto a tibble.
 result <- bq_project_query(project, sql)
+
+# Create a data frame with results
 result <- bq_table_download(result)
+
+# print the results
 print(result)
 ```
 
@@ -194,8 +194,8 @@ ISB-CGC Links:
 * [ISB-CGC Landing Page](https://isb-cgc.appspot.com/)
 * [ISB-CGC Documentation](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/)
 * [How to Get Started on ISB-CGC](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowToGetStartedonISB-CGC.html)
-* [GitHub Repository of Python Examples](https://github.com/isb-cgc/examples-Python)
-* [GitHub Repository of R Examples](https://github.com/isb-cgc/examples-R)
+* [How to access Google BigQuery](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/progapi/bigqueryGUI/HowToAccessBigQueryFromTheGoogleCloudPlatform.html)
+* [Community Notebook Repository](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowTos.html)
 * [Query of the Month](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/QueryOfTheMonthClub.html)
 * [Quick Links](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/QuicklinksOneTable.html)
 
@@ -203,10 +203,3 @@ Google Tutorials:
 
 * [Google's What is BigQuery?](https://cloud.google.com/bigquery/what-is-bigquery)
 * [Google Cloud Client Library for Python](https://googleapis.github.io/google-cloud-python/latest/index.html)
-
-ISB-CGC Tutorials:
-
-* [Walkthrough of Google BigQuery](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/progapi/bigqueryGUI/WalkthroughOfGoogleBigQuery.html)
-* [Introduction to GCE (Google Compute Engine)](https://docs.google.com/presentation/d/13ORIDboGC27uCMf_C9w9WIi0cK9tGO7cqgp6vwA2miE/edit?usp=sharing)
-* [Google Genomics “Pipelines” Service](https://docs.google.com/presentation/d/1_rRvlhNuA0_SQuO2SOru7ttjPvzlygW3ALILcQ-JEjg/edit?usp=sharing)
-* [ISB-CGC Pipelines Framework](https://docs.google.com/presentation/d/1akqoZImzei2D47O8rcWrcEzsWPYxUtL-2-eUdiBzzgo/edit?usp=sharing) and [github repository of pipelines](https://github.com/isb-cgc/ISB-CGC-pipelines)
