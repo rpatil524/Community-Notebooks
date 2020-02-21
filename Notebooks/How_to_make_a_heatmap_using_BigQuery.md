@@ -39,7 +39,7 @@ library(bigrquery)
     ## Warning: package 'bigrquery' was built under R version 3.6.1
 
 ``` r
-project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+project <- 'your_project_number' # Insert your project ID in the ''
 if (project == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }
