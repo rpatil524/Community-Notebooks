@@ -9,10 +9,10 @@ Check out more notebooks at our [Community Notebooks Repository](https://github.
 
 ```
 Title:   How to make a heatmap using BigQuery 
-Author:  David L Gibbs
-Created: 2019-12-02
+Author:  Lauren Hagen
+Created: 2020-02-21
 Purpose: Demonstrate how to make a correlation matrix and create a heatmap visualization.
-Notes:   Original notebook adapted for R by Lauren Hagen
+Notes:   Adapted from the original notebook by David L Gibbs
 Repo:    https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_make_a_heatmap_using_BigQuery.Rmd
 ```
 
@@ -30,7 +30,7 @@ Before we can begin working with BigQuery, we will need to load the BigQuery lib
 
 ```{r }
 library(bigrquery)
-project <- 'your_project_number' # Insert your project ID in the ''
+project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
 if (project == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }
@@ -155,3 +155,4 @@ pheatmap(cormat, fontsize_col = 5, fontsize_row = 4,
          cutree_rows = 3, border_color = NA)
 ```
 
+That's it! Please let us know if you have any questions at feedback@isb-cgc.org.
