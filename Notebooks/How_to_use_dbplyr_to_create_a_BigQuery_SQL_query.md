@@ -10,7 +10,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2020-02-26
     URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_use_dbplyr_to_create_a_BigQuery_SQL_query.md
-    Purpose: Demonnstrate query creation using PyPike and use query with BigQuery
+    Purpose: Demonnstrate query creation using dbplyr and use query with BigQuery
     Notes: 
 
 -----
