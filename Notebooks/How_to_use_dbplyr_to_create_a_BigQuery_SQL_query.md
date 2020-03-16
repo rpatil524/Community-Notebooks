@@ -9,7 +9,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Title:   How to use dbplyr to build a query
     Author:  Lauren Hagen
     Created: 2020-02-26
-    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_use_dbplyr_to_create_a_BigQuery_SQL_query.md
     Purpose: Demonnstrate query creation using PyPike and use query with BigQuery
     Notes: 
 
@@ -49,7 +49,7 @@ library(dbplyr)
 ```
 
 ``` r
-billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+billing <- 'your_project_number' # Insert your project ID in the ''
 if (billing == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }
