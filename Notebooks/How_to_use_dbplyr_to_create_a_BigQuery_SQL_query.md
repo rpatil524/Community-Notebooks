@@ -64,9 +64,6 @@ con <- dbConnect(
 con
 ```
 
-    ## <BigQueryConnection>
-    ##   Billing: isb-cgc-02-0001
-
 # Query Building
 
 In this notebook, we will build the final join query by each table first
