@@ -1,0 +1,73 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# ISB-CGC Community Notebooks
+
+Check out more notebooks at our [Community Notebooks Repository](https://github.com/isb-cgc/Community-Notebooks)!
+
+```
+Title:   How to use dbplyr to build a query
+Author:  Lauren Hagen
+Created: 2020-02-26
+URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/
+Purpose: Demonnstrate query creation using PyPike and use query with BigQuery
+Notes: 
+```
+***
+
+# Introduction
+
+## Overview
+
+
+## What is dbplyr?
+
+### FILL IN ALL THE WORDS ###
+
+```{r Load Libraries}
+library(bigrquery)
+library(dplyr)
+```
+
+```{r Set Up Variables}
+billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+if (billing == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
+```
+
+```{r}
+# Connect to BigQuery
+con <- dbConnect(
+  bigrquery::bigquery(),
+  project = billing,
+)
+con
+```
+
+```{r message=FALSE}
+clin <- tbl(con, "isb-cgc.TARGET_bioclin_v0.Clinical")
+expr <- tbl(con, "isb-cgc.TARGET_hg38_data_v0.RNAseq_Gene_Expression")
+```
+
+```{r}
+clin_query <- clin %>%
+  filter(disease_code=='AML') %>%
+  select(case_barcode, CR_status_at_end_of_course_1, CR_status_at_end_of_course_2) %>%
+  show_query()
+```
+
+```{r}
+expr_query <- expr %>%
+  select(case_barcode, HTSeq__FPKM_UQ, Ensembl_gene_id, gene_name) %>%
+  arrange(HTSeq__FPKM_UQ) %>%
+  show_query()
+```
+
+```{r}
+final <- inner_join(clin_query, expr_query, by = "case_barcode") %>%
+  head(10) %>%
+  show_query()
+```
