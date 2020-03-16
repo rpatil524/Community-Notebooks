@@ -11,8 +11,8 @@ Check out more notebooks at our [Community Notebooks Repository](https://github.
 Title:   How to use dbplyr to build a query
 Author:  Lauren Hagen
 Created: 2020-02-26
-URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/
-Purpose: Demonnstrate query creation using PyPike and use query with BigQuery
+URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_use_dbplyr_to_create_a_BigQuery_SQL_query.Rmd
+Purpose: Demonnstrate query creation using dbplyr and use query with BigQuery
 Notes: 
 ```
 ***
