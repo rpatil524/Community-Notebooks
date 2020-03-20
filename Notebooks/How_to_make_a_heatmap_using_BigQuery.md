@@ -10,8 +10,8 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2020-02-21
     Purpose: Demonstrate how to make a correlation matrix and create a heatmap visualization.
-    Notes:   Adapted from the original notebook by David L Gibbs
-    Repo:    https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_make_a_heatmap_using_BigQuery.Rmd
+    Notes:   Adapted from the How to make a heatmap using BigQuery python notebook by David L Gibbs
+    Repo:    https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_make_a_heatmap_using_BigQuery.md
 
 In this notebook, we will cover how to use BigQuery to pull some data,
 make a correlation (or distance) matrix, and visualize that result in a
@@ -36,7 +36,7 @@ BigQuery library and create a GCP variable.
 
 ``` r
 library(bigrquery)
-project <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+project <- 'your_project_number' # Insert your project ID in the ''
 if (project == 'your_project_number') {
   print('Please update the project number with your Google Cloud Project')
 }

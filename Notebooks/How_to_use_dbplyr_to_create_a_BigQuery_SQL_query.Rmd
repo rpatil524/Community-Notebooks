@@ -1,4 +1,4 @@
----
+==---
 title: "How to use dbplyr to build a query"
 output: rmarkdown::github_document
 ---
@@ -21,7 +21,7 @@ Notes:
 
 ## Overview
 
-In this notebook, we are going to use dbplyr package to build a query and then use that query with BigQuery. We are going to create a cohort by selecting clinical signs and then use the cohort to filter the RNA and miRNA gene expression tables from the TARGET data set.
+In this notebook, we are going to use the dbplyr package to build SQL for BigQuery. We are going to create a cohort by selecting on clinical signs and then filter the RNA and miRNA gene expression tables from the TARGET data set.
 
 ## What is dbplyr?
 
@@ -54,11 +54,11 @@ con
 
 # Query Building
 
-In this notebook, we will build the final join query by each table first and then combine them for a final query. This query will combine a selection of clinical data with molecular data from the TARGET data set.
+In this notebook, we will query each table first and then join them for a final query. The result will be a selection of clinical and molecular data from the TARGET data set.
 
 ## Patient Clinical Data Query
 
-We want to have a query that filters the TARGET data set for AML with only columns for the case barcode and the remission status of the patient for our cohort. 
+We want a query that filters the TARGET data set for AML selecting only columns for the case barcode and the remission status of the patient for our cohort. 
 
 ```{r}
 # Pass the Clincal data table name to the Table class to create a variable
@@ -76,7 +76,7 @@ clin_query <- clin %>% # Use the Clinical Table
 show_query(clin_query)
 ```
 
-We can query BigQuery, then create a data frame with the results though this isn't necessary for creating the final query.
+We can now query BigQuery, then create a data frame with the results though this isn't necessary for creating the final query.
 
 ```{r}
 # Query BigQuery and return a data frame
@@ -90,7 +90,7 @@ head(clin_data)
 
 Now that we have a list of cases with some clinical information, we can join that table to one of the molecular data sets, such as the TARGET gene expression data.
 
-We will now build the query for the molecular data set. We are not going to query BigQuery with this query, but it is good to make sure the query looks correct before joining it with another table.
+We'll build the query using the molecular data set. While We're not going to query BigQuery, it is good to make sure the query looks correct before joining it with another table.
 
 ```{r}
 # Pass the Clincal data table name to the Table class to create a variable
