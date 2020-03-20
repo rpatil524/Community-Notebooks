@@ -1,5 +1,6 @@
-How to use dbplyr to build a query
-================
+
+\==— title: “How to use dbplyr to build a query” output:
+rmarkdown::github\_document —
 
 # ISB-CGC Community Notebooks
 
@@ -9,7 +10,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Title:   How to use dbplyr to build a query
     Author:  Lauren Hagen
     Created: 2020-02-26
-    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_use_dbplyr_to_create_a_BigQuery_SQL_query.md
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_use_dbplyr_to_create_a_BigQuery_SQL_query.Rmd
     Purpose: Demonnstrate query creation using dbplyr and use query with BigQuery
     Notes: 
 
@@ -19,10 +20,10 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
 
 ## Overview
 
-In this notebook, we are going to use dbplyr package to build a query
-and then use that query with BigQuery. We are going to create a cohort
-by selecting clinical signs and then use the cohort to filter the RNA
-and miRNA gene expression tables from the TARGET data set.
+In this notebook, we are going to use the dbplyr package to build SQL
+for BigQuery. We are going to create a cohort by selecting on clinical
+signs and then filter the RNA and miRNA gene expression tables from the
+TARGET data set.
 
 ## What is dbplyr?
 
@@ -37,12 +38,7 @@ authenticate ourselves, create a client variable, and load necessary
 libraries.
 
 ``` r
-install.packages("dbplyr")
-```
-
-    ## Error in install.packages : Updating loaded packages
-
-``` r
+# install.packages("dbplyr")
 library(bigrquery)
 library(dplyr)
 library(dbplyr)
@@ -61,20 +57,19 @@ con <- dbConnect(
   bigrquery::bigquery(),
   project = billing,
 )
-con
 ```
 
 # Query Building
 
-In this notebook, we will build the final join query by each table first
-and then combine them for a final query. This query will combine a
-selection of clinical data with molecular data from the TARGET data set.
+In this notebook, we will query each table first and then join them for
+a final query. The result will be a selection of clinical and molecular
+data from the TARGET data set.
 
 ## Patient Clinical Data Query
 
-We want to have a query that filters the TARGET data set for AML with
-only columns for the case barcode and the remission status of the
-patient for our
+We want a query that filters the TARGET data set for AML selecting only
+columns for the case barcode and the remission status of the patient for
+our
 cohort.
 
 ``` r
@@ -98,8 +93,8 @@ show_query(clin_query)
     ## FROM `isb-cgc.TARGET_bioclin_v0.Clinical`
     ## WHERE (`disease_code` = 'AML')
 
-We can query BigQuery, then create a data frame with the results though
-this isn’t necessary for creating the final query.
+We can now query BigQuery, then create a data frame with the results
+though this isn’t necessary for creating the final query.
 
 ``` r
 # Query BigQuery and return a data frame
@@ -113,7 +108,7 @@ clin_data <- collect(clin_query)
     ## Downloading 993 rows in 1 pages.
 
 ``` 
-## Parsing [=========================================================] ETA:  0s                                                                            
+## Parsing [===========================================================================================================] ETA:  0s                                                                                                                              
 ```
 
 ``` r
@@ -137,9 +132,9 @@ Now that we have a list of cases with some clinical information, we can
 join that table to one of the molecular data sets, such as the TARGET
 gene expression data.
 
-We will now build the query for the molecular data set. We are not going
-to query BigQuery with this query, but it is good to make sure the query
-looks correct before joining it with another
+We’ll build the query using the molecular data set. While We’re not
+going to query BigQuery, it is good to make sure the query looks correct
+before joining it with another
 table.
 
 ``` r
@@ -184,7 +179,7 @@ final <- inner_join(clin_query, expr_query, by = "case_barcode") %>%
     ## FROM `isb-cgc.TARGET_hg38_data_v0.RNAseq_Gene_Expression`
     ## ORDER BY `HTSeq__FPKM_UQ`) `RHS`
     ## ON (`LHS`.`case_barcode` = `RHS`.`case_barcode`)
-    ## ) `dbplyr_004`
+    ## ) `dbplyr_019`
     ## LIMIT 100
 
 There\! We now have a query that joins the two tables. We can now query
@@ -202,7 +197,7 @@ final_data <- collect(final)
     ## Downloading 100 rows in 1 pages.
 
 ``` 
-## Parsing [=========================================================] ETA:  0s                                                                            
+## Parsing [===========================================================================================================] ETA:  0s                                                                                                                              
 ```
 
 ``` r
@@ -215,17 +210,16 @@ head(final)
 
     ## Downloading 6 rows in 1 pages.
 
-    ## Parsing [=========================================================] ETA:  0s                                                                            # Source:   lazy query [?? x 6]
+    ## Parsing [===========================================================================================================] ETA:  0s                                                                                                                              # Source:   lazy query [?? x 6]
     ## # Database: BigQueryConnection
-    ##   case_barcode CR_status_at_en… CR_status_at_en… HTSeq__FPKM_UQ
-    ##   <chr>        <chr>            <chr>                     <dbl>
-    ## 1 TARGET-20-P… CR               CR                      495724.
-    ## 2 TARGET-20-P… CR               CR                        3573.
-    ## 3 TARGET-20-P… CR               CR                         461.
-    ## 4 TARGET-20-P… CR               CR                        1413.
-    ## 5 TARGET-20-P… CR               CR                       14042.
-    ## 6 TARGET-20-P… CR               CR                         534.
-    ## # … with 2 more variables: Ensembl_gene_id <chr>, gene_name <chr>
+    ##   case_barcode     CR_status_at_end_of_course_1 CR_status_at_end_of_course_2 HTSeq__FPKM_UQ Ensembl_gene_id gene_name
+    ##   <chr>            <chr>                        <chr>                                 <dbl> <chr>           <chr>    
+    ## 1 TARGET-20-PAPWHS CR                           CR                                     185. ENSG00000115194 SLC30A3  
+    ## 2 TARGET-20-PAPWHS CR                           CR                                   54903. ENSG00000103489 XYLT1    
+    ## 3 TARGET-20-PAPWHS CR                           CR                                   48156. ENSG00000104450 SPAG1    
+    ## 4 TARGET-20-PAPWHS CR                           CR                                  144367. ENSG00000099864 PALM     
+    ## 5 TARGET-20-PAPWHS CR                           CR                                   29986. ENSG00000215199 YWHAZP6  
+    ## 6 TARGET-20-PAPWHS CR                           CR                                  105783. ENSG00000164941 INTS8
 
 It’s that simple\! Please let us know if you have any questions at
 <feedback@isb-cgc.org>.
