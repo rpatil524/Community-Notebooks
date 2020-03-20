@@ -29,8 +29,8 @@ The [dbplyr package](https://dbplyr.tidyverse.org/articles/dbplyr.html) allows t
 
 Before we get started, we will need to load the BigQuery module, authenticate ourselves, create a client variable, and load necessary libraries.
 
-```{r Load Libraries}
-install.packages("dbplyr")
+```{r Load Libraries, message=TRUE, warning=TRUE}
+# install.packages("dbplyr")
 library(bigrquery)
 library(dplyr)
 library(dbplyr)
@@ -49,7 +49,6 @@ con <- dbConnect(
   bigrquery::bigquery(),
   project = billing,
 )
-con
 ```
 
 # Query Building
