@@ -1,15 +1,205 @@
 from google.cloud import bigquery
 import numpy as np
 import pandas as pd
-#from pandas.api.types import is_numeric_dtype
 import seaborn as sns
 from scipy import stats
 from scipy.stats import mstats
 import ipywidgets as widgets
 from   ipywidgets import Layout
 
+def bqtable_data( MolecularFeature  ) :
 
-def runQuery ( client, qString, ParameterList, dryRun=False ):
+    Features = { 'Gene Expression' : { 'table'  : 'pancancer-atlas.Filtered.EBpp_AdjustPANCAN_IlluminaHiSeq_RNASeqV2_genExp_filtered',
+                                       'symbol' : 'Symbol',
+                                       'study'  : 'Study',
+                                       'data'   : 'AVG( LOG10( normalized_count + 1 ) ) ',
+                                       'rnkdata': '(RANK() OVER (PARTITION BY symbol ORDER BY data ASC)) + (COUNT(*) OVER ( PARTITION BY symbol, CAST(data as STRING)) - 1)/2.0',
+                                       'avgdat' : 'avgdata',  
+                                   'patientcode': 'ParticipantBarcode',
+                                    'samplecode': 'SampleBarcode',
+                                       'where'  : 'AND normalized_count IS NOT NULL',
+                                       'dattype': 'numeric' },
+               'Somatic Copy Number': {'table': 'pancancer-atlas.Filtered.all_CNVR_data_by_gene_filtered',
+                                       'symbol' : 'Gene_Symbol',
+                                       'study'  : 'Study',
+                                       'data'   : 'AVG(GISTIC_Calls)',
+                                       'rnkdata': '(RANK() OVER (PARTITION BY symbol ORDER BY data ASC)) + (COUNT(*) OVER ( PARTITION BY symbol, CAST(data as STRING)) - 1)/2.0',
+                                       'avgdat' : 'avgdata',  
+                                   'patientcode': 'ParticipantBarcode',
+                                    'samplecode': 'SampleBarcode',
+                                       'where'  : 'AND GISTIC_Calls IS NOT NULL',
+                                       'dattype': 'numeric'},
+          'Somatic Mutation t-test': { 'table'  : 'pancancer-atlas.Filtered.MC3_MAF_V5_one_per_tumor_sample',
+                                       'symbol' : 'Hugo_Symbol',
+                                        'study' : 'Study', 
+                                       'data'   : '#',
+                                       'rnkdata': '#',
+                                       'avgdat' : '#',  
+                                   'patientcode': 'ParticipantBarcode',
+                                    'samplecode': 'Tumor_SampleBarcode',
+                                       'where'  : 'AND FILTER = \'PASS\'',
+                                       'dattype': 'boolean'},
+        'Somatic Mutation Spearman': { 'table'  : 'pancancer-atlas.Filtered.MC3_MAF_V5_one_per_tumor_sample',
+                                       'symbol' : 'Hugo_Symbol',
+                                        'study' : 'Study',
+                                       'data'   : '#',
+                                       'rnkdata': '#',
+                                       'avgdat' : '#',  
+                                   'patientcode': 'ParticipantBarcode',
+                                    'samplecode': 'Tumor_SampleBarcode',
+                                       'where'  : 'AND FILTER = \'PASS\'',
+                                       'dattype': 'boolean'},      
+                 'Clinical Numeric': { 'table'  : 'pancancer-atlas.Filtered.clinical_PANCAN_patient_with_followup_filtered',
+                                       'symbol' : '\'COLUMN_NAME\'',
+                                        'study' : 'acronym',
+                                       'data'   : 'COLUMN_NAME',
+                                       'rnkdata': '(RANK() OVER (PARTITION BY table_columns.symbol ORDER BY table_columns.data ASC)) + (COUNT(*) OVER ( PARTITION BY table_columns.symbol, CAST(table_columns.data as STRING)) - 1)/2.0',
+                                       'avgdat' : 'avgdata',
+                                   'patientcode': 'bcr_patient_barcode',
+                                    'samplecode': '',
+                                       'where'  : '',
+                                       'dattype': 'numeric'},
+            'Clinical Categorical': {  'table'  : 'pancancer-atlas.Filtered.clinical_PANCAN_patient_with_followup_filtered',
+                                       'symbol' : '\'COLUMN_NAME\'',
+                                        'study' : 'acronym',
+                                       'data'   : 'COLUMN_NAME',
+                                       'rnkdata': 'table_columns.data',
+                                       'avgdat' : 'avgdata',
+                                   'patientcode': 'bcr_patient_barcode',
+                                    'samplecode': '',
+                                       'where'  : 'AND NOT REGEXP_CONTAINS(table_columns.data,r"^(\[.*\]$)")',
+                                       'dattype': 'categorical'},
+             'MicroRNA Expression': {  'table'  : 'pancancer-atlas.Filtered.pancanMiRs_EBadjOnProtocolPlatformWithoutRepsWithUnCorrectMiRs_08_04_16_filtered',
+                                       'symbol' : 'ID',
+                                        'study' : 'Study',
+                                       'data'   : 'AVG( miRNAexpr )',
+                                       'rnkdata': '(RANK() OVER (PARTITION BY symbol ORDER BY data ASC)) + (COUNT(*) OVER ( PARTITION BY symbol, CAST(data as STRING)) - 1)/2.0',
+                                       'avgdat' : 'avgdata',
+                                   'patientcode': 'ParticipantBarcode',
+                                    'samplecode': 'SampleBarcode',
+                                       'where'  : 'AND miRNAexpr IS NOT NULL AND Corrected = \'Corrected\'',
+                                       'dattype': 'numeric'}
+                
+               }
+
+    feature = Features[MolecularFeature]
+    return feature      
+
+
+def readcohort( cohortlist ) :
+    
+    SampleList = []
+    PatientList = []
+    
+    for fname in cohortlist.value : 
+        data  =  cohortlist.value[fname]['content'].decode()
+        lines = data.split('\n' )
+        
+        for line in lines :
+            
+            columns = line.strip().split(',')
+            if ( len( columns )  == 2 ) : 
+                SampleList.append(  columns[0] ) 
+                PatientList.append(  columns[1] )
+
+    return SampleList , PatientList
+
+
+def generic_numeric_bqtable ( tablename, feat , cohort, labels ) :
+    
+    mytable = "\n" + tablename + \
+""" AS (
+SELECT
+   symbol,
+   {0} AS rnkdata,
+   ParticipantBarcode
+FROM (
+   SELECT
+      {1} AS symbol, 
+      {2} AS data,
+      {3} AS ParticipantBarcode
+   FROM `{4}`
+   WHERE {6}    # cohort 
+         AND {1} {7}  # labels 
+         {5}  
+   GROUP BY
+      ParticipantBarcode, symbol
+   )
+)
+"""
+    table_query= mytable.format(feat['rnkdata'],feat['symbol'],feat['data'],feat['patientcode'],feat['table'],feat['where'],\
+                                cohort, labels )
+
+    return  table_query
+
+def generic_clinical_bqtable ( tablename, feat, cohort, struct_columns ) :
+        
+    mytable = "\n" + tablename + \
+""" AS (
+SELECT
+  ParticipantBarcode,
+  {0} as rnkdata,
+  table_columns.symbol as symbol
+FROM (
+  SELECT
+    {1} as ParticipantBarcode,
+    [
+"""+ ",\n".join( struct_columns ) + """ 
+    ] AS table_columns
+  FROM
+    `{2}`
+  WHERE
+     {3}
+  )  AS newtable 
+CROSS JOIN 
+  UNNEST( newtable.table_columns ) AS  table_columns
+WHERE 
+  table_columns.data IS NOT NULL {4}
+)              
+"""
+    table_query = mytable.format(feat['rnkdata'],feat['patientcode'],feat['table'], cohort, feat['where'] )
+    return table_query
+    
+
+def get_feature_tables( study, feature1, feature2, samplelist, patientlist, labellist ) :
+    
+    feat1 =  bqtable_data( feature1 )
+    feat2 =  bqtable_data( feature2 )
+    
+    # code to handle user defined cohort list
+    cohort1 = feat1['study'] + " = \'" + study + "\'"
+    cohort2 = feat2['study'] + " = \'" + study + "\'"
+    if ( len( samplelist ) > 0  ) :
+        cohort1 = feat1['samplecode'] + " IN UNNEST(@SAMPLELIST) "            
+        cohort2 = feat2['samplecode'] + " IN UNNEST(@SAMPLELIST) "
+
+    # Clinical features
+    struct_columns = []
+    if ( feature1.startswith('Clinical') or feature2.startswith('Clinical') ) :
+         struct_columns = clinical_features( 'Clinical Categorical' ) 
+        
+    # generate table 1:
+    table1 = ''
+    if ( feature1.startswith('Clinical') ) :
+        temp_structs =   find_clinical_features( struct_columns, labellist )
+        table1 = generic_clinical_bqtable ( 'table1' , feat1, cohort1, temp_structs )
+        
+    elif ( feat1['dattype'] == 'numeric' ) :
+        table1 = generic_numeric_bqtable ( 'table1', feat1, cohort1,  'IN UNNEST(@GENELIST)' )  
+    
+
+    # generate table 2:            
+    table2 = ''
+    if ( feature2.startswith('Clinical') ) :
+        table2 = generic_clinical_bqtable ( 'table2', feat2, cohort2, struct_columns )
+        
+    else :
+        table2 = generic_numeric_bqtable ( 'table2', feat2, cohort2, 'IS NOT NULL' )
+    
+        
+    return table1, table2
+
+def runQuery ( client, qString, GeneList, SampleList, PatientList, dryRun=False ):
 #  """
 #**`runQuery`**: a relatively generic BigQuery query-execution wrapper function which can be used to run a query in "dry-run"  mode or not:  the call to the `query()` function itself is inside a `try/except` block and if it fails we return `None`;  otherwise a "dry" will return an empty dataframe, and a "live" run will return the query results as a dataframe. This function was modify from previous notebooks to handle user-defined parameteres necessary for the purpose of this notbeook.
 #  """
@@ -22,10 +212,12 @@ def runQuery ( client, qString, ParameterList, dryRun=False ):
   job_config = bigquery.QueryJobConfig()
     
   query_params = [
-        bigquery.ArrayQueryParameter('PARAMETERLIST', 'STRING', ParameterList ),       
+        bigquery.ArrayQueryParameter('GENELIST', 'STRING', GeneList ),
+        bigquery.ArrayQueryParameter('SAMPLELIST', 'STRING', SampleList ),
+        bigquery.ArrayQueryParameter('PATIENTLIST', 'STRING', PatientList ),
   ]
-  job_config.query_parameters = query_params  
-    
+  job_config.query_parameters = query_params
+     
   job_config.dry_run = dryRun
   job_config.use_query_cache = True
   job_config.use_legacy_sql = False
@@ -66,66 +258,12 @@ def runQuery ( client, qString, ParameterList, dryRun=False ):
     return ( pd.DataFrame() )
 
 
-def bqtable_data( MolecularFeature  ) :
-
-    Features = { 'Gene Expression' : { 'table'  : 'pancancer-atlas.Filtered.EBpp_AdjustPANCAN_IlluminaHiSeq_RNASeqV2_genExp_filtered',
-                                       'symbol' : 'Symbol',
-                                       'data'   : 'AVG( LOG10( normalized_count + 1 ) ) ',
-                                       'rnkdata': '(RANK() OVER (PARTITION BY symbol ORDER BY data ASC)) + (COUNT(*) OVER ( PARTITION BY symbol, CAST(data as STRING)) - 1)/2.0',
-                                       'avgdat' : 'avgdata',  
-                                       'barcode': 'ParticipantBarcode',
-                                       'where'  : 'AND normalized_count IS NOT NULL',
-                                       'dattype': 'numeric' },
-               'Somatic Copy Number': {'table': 'pancancer-atlas.Filtered.all_CNVR_data_by_gene_filtered',
-                                       'symbol' : 'Gene_Symbol',
-                                       'data'   : 'AVG(GISTIC_Calls)',
-                                       'rnkdata': '(RANK() OVER (PARTITION BY symbol ORDER BY data ASC)) + (COUNT(*) OVER ( PARTITION BY symbol, CAST(data as STRING)) - 1)/2.0',
-                                       'avgdat' : 'avgdata',  
-                                       'barcode': 'ParticipantBarcode',
-                                       'where'  : 'AND GISTIC_Calls IS NOT NULL',
-                                       'dattype': 'numeric'},
-          'Somatic Mutation t-test': { 'table'  : 'pancancer-atlas.Filtered.MC3_MAF_V5_one_per_tumor_sample',
-                                       'symbol' : 'Hugo_Symbol',
-                                       'data'   : '#',
-                                       'rnkdata': '#',
-                                       'avgdat' : '#',  
-                                       'barcode': 'ParticipantBarcode',
-                                       'where'  : 'AND FILTER = \'PASS\'',
-                                       'dattype': 'boolean'},
-        'Somatic Mutation Spearman': { 'table'  : 'pancancer-atlas.Filtered.MC3_MAF_V5_one_per_tumor_sample',
-                                       'symbol' : 'Hugo_Symbol',
-                                       'data'   : '#',
-                                       'rnkdata': '#',
-                                       'avgdat' : '#',  
-                                       'barcode': 'ParticipantBarcode',
-                                       'where'  : 'AND FILTER = \'PASS\'',
-                                       'dattype': 'boolean'},      
-                 'Clinical Numeric': { 'table'  : 'pancancer-atlas.Filtered.clinical_PANCAN_patient_with_followup_filtered',
-                                       'symbol' : '\'COLUMN_NAME\'',
-                                       'data'   : 'COLUMN_NAME',
-                                       'rnkdata': '(RANK() OVER (PARTITION BY table_columns.symbol ORDER BY table_columns.data ASC)) + (COUNT(*) OVER ( PARTITION BY table_columns.symbol, CAST(table_columns.data as STRING)) - 1)/2.0',
-                                       'avgdat' : 'avgdata',
-                                       'barcode': 'bcr_patient_barcode',
-                                       'where'  : '',
-                                       'dattype': 'numeric'},
-            'Clinical Categorical': {  'table'  : 'pancancer-atlas.Filtered.clinical_PANCAN_patient_with_followup_filtered',
-                                       'symbol' : '\'COLUMN_NAME\'',
-                                       'data'   : 'COLUMN_NAME',
-                                       'rnkdata': 'table_columns.data',
-                                       'avgdat' : 'avgdata',
-                                       'barcode': 'bcr_patient_barcode',
-                                       'where'  : 'AND NOT REGEXP_CONTAINS(table_columns.data,r"^(\[.*\]$)")',
-                                       'dattype': 'categorical'}
-               }
-
-    feature = Features[MolecularFeature]
-    return feature      
 
 # This function is used to 1) unpivot the columns to rows, 
-# and 2) to clean the data (cast string to numeric) for computation of correlations
-def  clinical_features( feature2_name ) :
+# and 2) to clean the data (cast string to numeric) for the computation of correlation coefficients
+def  clinical_features( clinical_feature_name ) :
     
-    feat =  bqtable_data( feature2_name ) 
+    feat =  bqtable_data( clinical_feature_name ) 
     table_ref = feat['table']
     
     client = bigquery.Client()
@@ -143,8 +281,7 @@ def  clinical_features( feature2_name ) :
         
         if (  iName in ['bcr_patient_uuid', 'bcr_patient_barcode', 'acronym', 'patient_id' ] ):
             continue 
-        
-        
+                
         if ( feat['dattype'] == 'categorical')    :
             if ( iType == 'STRING') : 
                 struct = '     STRUCT(\''+ iName +'\' AS symbol, '+ iName +' AS data)'
@@ -159,92 +296,31 @@ def  clinical_features( feature2_name ) :
             struct_columns.append( struct )
                 
     return struct_columns 
-                
-def get_feature1_table( study , feature1_name ) :
 
-    table1= """
-table1 AS (
-SELECT  symbol, data, ParticipantBarcode,
-        (RANK() OVER (PARTITION BY symbol ORDER BY data ASC)) + (COUNT(*) OVER ( PARTITION BY symbol, CAST(data as STRING)) - 1)/2.0 AS rnkdata 
-FROM ( 
-   SELECT 
-         Symbol AS symbol, AVG( LOG10( normalized_count + 1 )) AS data, ParticipantBarcode,
-         COUNT( SampleBarcode)  as nsample 
-   FROM  `pancancer-atlas.Filtered.EBpp_AdjustPANCAN_IlluminaHiSeq_RNASeqV2_genExp_filtered` 
-   WHERE Study = '{0}' AND Symbol in UNNEST(@PARAMETERLIST) AND normalized_count IS NOT NULL
-   GROUP BY 
-         ParticipantBarcode, symbol
-   )
-)
-""".format( study ) 
+def find_clinical_features( struct_columns, labellist ) :
+    struct_list = []
     
-    return( table1 )
+    for mylabel in labellist: 
+        for mystruct in struct_columns :
+            mystring  = 'STRUCT(\''+ mylabel.strip()  +'\' AS symbol'
+            
+            if  ( mystruct.find( mystring ) != -1 ) :
+                struct_list.append( mystruct )
+                break
     
-def get_feature2_table( study , feature2_name ) :
-
-   feat =  bqtable_data( feature2_name )
-   struct_columns  = []
-   if ( feature2_name.startswith('Clinical') ) :
-        datatype = feat['dattype']
-        struct_columns = clinical_features( feature2_name ) 
-        
-        table2= """
-table2 AS (
-SELECT
-  ParticipantBarcode,
-  {0} as rnkdata,
-  table_columns.symbol as symbol
-FROM (
-  SELECT
-    {1} as ParticipantBarcode,
-    [
-"""+ ",\n".join( struct_columns ) + """ 
-    ] AS table_columns
-  FROM
-    `{2}`
-  WHERE
-    acronym = '{3}'
-  )  AS newtable 
-CROSS JOIN 
-  UNNEST( newtable.table_columns ) AS  table_columns
-WHERE 
-  table_columns.data IS NOT NULL {4}
-)              
-"""
-        table2 = table2.format(feat['rnkdata'],feat['barcode'],feat['table'], study, feat['where'])
-        
-   else :     
-       table2= """
-table2 AS (
-SELECT
-   symbol,
-   {0} AS rnkdata,
-   ParticipantBarcode
-FROM (
-   SELECT
-      {1} AS symbol, 
-      {2} AS data,
-      {3} AS ParticipantBarcode
-   FROM `{4}`
-   WHERE Study = '{6}' AND {1} IS NOT NULL
-         {5}  
-   GROUP BY
-      ParticipantBarcode, symbol
-   )
-)
-""".format( feat['rnkdata'],feat['symbol'],feat['data'],feat['barcode'],feat['table'],feat['where'],study )
-
-   return( table2 )
+    if ( struct_list == [] ) :
+        raise RuntimeError("Feature1 labels not found ..... ")
+       
+    return struct_list    
 
 
-def get_summarized_table( feature1_name , feature2_name ) :
+               
+def get_summarized_table( feature1_name, ft1, feature2_name, ft2 ) :
     
-    ft1 = bqtable_data( feature1_name )
-    ft2 = bqtable_data( feature2_name )
     
     if ( ft2['dattype']  == 'numeric' ): 
         statistics = """COUNT( n1.ParticipantBarcode ) as n,
-   CORR(n1.rnkdata , n2.rnkdata) as correlation
+   ABS(CORR(n1.rnkdata , n2.rnkdata)) as correlation
     """
     elif (  ft2['dattype']  == 'boolean') :
         
@@ -291,7 +367,7 @@ GROUP BY
     str_rm_input = '' 
     input_pairs_table = ''
     if ( feature1_name == feature2_name ):
-        str_rm_input = 'AND n2.symbol NOT IN UNNEST(@PARAMETERLIST)'
+        str_rm_input = 'AND n2.symbol NOT IN UNNEST(@GENELIST)'
         input_pairs_table = 'UNION ALL' + temp_table.format(statistics,'AND n1.symbol < n2.symbol','table1')  
            
     
@@ -303,20 +379,21 @@ GROUP BY
 
 
 
-def get_stat_table( feature , nsamples ) :
+def get_stat_table( feat_name1, feat1, feat_name2, feat2, nsamples ) :
   
     stat_table = '' 
     
-    if ( ( feature == 'Gene Expression' ) or (feature == 'Somatic Copy Number') or (feature == 'Clinical Numeric') )  :
+    if ( feat1['dattype'] == 'numeric' and feat2['dattype'] == 'numeric'  )  :
+        
         stat_table = """
 SELECT symbol1, symbol2, n, correlation 
 FROM summ_table
 WHERE 
-    n > {0} 
+    n > {0} AND NOT IS_NAN( correlation)
 ORDER BY correlation DESC
 """.format( str(nsamples) )
         
-    elif ( feature == 'Somatic Mutation t-test'  ) :
+    elif ( feat1['dattype'] == 'numeric' and feat_name2 == 'Somatic Mutation t-test'  ) :
         stat_table = """
 SELECT 
     symbol1, symbol2,
@@ -341,7 +418,7 @@ WHERE
 ORDER BY tscore DESC
 """.format( str(nsamples) )
         
-    elif ( feature == 'Somatic Mutation Spearman'  ) :
+    elif ( feat1['dattype'] == 'numeric' and feat_name2 == 'Somatic Mutation Spearman'  ) :
         stat_table = """
 SELECT 
     symbol1, symbol2,
@@ -365,7 +442,7 @@ ORDER BY correlation DESC
 """.format( str(nsamples) )
         
     
-    elif ( feature == 'Clinical Categorical'  ) :
+    elif ( feat1['dattype'] == 'numeric' and feat_name2 == 'Clinical Categorical'  ) :
         stat_table = """
 SELECT 
     symbol1, symbol2,
@@ -408,9 +485,9 @@ def makeWidgets():
       )
 
     
-  FeatureList1 = [ 'Gene Expression', 'Somatic Copy Number'] ;
+  FeatureList1 = [ 'Gene Expression', 'Somatic Copy Number', 'MicroRNA Expression', 'Clinical Numeric'] ;
 
-  FeatureList2 = [ 'Gene Expression', 'Somatic Mutation Spearman','Somatic Mutation t-test', 'Somatic Copy Number', 'Clinical Numeric', 'Clinical Categorical'] ;
+  FeatureList2 = [ 'Gene Expression', 'Somatic Mutation Spearman','Somatic Mutation t-test', 'Somatic Copy Number', 'Clinical Numeric', 'Clinical Categorical', 'MicroRNA Expression'] ;
 
   feature1 = widgets.Dropdown(
       options=FeatureList1,
@@ -439,6 +516,11 @@ def makeWidgets():
                            max=50,
                            description=''
                           )  # the n most variable genes
+  
+  cohortlist = widgets.FileUpload(
+      accept='',  # Accepted file extension e.g. '.txt', '.pdf', 'image/*', 'image/*,.pdf'
+      multiple=False  # True to accept multiple files upload else False
+      )  
     
   feature1_title = widgets.HTML('<em>Select Feature1 </em>')  
   display(widgets.HBox([ feature1_title, feature1 ]))
@@ -455,7 +537,11 @@ def makeWidgets():
   size_title = widgets.HTML('<em>Minimum number of samples</em>')
   display(widgets.HBox([size_title, size]))
     
-  return([study, feature1, feature2, gene_names, size ])
+  cohort_title = widgets.HTML('<em>Cohort list</em>')
+  display(widgets.HBox([cohort_title, cohortlist]))
+  
+  
+  return([study, feature1, feature2, gene_names, size, cohortlist])
 
 
 def makeWidgetsPair() : 
@@ -485,15 +571,23 @@ def makeWidgetsPair() :
 
  
 
-def table_pair ( symbol, feature2_name , study, table_label ) :
+def table_pair ( symbol, feature2_name, study, samplelist, table_label ) :
    
    ft = bqtable_data( feature2_name ) 
 
    if ( feature2_name == 'Clinical Numeric' or feature2_name == 'Clinical Categorical' ) :
        ft['data'] = symbol 
        ft['symbol'] = '\'' + symbol + '\'' 
-    
+   
+
+   cohort = ft['study'] + ' = \'' + study + '\'' 
+ 
    if  ( (feature2_name == 'Clinical Numeric') or (feature2_name == 'Clinical Categorical') ) :
+        
+       if ( len( samplelist ) > 0  ) :
+           cohort = ft['patientcode'] + " IN UNNEST(@PATIENTLIST) "
+        
+            
        query_table = table_label + """ AS (
 SELECT
    symbol,
@@ -505,11 +599,14 @@ FROM (
       {2} AS avgdata,
       {3} AS ParticipantBarcode
    FROM `{4}`
-   WHERE acronym = '{5}'         
+   WHERE {5}        
    )
-)""".format(ft['avgdat'],ft['symbol'],ft['data'],ft['barcode'],ft['table'], study )
+)""".format(ft['avgdat'],ft['symbol'],ft['data'],ft['patientcode'],ft['table'], cohort )
     
    else :
+       if ( len( samplelist ) > 0  ) :
+           cohort = ft['samplecode'] + " IN UNNEST(@SAMPLELIST) "
+
        query_table = table_label + """ AS (
 SELECT
    symbol,
@@ -521,12 +618,12 @@ FROM (
       {2} AS avgdata,
       {3} AS ParticipantBarcode
    FROM `{4}`
-   WHERE Study = '{5}' AND {1} = '{6}'
+   WHERE {5} AND {1} = '{6}'
          {7}  
    GROUP BY
       ParticipantBarcode, symbol
    )
-)""".format(ft['avgdat'],ft['symbol'],ft['data'],ft['barcode'],ft['table'], study, symbol ,ft['where'] )
+)""".format(ft['avgdat'],ft['symbol'],ft['data'],ft['patientcode'],ft['table'], cohort, symbol ,ft['where'] )
     
     
    
@@ -534,13 +631,13 @@ FROM (
 
     
     
-def get_query_pair (name1, name2, study, feature1_name, feature2_name): 
+def get_query_pair (name1, name2, study, samplelist, feature1_name, feature2_name): 
 
    name1 = name1.strip()
    name2 = name2.strip() 
     
-   query_table1 =  table_pair(name1, feature1_name , study, 'table1' )
-   query_table2 =  table_pair(name2, feature2_name , study, 'table2' )
+   query_table1 =  table_pair(name1, feature1_name , study, samplelist, 'table1' )
+   query_table2 =  table_pair(name2, feature2_name , study, samplelist, 'table2' )
 
    if ( (feature2_name == 'Gene Expression') or (feature2_name == 'Somatic Copy Number')   ):
       data2_str = 'n2.data' 
@@ -565,7 +662,7 @@ ON  n1.ParticipantBarcode = n2.ParticipantBarcode""".format( data2_str)
 
 def plot_statistics_pair ( mydf , feature2_name, name1 , name2, nsamples ) :  
 
-    if ( (feature2_name == 'Gene Expression') or (feature2_name == 'Somatic Copy Number') or  (feature2_name == 'Clinical Numeric') ): 
+    if ( (feature2_name == 'Gene Expression') or (feature2_name == 'Somatic Copy Number') or  (feature2_name == 'Clinical Numeric') or (feature2_name == 'MicroRNA Expression') ): 
          
          label1 = name1.strip() + " (gene expression)"
          label2 = name2.strip() + " (" +  feature2_name + ")" 
