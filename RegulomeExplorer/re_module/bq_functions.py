@@ -320,7 +320,7 @@ def get_summarized_table( feature1_name, ft1, feature2_name, ft2 ) :
     
     if ( ft2['dattype']  == 'numeric' ): 
         statistics = """COUNT( n1.ParticipantBarcode ) as n,
-   ABS(CORR(n1.rnkdata , n2.rnkdata)) as correlation
+   CORR(n1.rnkdata , n2.rnkdata) as correlation
     """
     elif (  ft2['dattype']  == 'boolean') :
         
