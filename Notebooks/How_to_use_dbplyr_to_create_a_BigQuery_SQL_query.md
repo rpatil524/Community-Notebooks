@@ -1,7 +1,3 @@
-
-\==— title: “How to use dbplyr to build a query” output:
-rmarkdown::github\_document —
-
 # ISB-CGC Community Notebooks
 
 Check out more notebooks at our [Community Notebooks
@@ -221,5 +217,5 @@ head(final)
     ## 5 TARGET-20-PAPWHS CR                           CR                                   29986. ENSG00000215199 YWHAZP6  
     ## 6 TARGET-20-PAPWHS CR                           CR                                  105783. ENSG00000164941 INTS8
 
-It’s that simple\! Please let us know if you have any questions at
+It’s that simple! Please let us know if you have any questions at
 <feedback@isb-cgc.org>.
