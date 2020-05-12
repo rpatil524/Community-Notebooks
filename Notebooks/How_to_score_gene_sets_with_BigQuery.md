@@ -3,10 +3,14 @@ Gene Set Scoring using hg38 mutation tables
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks
+Repository](https://github.com/isb-cgc/Community-Notebooks)\!
+
     Title:   Gene Set Scoring using hg38 mutation tables
     Author:  Lauren Hagen
     Created: 2019-08-02
     Purpose: To demonstrate how to join two tables in BigQuery to compare the expression of a set of genes  between two groups.
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_score_gene_sets_with_BigQuery.md
     Notes:   This notebook was adapted from work by David L Gibbs, January 2018 Query of the Month
 
 -----
@@ -74,7 +78,10 @@ Then let us set up the billing variables we will be using in this
 notebook:
 
 ``` r
-billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+billing <- 'your_project_number' # Insert your project ID in the ''
+if (billing == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
 ```
 
 Let’s get started on creating the full query. First, which tissue type
@@ -106,8 +113,8 @@ PARP1_result
     ##    project_short_name     n
     ##    <chr>              <int>
     ##  1 TCGA-UCEC             46
-    ##  2 TCGA-STAD             22
-    ##  3 TCGA-COAD             22
+    ##  2 TCGA-COAD             22
+    ##  3 TCGA-STAD             22
     ##  4 TCGA-BRCA             17
     ##  5 TCGA-SKCM             16
     ##  6 TCGA-BLCA             15
@@ -155,16 +162,16 @@ query1_result
     ## # A tibble: 530 x 1
     ##    sample_barcode  
     ##    <chr>           
-    ##  1 TCGA-A5-A1OF-01A
-    ##  2 TCGA-A5-A2K5-01A
-    ##  3 TCGA-AP-A1E0-01A
-    ##  4 TCGA-AX-A1C5-01A
-    ##  5 TCGA-B5-A1MW-01A
-    ##  6 TCGA-B5-A1MX-01A
-    ##  7 TCGA-D1-A2G0-01A
-    ##  8 TCGA-DF-A2KU-01A
-    ##  9 TCGA-E6-A1LX-01A
-    ## 10 TCGA-EO-A22X-01A
+    ##  1 TCGA-A5-A0G1-01A
+    ##  2 TCGA-A5-A0G2-01A
+    ##  3 TCGA-A5-A0GP-01A
+    ##  4 TCGA-AP-A1E0-01A
+    ##  5 TCGA-AX-A1CE-01A
+    ##  6 TCGA-BG-A221-01A
+    ##  7 TCGA-DF-A2KN-01A
+    ##  8 TCGA-E6-A1LX-01A
+    ##  9 TCGA-EO-A22R-01A
+    ## 10 TCGA-EO-A22U-01A
     ## # ... with 520 more rows
 
 This query returns 530 tumor sample barcodes with at least one known
@@ -398,14 +405,14 @@ head(tStatsPerGene_results)
 ```
 
     ## # A tibble: 6 x 7
-    ##   symbol   grp1_n grp2_n grp1_mean grp2_mean meandiff tstat
-    ##   <chr>     <int>  <int>     <dbl>     <dbl>    <dbl> <dbl>
-    ## 1 MAP2K1       41    489     5.51       5.41   0.103  22.7 
-    ## 2 KMT2C        41    489     4.94       4.92   0.0225  1.67
-    ## 3 CCR7         41    489     4.41       4.30   0.114   2.91
-    ## 4 SIX4         41    489     4.89       4.93  -0.0408 -4.37
-    ## 5 PRKAG3       41    489     0.743      1.74  -0.995  -3.80
-    ## 6 HIST1H4A     41    489     3.95       3.39   0.564   2.97
+    ##   symbol grp1_n grp2_n grp1_mean grp2_mean meandiff tstat
+    ##   <chr>   <int>  <int>     <dbl>     <dbl>    <dbl> <dbl>
+    ## 1 TLR9       41    489     1.51      2.08  -0.567   -2.26
+    ## 2 DUSP6      41    489     5.70      5.64   0.0592   3.36
+    ## 3 APAF1      41    489     4.57      4.54   0.0289   1.16
+    ## 4 MMP9       41    489     5.54      5.38   0.162    3.29
+    ## 5 HADHB      41    489     5.80      5.79   0.00561  1.72
+    ## 6 RXFP3      41    489     0.418     0.683 -0.265   -1.48
 
 We are now going to plot the t-statistic using ggplot2 library.
 

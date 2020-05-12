@@ -5,11 +5,14 @@ output: rmarkdown::github_document
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks Repository](https://github.com/isb-cgc/Community-Notebooks)!
+
 ```
 Title:   One-Way ANOVA Test in BigQuery
 Author:  Lauren Hagen
 Created: 2019-08-02
 Purpose: Demonstrate an ANOVA test within BigQuery
+URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebook/How_to_perform_an_ANOVA_test_in_BigQuery.Rmd
 Notes:   This notebook was adapted from work by David L Gibbs, September 2017 Query of the Month
 ```
 ***
@@ -22,7 +25,7 @@ Using this model, we are describing the data as being sampled from groups, with 
 
 We use the F-test to compare these two hypotheses. To compute the test statistic, we compute the within-group variation and the between-group variation. Recall that sample variance is defined as the sum of squared differences between observations and the mean, divided by the number of samples (normalized).
 
-First, we will need to import the required libraries and create a client variable. For more information see ['Quick Start Guide to ISB-CGC'](INSERT LINK) and alternative authentication methods can be found [here](https://googleapis.github.io/google-cloud-python/latest/core/auth.html).
+First, we will need to import the required libraries and create a client variable. For more information see ['Quick Start Guide to ISB-CGC'](https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_for_ISB-CGC.md) and alternative authentication methods can be found [here](https://googleapis.github.io/google-cloud-python/latest/core/auth.html).
 
 ```{r Load Libraries}
 library(bigrquery)
@@ -31,7 +34,10 @@ library(dplyr)
 
 Then let us set up the billing variables we will be using in this notebook:
 ```{r Set Up Variables}
-billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+billing <- 'your_project_number' # Insert your project ID in the ''
+if (billing == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
 ```
 
 Let’s look at the query:

@@ -3,10 +3,14 @@ How to Create Cohorts
 
 # ISB-CGC Community Notebooks
 
+Check out more notebooks at our [Community Notebooks
+Repository](https://github.com/isb-cgc/Community-Notebooks)\!
+
     Title:   How to create cohorts
     Author:  Lauren Hagen
     Created: 2019-06-20
     Purpose: Basic overview of creating cohorts
+    URL: https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_create_cohorts.md
     Notes:   This notebook was adapted from work by Shiela Reynolds, 'How to Create TCGA Cohorts part 1' https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
 
 -----
@@ -20,7 +24,7 @@ open-access [TCGA](http://cancergenome.nih.gov/) data available at the
 [Data Portal](https://tcga-data.nci.nih.gov/tcga/). You will need to
 have access to a Google Cloud Platform (GCP) project in order to use
 BigQuery. If you don’t already have one, you can sign up for a
-[free-trial](https://cloud.google.com/free-trial/).
+[free-trial](https://cloud.google.com/free-trial/). You can also explore the available tables and data sets before commiting to creating a GCP project though the [ISB-CGC BigQuery Table Searcher](isb-cgc.appspot.com/bq_meta_search/).
 
 We are not attempting to provide a thorough BigQuery or IPython tutorial
 here, as a wealth of such information already exists. Here are some
@@ -53,11 +57,22 @@ library(dplyr)
 library(dbplyr)
 ```
 
+    ## 
+    ## Attaching package: 'dbplyr'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     ident, sql
+
 Then let us set up some of the variables we will be using in this
 notebook:
 
 ``` r
-billing <- 'isb-cgc-02-0001' # Insert your project ID in the ''
+billing <- 'your_project_number' # Insert your project ID in the ''
+if (billing == 'your_project_number') {
+  print('Please update the project number with your Google Cloud Project')
+}
+
 theTable <- "isb-cgc.TCGA_bioclin_v0.Clinical" # The convention for calling a table is project.dataset.table
 ```
 
@@ -73,11 +88,6 @@ dataset:
 ``` r
 # Let us look which tables are in the TCGA_bioclin_v0 dataset
 tables<-list_tables("isb-cgc", "TCGA_bioclin_v0") # the convention is project name then dataset
-```
-
-    ## Auto-refreshing stale OAuth token.
-
-``` r
 tables
 ```
 
@@ -243,7 +253,7 @@ tobacco2 <- tobacco_query2 %>%
 
     ## Complete
 
-    ## Billed: 0 B
+    ## Billed: 10.49 MB
 
     ## Downloading 6 rows in 1 pages.
 
@@ -395,10 +405,12 @@ menopause_stat <- menopause_stat_query %>%
   collect()
 ```
 
+    ## 
+    Running job 'isb-cgc-02-0001.job_PeEjORQ4P75hha2vpeULEedX6lOv.US' [-]  1s
+    Running job 'isb-cgc-02-0001.job_PeEjORQ4P75hha2vpeULEedX6lOv.US' [\]  1s
+    Running job 'isb-cgc-02-0001.job_PeEjORQ4P75hha2vpeULEedX6lOv.US' [|]  1s
     ## Complete
-
-    ## Billed: 0 B
-
+    ## Billed: 10.49 MB
     ## Downloading 4 rows in 1 pages.
 
 ``` r
@@ -439,10 +451,12 @@ menopause_type <- menopause_type_query %>%
   collect()
 ```
 
+    ## 
+    Running job 'isb-cgc-02-0001.job_Ol7KcakNsEKXPZ3euNT3cXVXsGOL.US' [-]  1s
+    Running job 'isb-cgc-02-0001.job_Ol7KcakNsEKXPZ3euNT3cXVXsGOL.US' [\]  1s
+    Running job 'isb-cgc-02-0001.job_Ol7KcakNsEKXPZ3euNT3cXVXsGOL.US' [|]  1s
     ## Complete
-
-    ## Billed: 0 B
-
+    ## Billed: 10.49 MB
     ## Downloading 4 rows in 1 pages.
 
 ``` r
@@ -475,8 +489,8 @@ hpv_stat_query %>%
     ## FROM (SELECT `hpv_status`, `hpv_calls`, count(*) AS `n`
     ## FROM (SELECT *
     ## FROM `Clinical`
-    ## WHERE (NOT(((`hpv_status`) IS NULL)))) `dbplyr_016`
-    ## GROUP BY `hpv_status`, `hpv_calls`) `dbplyr_017`
+    ## WHERE (NOT(((`hpv_status`) IS NULL)))) `dbplyr_001`
+    ## GROUP BY `hpv_status`, `hpv_calls`) `dbplyr_002`
     ## WHERE (`n` > 20.0)
     ## ORDER BY `n` DESC
 
@@ -486,12 +500,10 @@ hpv_stat <- hpv_stat_query %>%
   collect()
 ```
 
-    ## 
-    Running job 'isb-cgc-02-0001.job_Ai6itInj6GrLUNd9raQSuP8wtO0X.US' [-]  1s
-    Running job 'isb-cgc-02-0001.job_Ai6itInj6GrLUNd9raQSuP8wtO0X.US' [\]  1s
-    Running job 'isb-cgc-02-0001.job_Ai6itInj6GrLUNd9raQSuP8wtO0X.US' [|]  1s
     ## Complete
+
     ## Billed: 10.49 MB
+
     ## Downloading 5 rows in 1 pages.
 
 ``` r
@@ -596,9 +608,11 @@ early_onset_breast_cancer <- early_onset_breast_cancer_query %>%
 ```
 
     ## 
-    Running job 'isb-cgc-02-0001.job_si8mdSHLvgoH0LABoemGJcr7fNot.US' [-]  1s
-    Running job 'isb-cgc-02-0001.job_si8mdSHLvgoH0LABoemGJcr7fNot.US' [\]  1s
-    Running job 'isb-cgc-02-0001.job_si8mdSHLvgoH0LABoemGJcr7fNot.US' [|]  1s
+    Running job 'isb-cgc-02-0001.job_WNCunCxOTfIjstecjfNWmXK5KkBE.US' [-]  1s
+    Running job 'isb-cgc-02-0001.job_WNCunCxOTfIjstecjfNWmXK5KkBE.US' [\]  1s
+    Running job 'isb-cgc-02-0001.job_WNCunCxOTfIjstecjfNWmXK5KkBE.US' [|]  2s
+    Running job 'isb-cgc-02-0001.job_WNCunCxOTfIjstecjfNWmXK5KkBE.US' [/]  2s
+    Running job 'isb-cgc-02-0001.job_WNCunCxOTfIjstecjfNWmXK5KkBE.US' [-]  2s
     ## Complete
     ## Billed: 20.97 MB
     ## Downloading 327 rows in 1 pages.
@@ -611,8 +625,8 @@ head(early_onset_breast_cancer, 5)
     ## # Groups:   case_barcode, category [5]
     ##   category case_barcode
     ##   <chr>    <chr>       
-    ## 1 <NA>     TCGA-AQ-A04L
-    ## 2 <NA>     TCGA-AR-A1AI
-    ## 3 <NA>     TCGA-BH-A1ES
-    ## 4 <NA>     TCGA-BH-A1EW
-    ## 5 <NA>     TCGA-C8-A1HG
+    ## 1 <NA>     TCGA-A2-A04U
+    ## 2 <NA>     TCGA-A7-A6VY
+    ## 3 <NA>     TCGA-AC-A6NO
+    ## 4 <NA>     TCGA-A7-A0D9
+    ## 5 <NA>     TCGA-B6-A0RS
