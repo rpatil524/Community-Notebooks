@@ -39,7 +39,7 @@ def bqtable_data( MolecularFeature  ) :
                                     'samplecode': 'Tumor_SampleBarcode',
                                        'where'  : 'AND FILTER = \'PASS\'',
                                        'dattype': 'boolean'},
-        'Somatic Mutation Spearman': { 'table'  : 'pancancer-atlas.Filtered.MC3_MAF_V5_one_per_tumor_sample',
+                 'Somatic Mutation': { 'table'  : 'pancancer-atlas.Filtered.MC3_MAF_V5_one_per_tumor_sample',
                                        'symbol' : 'Hugo_Symbol',
                                         'study' : 'Study',
                                        'data'   : '#',
@@ -84,6 +84,40 @@ def bqtable_data( MolecularFeature  ) :
 
     feature = Features[MolecularFeature]
     return feature      
+
+def approx_significant_level( ) :
+    f_alpha="""CREATE TEMP FUNCTION erfcc(x  FLOAT64)
+RETURNS FLOAT64
+LANGUAGE js AS \"\"\"
+  
+  var t; 
+  var z; 
+  var ans;
+  z = Math.abs(x) ;
+  t = 1.0 / (1.0 + 0.5*z ) ;
+  
+  ans= t * Math.exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+
+t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+
+t*(-0.82215223+t*0.17087277)))))))));
+  
+  if ( x >= 0 ) {
+    return ans ;
+  } else {
+    return 2.0 - ans;
+  }
+\"\"\";
+
+"""
+    return f_alpha 
+
+def  pvalues_dataframe( df ):
+    # computing p values from the two tailed t test
+    if not df.empty:
+        f = lambda n, correlation  : (1.0 - stats.t.cdf( abs(correlation) * np.sqrt( (n- 2.0) / (1.0 - correlation**2 )), n-2)) * 2.0  
+        df['p-value'] = df.apply(lambda x: f(x.n,x.correlation), axis=1)
+    
+#    return df 
+
 
 
 def readcohort( cohortlist ) :
@@ -166,7 +200,7 @@ def get_feature_tables( study, feature1, feature2, samplelist, patientlist, labe
     feat1 =  bqtable_data( feature1 )
     feat2 =  bqtable_data( feature2 )
     
-    # code to handle user defined cohort list
+    # code to handle a user defined cohort list
     cohort1 = feat1['study'] + " = \'" + study + "\'"
     cohort2 = feat2['study'] + " = \'" + study + "\'"
     if ( len( samplelist ) > 0  ) :
@@ -193,9 +227,8 @@ def get_feature_tables( study, feature1, feature2, samplelist, patientlist, labe
     if ( feature2.startswith('Clinical') ) :
         table2 = generic_clinical_bqtable ( 'table2', feat2, cohort2, struct_columns )
         
-    else :
-        table2 = generic_numeric_bqtable ( 'table2', feat2, cohort2, 'IS NOT NULL' )
-    
+    elif ( (feat2['dattype'] == 'numeric') or (feat2['dattype'] == 'boolean') ) :
+        table2 = generic_numeric_bqtable ( 'table2', feat2, cohort2, 'IS NOT NULL' )    
         
     return table1, table2
 
@@ -313,7 +346,10 @@ def find_clinical_features( struct_columns, labellist ) :
        
     return struct_list    
 
-
+def get_summarized_pancanatlas( feature1_name, feature2_name ) :
+    ft1 = bqtable_data(feature1_name )
+    ft2 = bqtable_data(feature2_name )
+    return get_summarized_table( feature1_name, ft1, feature2_name, ft2 ) 
                
 def get_summarized_table( feature1_name, ft1, feature2_name, ft2 ) :
     
@@ -325,7 +361,7 @@ def get_summarized_table( feature1_name, ft1, feature2_name, ft2 ) :
     elif (  ft2['dattype']  == 'boolean') :
         
         data = 'data' 
-        if ( feature2_name == 'Somatic Mutation Spearman' ):
+        if ( feature2_name == 'Somatic Mutation' ):
             data = 'rnkdata'
             
         statistics = """COUNT( n1.ParticipantBarcode) as n_1,
@@ -377,21 +413,34 @@ GROUP BY
    
     return sql_str
 
+def get_stat_pancanatlas( feat_name1, feat_name2, nsamples, alpha ) :
+    
+    feat1 = bqtable_data(feat_name1 )
+    feat2 = bqtable_data(feat_name2 )
+    return get_stat_table( feat_name1, feat1, feat_name2, feat2, nsamples, alpha )
 
-
-def get_stat_table( feat_name1, feat1, feat_name2, feat2, nsamples ) :
+def get_stat_table( feat_name1, feat1, feat_name2, feat2, nsamples, alpha ) :
   
     stat_table = '' 
     
     if ( feat1['dattype'] == 'numeric' and feat2['dattype'] == 'numeric'  )  :
         
         stat_table = """
+SELECT symbol1, symbol2, n, correlation
+FROM summ_table
+WHERE 
+    n > {0} AND n < 500 AND NOT IS_NAN( correlation)
+GROUP BY 1,2,3,4
+HAVING  `cgc-05-0042.functions.significance_level_ttest2`(n-2, ABS(correlation)*SQRT((n-2)/((1+correlation)*(1-correlation)))) <= {1}
+UNION ALL
 SELECT symbol1, symbol2, n, correlation 
 FROM summ_table
 WHERE 
-    n > {0} AND NOT IS_NAN( correlation)
-ORDER BY correlation DESC
-""".format( str(nsamples) )
+    n >= 500 AND NOT IS_NAN( correlation)
+GROUP BY 1,2,3,4
+HAVING erfcc( ABS(correlation)*SQRT(n)/1.414213562373095 ) <= {1}
+ORDER BY ABS(correlation) DESC
+""".format( str(nsamples) , alpha )
         
     elif ( feat1['dattype'] == 'numeric' and feat_name2 == 'Somatic Mutation t-test'  ) :
         stat_table = """
@@ -418,28 +467,36 @@ WHERE
 ORDER BY tscore DESC
 """.format( str(nsamples) )
         
-    elif ( feat1['dattype'] == 'numeric' and feat_name2 == 'Somatic Mutation Spearman'  ) :
-        stat_table = """
-SELECT 
-    symbol1, symbol2,
-    n_1, n_0,
-    ABS( avg1 - avg0 ) * SQRT( n_1*n_0 / var_t )  as  correlation 
-FROM (
-SELECT symbol1, symbol2, n_1, 
-       sumx_1 / n_1 as avg1,
-       n_t - n_1 as n_0,
-       (sumx_t - sumx_1)/(n_t - n_1) as avg0,  
-       n_t * sumx2_t - sumx_t*sumx_t  as var_t 
-FROM  summ_table
-LEFT JOIN ( SELECT symbol, COUNT( ParticipantBarcode ) as n_t, SUM( rnkdata ) as sumx_t, SUM( rnkdata*rnkdata ) as sumx2_t
+    elif ( feat1['dattype'] == 'numeric' and feat_name2 == 'Somatic Mutation'  ) :
+        stat_table = """,
+statistics AS (
+   SELECT symbol1, symbol2, n_t as n, 
+       n_t * sumx_1 - n_1*sumx_t as  cov_xy,
+       n_t * sumx2_t - sumx_t*sumx_t  as var_x,
+       n_1 * (n_t - n_1 )  as var_y    
+   FROM  summ_table
+   LEFT JOIN ( SELECT symbol, COUNT( ParticipantBarcode ) as n_t, SUM( rnkdata ) as sumx_t, SUM( rnkdata*rnkdata ) as sumx2_t
             FROM table1 
             GROUP BY symbol )
-ON symbol1 = symbol      
+   ON symbol1 = symbol  
+   group by 1,2,3,4,5,6
+   having var_x > 0 AND var_y > 0 
 )
-WHERE
-   n_1 > {0} AND n_0 > {0} AND var_t > 0
-ORDER BY correlation DESC
-""".format( str(nsamples) )
+SELECT symbol1, symbol2, n,
+       cov_xy / ( SQRT(var_x) *  SQRT(var_y) ) as correlation
+FROM statistics 
+where n > {0} AND n < 500 
+group by 1,2,3,4
+HAVING `cgc-05-0042.functions.significance_level_ttest2`(n-2, ABS(correlation)*SQRT((n-2)/((1+correlation)*(1-correlation)))) <= {1}
+UNION ALL
+SELECT symbol1, symbol2, n,
+       cov_xy / ( SQRT(var_x) *  SQRT(var_y) ) as correlation
+FROM statistics 
+where n > {0} AND n >= 500 
+group by 1,2,3,4
+HAVING erfcc( ABS(correlation)*SQRT(n)/1.414213562373095 ) <= {1}
+ORDER BY ABS(correlation) DESC
+""".format( str(nsamples) , alpha )
         
     
     elif ( feat1['dattype'] == 'numeric' and feat_name2 == 'Clinical Categorical'  ) :
@@ -487,7 +544,8 @@ def makeWidgets():
     
   FeatureList1 = [ 'Gene Expression', 'Somatic Copy Number', 'MicroRNA Expression', 'Clinical Numeric'] ;
 
-  FeatureList2 = [ 'Gene Expression', 'Somatic Mutation Spearman','Somatic Mutation t-test', 'Somatic Copy Number', 'Clinical Numeric', 'Clinical Categorical', 'MicroRNA Expression'] ;
+  #FeatureList2 = [ 'Gene Expression', 'Somatic Mutation Spearman','Somatic Mutation t-test', 'Somatic Copy Number', 'Clinical Numeric', 'Clinical Categorical', 'MicroRNA Expression'] ;
+  FeatureList2 = [ 'Gene Expression', 'Somatic Mutation', 'Somatic Copy Number', 'Clinical Numeric', 'MicroRNA Expression'] ;  
 
   feature1 = widgets.Dropdown(
       options=FeatureList1,
@@ -510,7 +568,15 @@ def makeWidgets():
       disabled=False
       )
 
-  
+  significance = widgets.SelectionSlider( options=['0.05', '0.01', '0.005', '0.001'],
+                                   value='0.01',
+                                   description='',
+                                   disabled=False,
+                                   continuous_update=False,
+                                   orientation='horizontal',
+                                   readout=True
+                                 )
+    
   size = widgets.IntSlider(value=25, 
                            min=5, 
                            max=50,
@@ -534,6 +600,9 @@ def makeWidgets():
   study_title = widgets.HTML('<em>Select a study </em>')
   display(widgets.HBox([study_title, study]))
     
+  significance_title = widgets.HTML('<em>Significance level </em>')
+  display(widgets.HBox([ significance_title, significance]))
+    
   size_title = widgets.HTML('<em>Minimum number of samples</em>')
   display(widgets.HBox([size_title, size]))
     
@@ -541,7 +610,7 @@ def makeWidgets():
   display(widgets.HBox([cohort_title, cohortlist]))
   
   
-  return([study, feature1, feature2, gene_names, size, cohortlist])
+  return([study, feature1, feature2, gene_names, size, cohortlist, significance])
 
 
 def makeWidgetsPair() : 
@@ -641,7 +710,7 @@ def get_query_pair (name1, name2, study, samplelist, feature1_name, feature2_nam
 
    if ( (feature2_name == 'Gene Expression') or (feature2_name == 'Somatic Copy Number')   ):
       data2_str = 'n2.data' 
-   elif ( (feature2_name == 'Somatic Mutation t-test') or feature2_name == 'Somatic Mutation Spearman' ):
+   elif ( (feature2_name == 'Somatic Mutation t-test') or feature2_name == 'Somatic Mutation' ):
       data2_str = 'IF( n2.ParticipantBarcode is null, 0, 1)'
    else :
       data2_str = 'n2.data'
@@ -693,7 +762,7 @@ def plot_statistics_pair ( mydf , feature2_name, name1 , name2, nsamples ) :
          print('\nT-test statistics : ')
          print( stats.ttest_ind(Set1[label1], Set2[label1], equal_var=False ) )
         
-    elif (feature2_name == 'Somatic Mutation Spearman' ): 
+    elif (feature2_name == 'Somatic Mutation' ): 
          label1 = name1.strip() + " (gene expression)"
          label2 = name2.strip() + " (Somatic Mutation)"
        
