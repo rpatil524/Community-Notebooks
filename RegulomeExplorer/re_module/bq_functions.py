@@ -108,7 +108,21 @@ t*(-0.82215223+t*0.17087277)))))))));
 \"\"\";
 
 """
-    return f_alpha 
+    return f_alpha
+
+def query_js_tscore_pvalue() :
+    f_pvalue="""CREATE TEMPORARY FUNCTION tscore_to_p(a FLOAT64, b FLOAT64, c FLOAT64)
+ RETURNS FLOAT64
+ LANGUAGE js AS
+\"\"\"
+  return jStat.ttest(a,b,c); //jStat.ttest( tscore, n, sides)
+\"\"\"
+OPTIONS (
+ library="gs://ba-cgc-bigquery/jstat/dist/jstat.min.js"
+);
+
+"""
+    return f_pvalue
 
 def  pvalues_dataframe( df ):
     # computing p values from the two tailed t test
