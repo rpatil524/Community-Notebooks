@@ -1,4 +1,4 @@
-How to Create Cohorts
+How to quickly compare cohorts
 ================
 
 # ISB-CGC Community Notebooks
