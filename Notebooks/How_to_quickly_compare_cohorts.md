@@ -186,6 +186,11 @@ that the percent survival falls faster for Cohort 2 (LUSC) than Cohort 1
 (LUAD). Below is a section on compare the case counts for different
 features within the data.
 
+Listed below are some useful resources on Survival Curves:
+- [Kaplan-Meier Estimator Wikipedia](https://en.wikipedia.org/wiki/Kaplan%E2%80%93Meier_estimator)
+- [Kaplan Meier curves: an introduction](https://towardsdatascience.com/kaplan-meier-curves-c5768e349479)
+- [Nature: A practical guide to understanding Kaplan-Meier curves by Rich J, Neely J, Paniello R, Voelker C, Nussenbaum B, Wang E](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3932959/)
+
 # Feature Comparisons
 
 We may also like to view the distribution of the patient’s ages, gender,
