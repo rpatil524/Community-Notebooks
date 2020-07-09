@@ -10,7 +10,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)\!
     Author:  Lauren Hagen
     Created: 2020-04-09
     URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_quickly_compare_cohorts.md
-    Purpose: Compare cohorts with survival curve and histograms creating the cohort with data from BigQuery or the WebApp
+    Purpose: Comparing cohorts with survival curves and histograms with data from BigQuery or the WebApp.
     Notes: 
 
 # Overview
