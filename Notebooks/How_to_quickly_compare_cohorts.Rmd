@@ -106,7 +106,7 @@ query2 = "
   "
 
 # Update with files or queries used
-cohort <- data.frame(Cohort_1=query1, Cohort_2=query2)
+cohorts <- data.frame(Cohort_1=query1, Cohort_2=query2)
 ```
 
 ```{r}
@@ -132,7 +132,7 @@ load_cohort <- function(cohorts, cohort_type){
 ```
 
 ```{r}
-combined_list <- load_cohort(cohort, cohort_type)
+combined_list <- load_cohort(cohorts, cohort_type)
 ```
 
 # Survival Curve
