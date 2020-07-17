@@ -309,7 +309,7 @@ vital_status_graph
 
 ![](Cohort_Comparison_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
-# That’s all folk\!
+# That’s all folks\!
 
 So, that’s it for a quick cohort comparison. If you need help or have a
 comment, reach out to us at <feedback@isb-cgc.org>
