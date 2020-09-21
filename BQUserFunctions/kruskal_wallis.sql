@@ -34,6 +34,6 @@ OPTIONS (description="Computes the test statistics (H) and the p value of the Kr
                       count(n) -1 as DoF
         FROM sums
     ) # H_raw
-    SELECT struct(H as H, `isb-cgc-bq.functions.complement_chisquare_cdf_current`(H, DoF) as p, DoF as DoF) from H_raw
+    SELECT struct(H as H, `__PROJECTID__.__DATASET__.complement_chisquare_cdf_v1_0`(H, DoF) as p, DoF as DoF) from H_raw
 )
 )
