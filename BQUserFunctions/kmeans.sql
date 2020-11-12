@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION `__PROJECTID__.__DATASET__.kmeans___VERSIONTAG__`(PointSet ARRAY<STRUCT<point ARRAY<FLOAT64>>>, iterations INT64, k INT64)
+CREATE OR REPLACE FUNCTION `__PROJECTID__.__DATASET__.kmeans__VERSIONTAG__`(PointSet ARRAY<STRUCT<point ARRAY<FLOAT64>>>, iterations INT64, k INT64)
 RETURNS ARRAY<INT64> 
 LANGUAGE js 
 OPTIONS(description="Estimates cluster assigments using the K-means algorithm (https://en.wikipedia.org/wiki/K-means_clustering), implemented in JavaScript.\nPARAMETERS: PointSet ( ARRAY<STRUCT<point ARRAY<FLOAT64>>>, the data in the form of an array of structures where each element(point) is an array that represents a data point. All the data points should have the same dimension), iterations (INT64, the number of iterations), and k (the number of clusters, INT64).\nOUTPUT: An array of labels (integer numbers) representing the cluster assigments for each data point.\nVERSION: 1.0\nNOTE: The code was adapted from https://github.com/NathanEpstein/clusters \nEXAMPLE:https://github.com/isb-cgc/Community-Notebooks/tree/master/BQUserFunctions")
