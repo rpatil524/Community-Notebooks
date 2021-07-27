@@ -11,7 +11,7 @@ Repository](https://github.com/isb-cgc/Community-Notebooks)!
     Created: 2019-06-20
     Updated: 2021-07-27
     Purpose: Painless intro to working in the cloud
-    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_to_ISB_CGC.ipynb
+    URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_to_ISB_CGC.md
     Notes:
 
 ------------------------------------------------------------------------
