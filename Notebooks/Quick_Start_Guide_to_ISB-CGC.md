@@ -23,8 +23,8 @@ Visit our WebApp at [ISB-CGC.org](https://isb-cgc.appspot.com/)!
 [ISB-CGC](https://isb-cgc.appspot.com/)
 
 This Quick Start Guide gives an overview of the data available, account
-set-up overview, and getting started with a basic example in python. If
-you have read the R version, you can skip to the Example section.
+set-up overview, and getting started with a basic example in R. If
+you have read the python version, you can skip to the Example section.
 
 ## Access Requirements
 
