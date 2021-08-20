@@ -32,7 +32,7 @@ library(superml)
 
 ``` r
 # set the google project that will be billed for this notebook's computations
-google_project <- 'isb-project-zero'
+google_project <- 'google-project'
 
 # in this example, we'll be using the Ovarian cancer TCGA dataset
 cancer_type <- 'TCGA-OV'
