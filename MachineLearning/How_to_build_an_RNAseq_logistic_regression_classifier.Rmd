@@ -88,7 +88,7 @@ ge_query <- sprintf("
 ge_table <- bq_project_query(google_project, ge_query, quiet = TRUE)
 
 # Download the query result
-ge_data <- bq_table_download(ge_tabe, quiet = TRUE)
+ge_data <- bq_table_download(ge_table, quiet = TRUE)
 
 # Show the dataframe
 str(ge_data)
