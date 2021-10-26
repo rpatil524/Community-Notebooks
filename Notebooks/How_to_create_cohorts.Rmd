@@ -13,7 +13,7 @@ Author:  Lauren Hagen
 Created: 2019-06-20
 Purpose: Basic overview of creating cohorts
 URL:     https://github.com/isb-cgc/Community-Notebooks/blob/master/Notebooks/How_to_create_cohorts.Rmd
-Notes:   This notebook was adapted from work by Shiela Reynolds, 'How to Create TCGA Cohorts part 1' https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
+Notes:   This notebook was adapted from work by Sheila Reynolds, 'How to Create TCGA Cohorts part 1' https://github.com/isb-cgc/examples-Python/blob/master/notebooks/Creating%20TCGA%20cohorts%20--%20part%201.ipynb.
 ```
 ***
 
