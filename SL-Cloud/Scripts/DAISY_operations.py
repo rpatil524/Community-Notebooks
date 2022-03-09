@@ -810,7 +810,7 @@ ORDER BY pvalue ASC """
 
     results= client.query(sql_func_ex).result().to_dataframe()
     if results.shape[0]<1:
-      print("Functional examimation inference procedure applied on " + data_resource + " did not find candidate " + SL_or_SDL + " pairs.")
+      print("Functional examimation inference procedure applied on " + database + " did not find candidate " + SL_or_SDL + " pairs.")
       return(results)
     
     report=results[['symbol1', 'symbol2', 'n1', 'n' ,'pvalue']]
