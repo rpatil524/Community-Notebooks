@@ -9,3 +9,5 @@ matplotlib
 plotly
 importlib
 pandas_gbq
+openpyxl
+seaborn
