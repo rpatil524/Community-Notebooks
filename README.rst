@@ -28,6 +28,7 @@ Contents:
 
 - Beta - Drafts and Prototypes.
 
+- HTAN - notebooks illustrating how to work with data of the Human Tumor Atlas Network https://humantumoratlas.org
 
 Documentation:
 
