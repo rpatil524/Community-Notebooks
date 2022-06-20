@@ -1,10 +1,10 @@
 =====================================================
 HTAN BigQuery Notebooks
 =====================================================
-`HTAN <https://humantumoratlas.org>`_ is a National Cancer Institute (NCI)-funded Cancer Moonshot$^{SM}$ initiative to construct 3-dimensional atlases of the dynamic cellular, morphological, and molecular features of human cancers as they evolve from precancerous lesions to advanced disease `Cell April 2020 <https://www.sciencedirect.com/science/article/pii/S0092867420303469>`_ .
+`HTAN <https://humantumoratlas.org>`_ is a National Cancer Institute (NCI)-funded Cancer Moonshot$^{SM}$ initiative to construct 3-dimensional atlases of the dynamic cellular, morphological, and molecular features of human cancers as they evolve from precancerous lesions to advanced disease `(Cell, April 2020) <https://www.sciencedirect.com/science/article/pii/S0092867420303469>`_ .
 
 
-Clinical data, sample biospecimen data and assay files in HTAN have a rich set of annotations supplied by HTAN data contributors.  These annotations are made according to the  HTAN Data model `<https://data.humantumoratlas.org/standards>`_ , a set of standards defined by the HTAN consortium. The supplied values of these attributes have been collected into comprehensive data tables on the cloud, using the Google BigQuery structure that is part of Google Cloud Project.
+Clinical data, sample biospecimen data and assay files in HTAN have a rich set of annotations supplied by HTAN data contributors.  These annotations are made according to the  `HTAN Data model <https://data.humantumoratlas.org/standards>`_ , a set of standards defined by the HTAN consortium. The supplied values of these attributes have been collected into comprehensive data tables on the cloud, using the Google BigQuery structure that is part of Google Cloud Project.
 
 This folder contains notebooks that illustrate how to query, process and analyze HTAN metadata, HTAN molecular data, and HTAN spatial data available in Google BigQuery tables. 
 
