@@ -12,13 +12,13 @@ Notebooks are available in the R programming language (R markdown) and in python
 
 Contents:
 
-- `Explore_HTAN_Clinical_Biospecimen_Assay_Metadata.Rmd` - illustrates how to make use of HTAN Google BigQuery metadata tables to tabulate and plot available HTAN clinical, biospecimen, and assay metadata
+**Explore_HTAN_Clinical_Biospecimen_Assay_Metadata.Rmd** - illustrates how to make use of HTAN Google BigQuery metadata tables to tabulate and plot available HTAN clinical, biospecimen, and assay metadata
 
-- `Investigating_Single_Cell_HTAN_Data.ipynb` - description
+**Investigating_Single_Cell_HTAN_Data.ipynb** - illustrates how to query HTAN single-cell RNA sequencing data for cell content and gene expression 
 
-- `Building_AnnData_with_Subset_of_Cells_from_BQ.ipynb` - description
+**Building_AnnData_with_Subset_of_Cells_from_BQ.ipynb** - illustrates how to query HTAN single-cell RNA sequencing data for specific cell types and contruct an Scanpy Anndata object from the result
 
-- `HTAN_Notebook_Templates` - templates
+**HTAN_Notebook_Templates** - Templates for notebook construction
 
 General How-Tos:
 
