@@ -125,6 +125,6 @@ demographics %>% ggplot(aes(y=Gender,fill=HTAN_Center)) +
   geom_bar() + theme_classic() 
 ```
 
-# 5. Relevant Citations and Links (if applicable)
+# 5. Relevant Citations and Links 
 
 [Cell April 2020](https://www.sciencedirect.com/science/article/pii/S0092867420303469)
