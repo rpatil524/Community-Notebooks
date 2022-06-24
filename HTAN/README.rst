@@ -18,7 +18,7 @@ Contents:
 
 **Building_AnnData_with_Subset_of_Cells_from_BQ.ipynb** - illustrates how to query HTAN single-cell RNA sequencing data for specific cell types and contruct an Scanpy Anndata object from the result
 
-**HTAN_Notebook_Templates** - Templates for notebook construction
+**HTAN_Notebook_Templates** - these templates serve as a guide for notebook construction. 
 
 General How-Tos:
 
