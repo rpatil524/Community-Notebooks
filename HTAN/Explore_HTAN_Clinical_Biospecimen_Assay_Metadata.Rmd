@@ -1,9 +1,10 @@
 ---
 title: "Explore HTAN Clinicial, Biospecimen, and Assay Metadata"
 author: "Vesteinn Þórsson, ISB (Vesteinn.Thorsson@isbscience.org)"
-date: "Edited 23 June, 2022"
+date: "Edited 24 June, 2022"
 output:
   html_document:
+    keep_md: true
     highlight: tango
     toc: true
     toc_float:
@@ -48,31 +49,23 @@ Running the BigQuery cells in this notebook requires a Google Cloud Project, ins
 
 ```{r}
 
-billing <- 'your_project_number' # Insert your project ID in the ''
-if (billing == 'your_project_number') {
-  print('Please update the project number with your Google Cloud Project')
+billing <- 'your_project_id' # Insert your project ID in the ''
+if (billing == 'your_project_id') {
+  print('Please update the project id with your Google Cloud Project')
 }
-
-# Connect to BigQuery
-#con <- dbConnect(
-#  bigrquery::bigquery(),
-#  project = billing,
-#)
-
-
 ```
 
 
 # 4. Analyzing Clinical Data in HTAN
 
-In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven contributions: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All of HTAN demographic data is collected into a single Demographics table (*htan-dcc.htan_isb_cgc.Demographics*) in Google BigQuery. The same is true of Diagnosis, and so on. 
+In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven contributions: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All of HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery. The same is true of Diagnosis, and so on. 
 
 ### 4.1 Demographics
 
 Let's look at demographic distributions in HTAN. We begin by constructing an SQL query (as a string), then sending that as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a few unnneeded bookkeeping columns.
 
 ```{r cache=TRUE}
-sql  <- "select * from `isb-project-zero.HTAN.clinical_tier1_demographics_current`"
+sql  <- "select * from `isb-cgc-bq.HTAN.clinical_tier1_demographics_current`"
 tb <- bq_project_query(billing, sql)
 demographics <- bq_table_download(tb)
 demographics <- demographics %>% select(-entityId,-Component,-`Data_Release`) %>% distinct()
@@ -130,7 +123,7 @@ demographics %>% ggplot(aes(y=Gender,fill=HTAN_Center)) +
 Let's take a look at annotated treatment in HTAN. This can be found in the Therapy table.
 
 ```{r cache=TRUE}
-sql  <- "select * from `isb-project-zero.HTAN.clinical_tier1_therapy_current`"
+sql  <- "select * from `isb-cgc-bq.HTAN.clinical_tier1_therapy_current`"
 tb <- bq_project_query(billing, sql)
 therapy <- bq_table_download(tb)
 therapy <- therapy %>% select(-entityId,-Component,-`Data_Release`) %>% distinct()
@@ -157,13 +150,13 @@ Biospecimen data in HTAN conforms to the [Biospecimen Data](https://data.humantu
 
 
 ```{r, cache=TRUE}
-sql <- "SELECT * FROM `isb-project-zero.HTAN.biospecimen_current`"
+sql <- "SELECT * FROM `isb-cgc-bq.HTAN.biospecimen_current`"
 tb <- bq_project_query(billing, sql)
 biospecimen <- bq_table_download(tb)
 biospecimen <- biospecimen %>% select(-entityId,-Component) 
 biospecimen <- mutate(biospecimen,HTAN_Participant_ID=unlist(map(HTAN_Biospecimen_ID,participant_from_other_htan_id)))
 ```
-Number of unique biospecimens : `r nrow(biospecimen)`, from `r length(unique(biospecimen$HTAN_Participant_ID))` participants. Of these,  `r length(which(biospecimen$HTAN_Parent_ID %in% unique(clinone$HTAN_Participant_ID)))` list an HTAN Participant ID as Parent ID.
+Number of unique biospecimens : `r nrow(biospecimen)`, from `r length(unique(biospecimen$HTAN_Participant_ID))` participants. Of these,  `r length(which(biospecimen$HTAN_Parent_ID %in% unique(demographics$HTAN_Participant_ID)))` list an HTAN Participant ID as Parent ID.
 
 Let's take a look at the various storage methods used for HTAN biospecimens
 
@@ -180,39 +173,39 @@ Annotated files for each assay type
 
 ```{r, cache=TRUE, echo=FALSE}
 sql <- "with X as ( 
-select Component, HTAN_Center from `isb-project-zero.HTAN.scRNAseq_level1_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.scRNAseq_level1_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.scRNAseq_level2_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.scRNAseq_level2_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.scRNAseq_level3_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.scRNAseq_level3_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.scRNAseq_level4_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.scRNAseq_level4_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.bulkRNAseq_level1_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.bulkRNAseq_level1_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.bulkRNAseq_level2_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.bulkRNAseq_level2_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.bulkRNAseq_level3_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.bulkRNAseq_level3_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.bulkWES_level1_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.bulkWES_level1_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.bulkWES_level1_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.bulkWES_level1_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.scATACseq_level1_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.scATACseq_level1_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.scATACseq_level3_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.scATACseq_level3_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.scATACseq_level4_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.scATACseq_level4_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.metabolomics_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.metabolomics_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.proteomics_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.proteomics_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.lipidomics_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.lipidomics_metadata_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.clinical_tier1_moleculartest_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.clinical_tier1_moleculartest_current`
 UNION ALL
-select Component, HTAN_Center from `isb-project-zero.HTAN.imaging_level2_metadata_current`
+select Component, HTAN_Center from `isb-cgc-bq.HTAN.imaging_level2_metadata_current`
 )
 select Component, HTAN_Center, count(*) as Count from X
 group by Component, HTAN_Center
