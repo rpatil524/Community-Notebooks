@@ -120,7 +120,7 @@ demographics_gender_reported %>% ggplot(aes(y=Gender,fill=HTAN_Center)) +
   geom_bar() + theme_classic() 
 ```
 
-#### 4.1.3 Treatment 
+### 4.2 Treatment 
 
 Let's take a look at annotated treatment in HTAN. This can be found in the Therapy table.
 
@@ -161,7 +161,7 @@ Number of unique biospecimens : `r nrow(biospecimen)`, from `r length(unique(bio
 
 As an example, let's take a look at the various storage methods used for HTAN biospecimens
 
-## Storage Methods
+### 5.1 Storage Methods
 ```{r}
 biospecimen_storage_noted <- biospecimen %>% filter(Storage_Method != "unknown" & Storage_Method != "Unknown")
 table(biospecimen_storage_noted$Storage_Method,biospecimen_storage_noted$HTAN_Center) %>% kable()

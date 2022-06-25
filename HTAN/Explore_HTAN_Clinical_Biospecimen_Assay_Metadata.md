@@ -51,6 +51,10 @@ if (billing == 'your_project_id') {
 }
 ```
 
+```
+## [1] "Please update the project id with your Google Cloud Project"
+```
+
 
 # 4. Analyzing Clinical Data in HTAN
 
@@ -171,7 +175,7 @@ demographics_gender_reported %>% ggplot(aes(y=Gender,fill=HTAN_Center)) +
 
 <img src="Explore_HTAN_Clinical_Biospecimen_Assay_Metadata_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
-#### 4.1.3 Treatment 
+### 4.2 Treatment 
 
 Let's take a look at annotated treatment in HTAN. This can be found in the Therapy table.
 
@@ -250,7 +254,7 @@ Number of unique biospecimens : 4789, from 1228 participants. Of these,  2280 li
 
 As an example, let's take a look at the various storage methods used for HTAN biospecimens
 
-## Storage Methods
+### 5.1 Storage Methods
 
 ```r
 biospecimen_storage_noted <- biospecimen %>% filter(Storage_Method != "unknown" & Storage_Method != "Unknown")
@@ -273,7 +277,7 @@ table(biospecimen_storage_noted$Storage_Method,biospecimen_storage_noted$HTAN_Ce
 
 # 6. Assay types in HTAN 
 
-HTAN has multiple assay types, probing cancers and the tumor microenvironment, at molecular, cellular, and tissue level, in bulk, single-cell, and spatial assays level. As described on the [HTAN Data Standards](https://data.humantumoratlas.org/standards) page, these are arranged into data "Levels" corresponding to bioinformatic processing steps. In BigQuery each assay type and level is collected into a single table. Combining all of them (the query is a little long to display, but can be seen in the code), we can tally the number of files available for each.
+HTAN has multiple assay types, probing cancers and the tumor microenvironment at molecular, cellular, and tissue level, using bulk, single-cell, and spatial assays. As described on the [HTAN Data Standards](https://data.humantumoratlas.org/standards) page, generated data are arranged into data "Levels" corresponding to bioinformatic processing steps. In BigQuery each assay type and level is collected into a single table. Combining all of them (the query is a little long to display, but can be seen in the code), we can tally the number of files available for each.
 
 
 There are a total of 25321 annotated assay files. This is the breakdown by center and Component, which corresponds to assay type and Level. 
