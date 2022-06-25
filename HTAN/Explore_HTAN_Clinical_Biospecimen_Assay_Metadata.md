@@ -15,7 +15,7 @@ output:
 
 # 1. Introduction & Overview 
 
-[HTAN](https://humantumoratlas.org/) is a National Cancer Institute (NCI)-funded Cancer Moonshot$^{SM}$ initiative to construct 3-dimensional atlases of the dynamic cellular, morphological, and molecular features of human cancers as they evolve from precancerous lesions to advanced disease. [Cell April 2020](https://www.sciencedirect.com/science/article/pii/S0092867420303469) 
+[HTAN](https://humantumoratlas.org/) is a National Cancer Institute (NCI)-funded Cancer Moonshot$^{SM}$ initiative to construct 3-dimensional atlases of the dynamic cellular, morphological, and molecular features of human cancers as they evolve from precancerous lesions to advanced disease ( [Cell April 2020](https://www.sciencedirect.com/science/article/pii/S0092867420303469) ).
 
 Clinical data, sample biospecimen data and assay files in HTAN have a rich set of annotations supplied by HTAN data contributors.  These annotations are made according to the [HTAN Data model](https://data.humantumoratlas.org/standards), a set of standards defined by the HTAN consortium. The supplied values of these attributes have been collected into comprehensive data tables on the cloud, using the Google BigQuery structure that is part of Google Cloud Project.
 
@@ -25,7 +25,7 @@ This example notebook illustrates how to make use of HTAN Google BigQuery metada
 
 ### 1.2 Inputs, Outputs, & Data
 
-The originating data can be found on the [HTAN Data Portal]([HTAN](https://data.humantumoratlas.org/)), and the compiled tables on ISB-CGC (location pending).
+The originating data can be found on the [HTAN Data Portal](https://data.humantumoratlas.org/), and the compiled tables are on the [Cancer Gateway in the Cloud](https://isb-cgc.appspot.com/).
 
 ### 1.3 Notes
 
@@ -41,20 +41,20 @@ suppressMessages(library(knitr))
 
 # 3. Google Authentication
 
-Running the BigQuery cells in this notebook requires a Google Cloud Project, instructions for creating a project can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console). The instance needs to be authorized to bill the project for queries. For more information on getting started in the cloud see 'Quick Start Guide to ISB-CGC' and alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
+Running the BigQuery cells in this notebook requires a Google Cloud Project. Instructions for creating a project can be found in [Google cloud documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console). The instance needs to be authorized to bill the project for queries. For more information on getting started see [Quick Start Guide to ISB-CGC](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowToGetStartedonISB-CGC.html). Alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
 
 
 ```r
 billing <- 'your_project_id' # Insert your project ID in the ''
-if (billing == 'your_project_number') {
-  print('Please update the project number with your Google Cloud Project')
+if (billing == 'your_project_id') {
+  print('Please update the project id with your Google Cloud Project')
 }
 ```
 
 
 # 4. Analyzing Clinical Data in HTAN
 
-In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven contributions: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All of HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery. The same is true of Diagnosis, and so on. 
+In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven components: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All of HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery. The same is true of Diagnosis, and so on. 
 
 ### 4.1 Demographics
 
@@ -69,7 +69,7 @@ demographics <- demographics %>% select(-entityId,-Component,-`Data_Release`) %>
 demographics$HTAN_Center <- gsub("HTAN ","",demographics$HTAN_Center)
 ```
 
-The number of rows of this table is the mumber of participants for which demographics is reported: nrow(demographics)=1218. The list of IDs of all HTAN Participants with demographic annotations is 
+The number of rows of this table is the number of participants for which demographics is reported: nrow(demographics)=1218. The list of IDs of all HTAN Participants with demographic annotations is 
 
 
 ```r
@@ -124,26 +124,23 @@ These are the attributes of the HTAN [Clinical Tier 1 Demographics Data Model](h
 Race is one of the Demographics attributes. Let's tabulate reported Race in HTAN and report fraction in percent. 
 
 ```r
-demographics %>% group_by(Race) %>% tally() %>% mutate(Percent=round(100*n/nrow(demographics),1)) %>% kable() 
+demographics_race_reported <- demographics %>% filter(Race != "unknown" & Race != "Unknown" & Race != "Not Reported" & Race != "not allowed to collect" )
+demographics_race_reported %>% group_by(Race) %>% tally() %>% mutate(Percent=round(100*n/nrow(demographics_race_reported),1)) %>% kable() 
 ```
 
 
 
 |Race                      |   n| Percent|
 |:-------------------------|---:|-------:|
-|asian                     |  21|     1.7|
-|black or african american | 217|    17.8|
-|not allowed to collect    |   1|     0.1|
-|Not Reported              |  74|     6.1|
+|asian                     |  21|     1.9|
+|black or african american | 217|    19.3|
 |Other                     |   2|     0.2|
-|unknown                   |   5|     0.4|
-|Unknown                   |  16|     1.3|
-|white                     | 882|    72.4|
+|white                     | 882|    78.6|
 
 Here is barchart of the distribution
 
 ```r
-demographics %>% ggplot(aes(y=Race,fill=HTAN_Center)) + 
+demographics_race_reported %>% ggplot(aes(y=Race,fill=HTAN_Center)) + 
   geom_bar() + theme_classic() 
 ```
 
@@ -155,20 +152,20 @@ Similarly, here is a barchart for Gender
 
 
 ```r
-demographics %>% group_by(Gender) %>% tally() %>% mutate(Percent=round(100*n/nrow(demographics),1)) %>% kable()
+demographics_gender_reported <- demographics %>% filter(Race != "Not Reported") 
+demographics_gender_reported %>% group_by(Gender) %>% tally() %>% mutate(Percent=round(100*n/nrow(demographics),1)) %>% kable()
 ```
 
 
 
-|Gender       |   n| Percent|
-|:------------|---:|-------:|
-|female       | 992|    81.4|
-|male         | 221|    18.1|
-|Not Reported |   5|     0.4|
+|Gender |   n| Percent|
+|:------|---:|-------:|
+|female | 955|    78.4|
+|male   | 189|    15.5|
 
 
 ```r
-demographics %>% ggplot(aes(y=Gender,fill=HTAN_Center)) + 
+demographics_gender_reported %>% ggplot(aes(y=Gender,fill=HTAN_Center)) + 
   geom_bar() + theme_classic() 
 ```
 
@@ -242,7 +239,6 @@ therapy_yes %>% group_by(HTAN_Center,Treatment_Type) %>% tally() %>% arrange(des
 Biospecimen data in HTAN conforms to the [Biospecimen Data](https://data.humantumoratlas.org/standard/biospecimen) standard, and all annotated values can be obtained in a single BigQuery table.
 
 
-
 ```r
 sql <- "SELECT * FROM `isb-cgc-bq.HTAN.biospecimen_current`"
 tb <- bq_project_query(billing, sql)
@@ -252,7 +248,7 @@ biospecimen <- mutate(biospecimen,HTAN_Participant_ID=unlist(map(HTAN_Biospecime
 ```
 Number of unique biospecimens : 4789, from 1228 participants. Of these,  2280 list an HTAN Participant ID as Parent ID.
 
-Let's take a look at the various storage methods used for HTAN biospecimens
+As an example, let's take a look at the various storage methods used for HTAN biospecimens
 
 ## Storage Methods
 
@@ -277,10 +273,16 @@ table(biospecimen_storage_noted$Storage_Method,biospecimen_storage_noted$HTAN_Ce
 
 # 6. Assay types in HTAN 
 
-Annotated files for each assay type
+HTAN has multiple assay types, probing cancers and the tumor microenvironment, at molecular, cellular, and tissue level, in bulk, single-cell, and spatial assays level. As described on the [HTAN Data Standards](https://data.humantumoratlas.org/standards) page, these are arranged into data "Levels" corresponding to bioinformatic processing steps. In BigQuery each assay type and level is collected into a single table. Combining all of them (the query is a little long to display, but can be seen in the code), we can tally the number of files available for each.
 
 
-There are a total of 27033 annotated assay files. This is the breakdown by center and Component, which corresponds to assay type and Level. 
+There are a total of 25321 annotated assay files. This is the breakdown by center and Component, which corresponds to assay type and Level. 
+
+
+```r
+apc_tb %>% kable()
+```
+
 
 
 |Component         |  HMS| OHSU| Stanford| WUSTL| Duke| Vanderbilt| MSK| TNP SARDANA| CHOP| HTAPP|  BU|
@@ -288,7 +290,8 @@ There are a total of 27033 annotated assay files. This is the breakdown by cente
 |BulkRNA-seqLevel1 |  444|    8|      338|   232|    0|          0|   0|           0|    0|     0|   0|
 |BulkRNA-seqLevel2 |  222|    2|        0|     0|    0|          0|   0|           0|    0|     0|   0|
 |BulkRNA-seqLevel3 |    1|    7|        0|     0|    0|          0|   0|           0|    0|     0|   0|
-|BulkWESLevel1     |    0|  288|      216|   416| 2348|        388|   0|           0|    0|     0|   0|
+|BulkWESLevel1     |    0|  144|      108|   208| 1174|        194|   0|           0|    0|     0|   0|
+|BulkWESLevel2     |    0|   19|        0|     0|    0|         97|   0|           0|    0|     0|   0|
 |ImagingLevel2     |  398|   61|        0|   150|  769|         30|  58|          71|    0|     0|   0|
 |MolecularTest     | 1025|  124|        0|     0|  340|         92| 491|           3|   30|   207|   0|
 |OtherAssay        |    0|    0|     1100|     0|    0|          0|   0|           0|    0|     0|   0|
