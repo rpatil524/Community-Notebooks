@@ -35,57 +35,110 @@ The tables correspond to HTAN Data Version 2.
 
 ```r
 suppressMessages(library(tidyverse))
+```
+
+```
+## Warning: package 'tidyverse' was built under R version 4.2.1
+```
+
+```
+## Warning: package 'tidyr' was built under R version 4.2.1
+```
+
+```
+## Warning: package 'forcats' was built under R version 4.2.1
+```
+
+```r
 suppressMessages(library(bigrquery))
+```
+
+```
+## Warning: package 'bigrquery' was built under R version 4.2.1
+```
+
+```r
 suppressMessages(library(knitr))
 ```
 
 # 3. Google Authentication
 
-Running the BigQuery cells in this notebook requires a Google Cloud Project. Instructions for creating a project can be found in [Google cloud documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console). The instance needs to be authorized to bill the project for queries. For more information on getting started see [Quick Start Guide to ISB-CGC](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowToGetStartedonISB-CGC.html). Alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
+Running the BigQuery cells in this notebook requires a Google Cloud Project. Instructions for creating a project can be
+found in [Google cloud documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
+The instance needs to be authorized to bill the project for queries. For more information on getting started see
+[Quick Start Guide to ISB-CGC](https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/HowToGetStartedonISB-CGC.html).
+Alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
 
 
 ```r
-billing <- 'your_project_id' # Insert your project ID in the ''
+billing <- 'htan-dcc' # Insert your project ID in the ''
 if (billing == 'your_project_id') {
   print('Please update the project id with your Google Cloud Project')
 }
 ```
 
-```
-## [1] "Please update the project id with your Google Cloud Project"
-```
-
 
 # 4. Analyzing Clinical Data in HTAN
 
-In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven components: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All of HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery. The same is true of Diagnosis, and so on. 
+In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven components: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery. The same is true of Diagnosis, and so on.
 
 ### 4.1 Demographics
 
-Let's look at demographic distributions in HTAN. We begin by constructing an SQL query (as a string), then sending that as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a few unnneeded bookkeeping columns.
+Let's look at demographic distributions in HTAN. We begin by constructing an SQL query (as a string), then sending that
+as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a few unnneeded bookkeeping columns.
 
 
 ```r
 sql  <- "select * from `isb-cgc-bq.HTAN.clinical_tier1_demographics_current`"
 tb <- bq_project_query(billing, sql)
+```
+
+```
+## ! Using an auto-discovered, cached token.
+```
+
+```
+##   To suppress this message, modify your code or options to clearly consent to
+##   the use of a cached token.
+```
+
+```
+##   See gargle's "Non-interactive auth" vignette for more details:
+```
+
+```
+##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
+```
+
+```
+## ℹ The bigrquery package is using a cached token for
+##   'dgibbs@systemsbiology.org'.
+```
+
+```r
 demographics <- bq_table_download(tb)
 demographics <- demographics %>% select(-entityId,-Component,-`Data_Release`) %>% distinct()
 demographics$HTAN_Center <- gsub("HTAN ","",demographics$HTAN_Center)
 ```
 
-The number of rows of this table is the number of participants for which demographics is reported: nrow(demographics)=1218. The list of IDs of all HTAN Participants with demographic annotations is 
+The number of rows of this table is the number of participants for which demographics is reported:
+nrow(demographics)=1218. The list of IDs of all HTAN Participants with demographic annotations is
 
 
 ```r
 participant_list <- demographics$HTAN_Participant_ID 
 ```
 
-There are length(participant_list)=1218 participants with demographic annotations.  Participants per HTAN center
+There are length(participant_list)=1218 participants with demographic annotations.
 
+Participants per HTAN center
 
 ```r
-participant_count_by_center <- demographics %>% select(HTAN_Center) %>% group_by(HTAN_Center) %>% tally()
-participant_count_by_center %>% kable()
+participant_count_by_center <- demographics %>%
+        select(HTAN_Center) %>%
+        group_by(HTAN_Center) %>%
+        tally()
+participant_count_by_center %>% kable() 
 ```
 
 
@@ -103,9 +156,13 @@ participant_count_by_center %>% kable()
 |Vanderbilt  |  92|
 |WUSTL       |  21|
 
-You will see some differences between this table and the case counts on the [HTAN Data Portal]([HTAN](https://data.humantumoratlas.org/)). (Some contributing factors: This notebook is fixed to HTAN data Release 2.0 while the portal has additional data; the portal case inclusion criterion does not correspond to this simple row count.)
 
-The number of columns in the Demographics table, ncol(demographics)=18, is the number of demographic attributes. The attributes are 
+You will see some differences between this table and the case counts on the [HTAN Data Portal]([HTAN](https://data.humantumoratlas.org/)).
+(Some contributing factors: This notebook is fixed to HTAN data Release 2.0 while the portal has additional data;
+the portal case inclusion criterion does not correspond to this simple row count.)
+
+The number of columns in the Demographics table, ncol(demographics)=18, is the number of demographic
+attributes. The attributes are
 
 ```r
 colnames(demographics)
@@ -122,14 +179,20 @@ colnames(demographics)
 ## [15] "Cause_of_Death"            "Cause_of_Death_Source"    
 ## [17] "Days_to_Death"             "HTAN_Center"
 ```
-These are the attributes of the HTAN [Clinical Tier 1 Demographics Data Model](https://data.humantumoratlas.org/standard/clinical), along with a few general attributes.
+These are the attributes of the HTAN [Clinical Tier 1 Demographics Data Model](https://data.humantumoratlas.org/standard/clinical),
+along with a few general attributes.
 
 #### 4.1.1 Race
-Race is one of the Demographics attributes. Let's tabulate reported Race in HTAN and report fraction in percent. 
+Race is one of the Demographics attributes. Let's tabulate reported Race in HTAN and report the fraction as a percent. 
 
 ```r
-demographics_race_reported <- demographics %>% filter(Race != "unknown" & Race != "Unknown" & Race != "Not Reported" & Race != "not allowed to collect" )
-demographics_race_reported %>% group_by(Race) %>% tally() %>% mutate(Percent=round(100*n/nrow(demographics_race_reported),1)) %>% kable() 
+demographics_race_reported <- demographics %>%
+        filter(Race != "unknown" & Race != "Unknown" & Race != "Not Reported" & Race != "not allowed to collect" )
+demographics_race_reported %>%
+        group_by(Race) %>%
+        tally() %>%
+        mutate(Percent=round(100*n/nrow(demographics_race_reported),1)) %>%
+        kable()
 ```
 
 
@@ -141,7 +204,7 @@ demographics_race_reported %>% group_by(Race) %>% tally() %>% mutate(Percent=rou
 |Other                     |   2|     0.2|
 |white                     | 882|    78.6|
 
-Here is barchart of the distribution
+Here is a barchart showing the distribution
 
 ```r
 demographics_race_reported %>% ggplot(aes(y=Race,fill=HTAN_Center)) + 
@@ -152,12 +215,16 @@ demographics_race_reported %>% ggplot(aes(y=Race,fill=HTAN_Center)) +
 
 #### 4.1.2 Gender
 
-Similarly, here is a barchart for Gender
+Similarly, here's a barchart showing the breakdown by Gender.
 
 
 ```r
 demographics_gender_reported <- demographics %>% filter(Race != "Not Reported") 
-demographics_gender_reported %>% group_by(Gender) %>% tally() %>% mutate(Percent=round(100*n/nrow(demographics),1)) %>% kable()
+demographics_gender_reported %>%
+        group_by(Gender) %>%
+        tally() %>%
+        mutate(Percent=round(100*n/nrow(demographics),1)) %>%
+        kable()
 ```
 
 
@@ -169,8 +236,10 @@ demographics_gender_reported %>% group_by(Gender) %>% tally() %>% mutate(Percent
 
 
 ```r
-demographics_gender_reported %>% ggplot(aes(y=Gender,fill=HTAN_Center)) + 
-  geom_bar() + theme_classic() 
+demographics_gender_reported %>%
+  ggplot(aes(y=Gender,fill=HTAN_Center)) +
+  geom_bar() +
+  theme_classic()
 ```
 
 <img src="Explore_HTAN_Clinical_Biospecimen_Assay_Metadata_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
@@ -192,15 +261,20 @@ Now filter this table to retrieve instances of annotated therapy.
 
 
 ```r
-therapy_yes <- therapy %>% filter((Treatment_or_Therapy == "Yes" | !is.na(.$Treatment_Type)) & Treatment_Type != "Not Reported" & Treatment_Type != "None")
+therapy_yes <- therapy %>%
+    filter((Treatment_or_Therapy == "Yes" | !is.na(.$Treatment_Type)) & Treatment_Type != "Not Reported" & Treatment_Type != "None")
 ```
+
 These are 483 in number, for 201 participants.
 
 
 By center and treatment type:
 
 ```r
-therapy_yes %>% group_by(HTAN_Center,Treatment_Type) %>% tally() %>% arrange(desc(n)) %>% kable()
+therapy_yes %>%
+  group_by(HTAN_Center,Treatment_Type) %>%
+  tally() %>% arrange(desc(n)) %>%
+  kable()
 ```
 
 
@@ -240,7 +314,8 @@ therapy_yes %>% group_by(HTAN_Center,Treatment_Type) %>% tally() %>% arrange(des
 
 # 5. Analyzing Biospecimen Data in HTAN
 
-Biospecimen data in HTAN conforms to the [Biospecimen Data](https://data.humantumoratlas.org/standard/biospecimen) standard, and all annotated values can be obtained in a single BigQuery table.
+Biospecimen data in HTAN conforms to the [Biospecimen Data](https://data.humantumoratlas.org/standard/biospecimen) standard,
+and all annotated values can be obtained in a single BigQuery table.
 
 
 ```r
@@ -250,7 +325,8 @@ biospecimen <- bq_table_download(tb)
 biospecimen <- biospecimen %>% select(-entityId,-Component) 
 biospecimen <- mutate(biospecimen,HTAN_Participant_ID=unlist(map(HTAN_Biospecimen_ID,participant_from_other_htan_id)))
 ```
-Number of unique biospecimens : 4789, from 1228 participants. Of these,  2280 list an HTAN Participant ID as Parent ID.
+Number of unique biospecimens : 4789, from 1228 participants.
+Of these,  2280 list an HTAN Participant ID as Parent ID.
 
 As an example, let's take a look at the various storage methods used for HTAN biospecimens
 
@@ -277,7 +353,11 @@ table(biospecimen_storage_noted$Storage_Method,biospecimen_storage_noted$HTAN_Ce
 
 # 6. Assay types in HTAN 
 
-HTAN has multiple assay types, probing cancers and the tumor microenvironment at molecular, cellular, and tissue level, using bulk, single-cell, and spatial assays. As described on the [HTAN Data Standards](https://data.humantumoratlas.org/standards) page, generated data are arranged into data "Levels" corresponding to bioinformatic processing steps. In BigQuery each assay type and level is collected into a single table. Combining all of them (the query is a little long to display, but can be seen in the code), we can tally the number of files available for each.
+HTAN data is generated from multiple assay types, probing cancers and the tumor microenvironment at molecular, cellular, and tissue level,
+using bulk, single-cell, and spatial assays. As described on the [HTAN Data Standards](https://data.humantumoratlas.org/standards)
+page, generated data are arranged into data "Levels" corresponding to bioinformatic processing steps. In BigQuery, each
+assay type and level is collected into a single table. Combining all of them (the query is a little long to display,
+but can be seen in the code), we can tally the number of files available for each.
 
 
 There are a total of 25321 annotated assay files. This is the breakdown by center and Component, which corresponds to assay type and Level. 
@@ -309,3 +389,5 @@ apc_tb %>% kable()
 # 7. Relevant Citations and Links 
 
 [Cell April 2020](https://www.sciencedirect.com/science/article/pii/S0092867420303469)
+
+
