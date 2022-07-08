@@ -35,29 +35,7 @@ The tables correspond to HTAN Data Version 2.
 
 ```r
 suppressMessages(library(tidyverse))
-```
-
-```
-## Warning: package 'tidyverse' was built under R version 4.2.1
-```
-
-```
-## Warning: package 'tidyr' was built under R version 4.2.1
-```
-
-```
-## Warning: package 'forcats' was built under R version 4.2.1
-```
-
-```r
 suppressMessages(library(bigrquery))
-```
-
-```
-## Warning: package 'bigrquery' was built under R version 4.2.1
-```
-
-```r
 suppressMessages(library(knitr))
 ```
 
@@ -91,31 +69,7 @@ as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a
 ```r
 sql  <- "select * from `isb-cgc-bq.HTAN.clinical_tier1_demographics_current`"
 tb <- bq_project_query(billing, sql)
-```
 
-```
-## ! Using an auto-discovered, cached token.
-```
-
-```
-##   To suppress this message, modify your code or options to clearly consent to
-##   the use of a cached token.
-```
-
-```
-##   See gargle's "Non-interactive auth" vignette for more details:
-```
-
-```
-##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
-```
-
-```
-## ℹ The bigrquery package is using a cached token for
-##   'dgibbs@systemsbiology.org'.
-```
-
-```r
 demographics <- bq_table_download(tb)
 demographics <- demographics %>% select(-entityId,-Component,-`Data_Release`) %>% distinct()
 demographics$HTAN_Center <- gsub("HTAN ","",demographics$HTAN_Center)
