@@ -49,7 +49,7 @@ Alternative authentication methods can be found in the [Google Documentation](ht
 
 
 ```r
-billing <- 'htan-dcc' # Insert your project ID in the ''
+billing <- 'your_project_id' # Insert your project ID in the ''
 if (billing == 'your_project_id') {
   print('Please update the project id with your Google Cloud Project')
 }
@@ -69,7 +69,6 @@ as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a
 ```r
 sql  <- "select * from `isb-cgc-bq.HTAN.clinical_tier1_demographics_current`"
 tb <- bq_project_query(billing, sql)
-
 demographics <- bq_table_download(tb)
 demographics <- demographics %>% select(-entityId,-Component,-`Data_Release`) %>% distinct()
 demographics$HTAN_Center <- gsub("HTAN ","",demographics$HTAN_Center)

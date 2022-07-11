@@ -1,7 +1,7 @@
 ---
 title: "Explore HTAN Clinicial, Biospecimen, and Assay Metadata"
 author: "Vesteinn Þórsson, ISB (Vesteinn.Thorsson@isbscience.org)"
-date: "Edited 24 June, 2022"
+date: "Edited 11 July, 2022"
 output:
   html_document:
     keep_md: true
@@ -53,7 +53,7 @@ Alternative authentication methods can be found in the [Google Documentation](ht
 
 ```{r}
 
-billing <- 'htan-dcc' # Insert your project ID in the ''
+billing <- 'your_project_id' # Insert your project ID in the ''
 if (billing == 'your_project_id') {
   print('Please update the project id with your Google Cloud Project')
 }
