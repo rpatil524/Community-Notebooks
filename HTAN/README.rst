@@ -25,7 +25,10 @@ There is a also a folder with templates, if you would like to create and share y
 Contents:
 
 **R Notebooks/Explore_HTAN_Clinical_Biospecimen_Assay_Metadata.Rmd** - illustrates how to make use of HTAN Google
-BigQuery metadata tables to tabulate and plot available HTAN clinical, biospecimen, and assay metadata
+BigQuery metadata tables to tabulate and plot available HTAN clinical, biospecimen, and assay metadata in R
+
+**Python Notebooks/Explore_HTAN_Clinical_Biospecimen_Assay_Metadata.Rmd** - illustrates how to make use of HTAN Google
+BigQuery metadata tables to tabulate and plot available HTAN clinical, biospecimen, and assay metadata in Python
 
 **Python Notebooks/Investigating_Single_Cell_HTAN_Data.ipynb** - illustrates how to query HTAN single-cell RNA
 sequencing data for cell content and gene expression
