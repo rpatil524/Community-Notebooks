@@ -1,7 +1,7 @@
 ---
 title: "Explore HTAN Clinicial, Biospecimen, and Assay Metadata"
 author: "Vesteinn Þórsson, ISB (Vesteinn.Thorsson@isbscience.org)"
-date: "Edited 24 June, 2022"
+date: "Edited 11 July, 2022"
 output:
   html_document:
     keep_md: true
@@ -35,8 +35,54 @@ The tables correspond to HTAN Data Version 2.
 
 ```r
 suppressMessages(library(tidyverse))
+```
+
+```
+## Warning: package 'tidyverse' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'tibble' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'tidyr' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'readr' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'purrr' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'dplyr' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'forcats' was built under R version 3.6.2
+```
+
+```r
 suppressMessages(library(bigrquery))
+```
+
+```
+## Warning: package 'bigrquery' was built under R version 3.6.2
+```
+
+```r
 suppressMessages(library(knitr))
+```
+
+```
+## Warning: package 'knitr' was built under R version 3.6.2
 ```
 
 # 3. Google Authentication
@@ -55,20 +101,48 @@ if (billing == 'your_project_id') {
 }
 ```
 
+```
+## [1] "Please update the project id with your Google Cloud Project"
+```
+
 
 # 4. Analyzing Clinical Data in HTAN
 
-In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven components: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery. The same is true of Diagnosis, and so on.
+In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven components: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery containing data across all [HTAN Centers](https://humantumoratlas.org/research-network). The same is true of Diagnosis, and so on.
 
 ### 4.1 Demographics
 
 Let's look at demographic distributions in HTAN. We begin by constructing an SQL query (as a string), then sending that
-as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a few unnneeded bookkeeping columns.
+as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a few unneeded bookkeeping columns.
 
 
 ```r
 sql  <- "select * from `isb-cgc-bq.HTAN.clinical_tier1_demographics_current`"
 tb <- bq_project_query(billing, sql)
+```
+
+```
+## ! Using an auto-discovered, cached token.
+```
+
+```
+##   To suppress this message, modify your code or options to clearly consent to
+##   the use of a cached token.
+```
+
+```
+##   See gargle's "Non-interactive auth" vignette for more details:
+```
+
+```
+##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
+```
+
+```
+## ℹ The bigrquery package is using a cached token for 'clau@systemsbiology.org'.
+```
+
+```r
 demographics <- bq_table_download(tb)
 demographics <- demographics %>% select(-entityId,-Component,-`Data_Release`) %>% distinct()
 demographics$HTAN_Center <- gsub("HTAN ","",demographics$HTAN_Center)
