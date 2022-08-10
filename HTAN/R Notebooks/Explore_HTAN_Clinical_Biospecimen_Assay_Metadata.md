@@ -1,7 +1,7 @@
 ---
 title: "Explore HTAN Clinicial, Biospecimen, and Assay Metadata"
 author: "Vesteinn Þórsson, ISB (Vesteinn.Thorsson@isbscience.org)"
-date: "Edited 24 June, 2022"
+date: "Edited 11 July, 2022"
 output:
   html_document:
     keep_md: true
@@ -58,12 +58,12 @@ if (billing == 'your_project_id') {
 
 # 4. Analyzing Clinical Data in HTAN
 
-In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven components: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery. The same is true of Diagnosis, and so on.
+In the [HTAN Data model](https://data.humantumoratlas.org/standards), [Tier 1 Clinical Data](https://data.humantumoratlas.org/standard/clinical) has seven components: Demographics, Diagnosis, Exposure, Family History, Follow Up, Molecular Test, and Therapy. All HTAN demographic data is collected into a single Demographics table (*isb-cgc-bq.HTAN.clinical_tier1_demographics_current*) in Google BigQuery containing data across all [HTAN Centers](https://humantumoratlas.org/research-network). The same is true of Diagnosis, and so on.
 
 ### 4.1 Demographics
 
 Let's look at demographic distributions in HTAN. We begin by constructing an SQL query (as a string), then sending that
-as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a few unnneeded bookkeeping columns.
+as query to HTAN Google BigQuery to retrieve the Demographics table. We remove a few unneeded bookkeeping columns.
 
 
 ```r
