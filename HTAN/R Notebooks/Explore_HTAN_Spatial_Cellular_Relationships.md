@@ -1,6 +1,6 @@
 ---
-title: "Explore Spatial Cellular and Molecular Relationsips"
-author: "Vesteinn Þórsson, (Vesteinn.Thorsson@isbscience.org)"
+title: "Explore Spatial Cellular and Molecular Relationsips in HTAN using Google BigQuery"
+author: "Vesteinn Þórsson, Institute for Systems Biology"
 date: "Created June 1, 2023"
 output:
   html_document:
@@ -17,21 +17,19 @@ output:
 
 # 1. Introduction & Overview 
 
-[HTAN](https://humantumoratlas.org/) is a National Cancer Institute (NCI)-funded Cancer MoonshotSM initiative to construct 3-dimensional atlases of the dynamic cellular, morphological, and molecular features of human cancers as they evolve from precancerous lesions to advanced disease. [Cell April 2020](https://www.sciencedirect.com/science/article/pii/S0092867420303469) 
+[HTAN](https://humantumoratlas.org/) is a National Cancer Institute (NCI)-funded Cancer Moonshot<sup>SM</sup> initiative to construct 3-dimensional atlases of the dynamic cellular, morphological, and molecular features of human cancers as they evolve from precancerous lesions to advanced disease. [Cell April 2020](https://www.sciencedirect.com/science/article/pii/S0092867420303469) 
 
-Many HTAN Research Centers employ highly-multiplexed imaging to gain understanding of cellular and molecular processes at work in the tumor microenvironment.  The study[Multiplexed 3D atlas of state transitions and immune interaction in colorectal cancer](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9), Lin et al 2023, uses multiplexed whole-slide imaging analysis to characterize intermixed and graded morphological and molecular features in human colorectal cancer samples, highlighting large-scale cancer-characteristic structural features.
+Many HTAN Research Centers employ highly-multiplexed imaging to gain understanding of molecular processes and interactions at work in the tumor microenvironment.  The study [Multiplexed 3D atlas of state transitions and immune interaction in colorectal cancer](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9), Lin et al, Cell, Vol. 186, p363, 2023, uses multiplexed whole-slide imaging analysis to characterize intermixed and graded morphological and molecular features in human colorectal cancer samples, highlighting large-scale cancer-characteristic structural features.
 
 This notebook shows one example of how these data can be accessed and analyzed using R programming software.
 
 ### 1.1 Goal
 
-This example notebook illustrates how to make use of HTAN Google BigQuery tables that contain information on cellular locations and the estimated expression of key marker protein based multiplexed imaging followed by cell segmentation. 
+This example notebook illustrates how to make use of HTAN Google BigQuery tables which contain information on cellular locations and the estimated expression of key marker proteins, based on multiplexed imaging and cell segmentation. 
 
 ### 1.2 Inputs, Outputs, & Data 
 
 The originating data can be found on the [HTAN Data Portal](https://data.humantumoratlas.org/), and the data tables are on the [Cancer Gateway in the Cloud](https://isb-cgc.appspot.com/).
-
-
 
 ### 1.3 Notes
 
@@ -49,11 +47,11 @@ suppressMessages(library(dbscan))
 
 # 3. Google Authentication
 
-Running the BigQuery cells in this notebook requires a Google Cloud Project, instructions for creating a project can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console). The instance needs to be authorized to bill the project for queries. For more information on getting started in the cloud see 'Quick Start Guide to ISB-CGC' and alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
+Running the BigQuery cells in this notebook requires a Google Cloud Project. Instructions for creating a project can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console). The instance needs to be authorized to bill the project for queries. For more information on getting started in the cloud see 'Quick Start Guide to ISB-CGC' and alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
 
 
 ```r
-billing <- 'my-project' # Insert your project ID in the ''
+billing <- 'htan-dcc' # Insert your project ID in the ''
 if (billing == 'my-projectr') {
   print('Please update the project number with your Google Cloud Project')
 }
@@ -61,23 +59,45 @@ if (billing == 'my-projectr') {
 
 # 4. Explore Spatial Cellular and Molecular Relationsips
 
-We will focus on sample CRC1, tissue section 97, described in the manuscript in detail (see e.g. Figure 1C). This section is HTAN biospecimen `HTA13_1_101`. An excellent interactive introduction to multiplex imaging data for this biospecimen is provided on InsertSiteHere.  The data for this and the other CRC1 tissue sections is found in BigQuery table `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`, which contains estimated marker intensity after segmentation using three kinds of masks. Here we will use the mask "cellRingMask". The tables also contain data on location of geometry of segmented regions and here we will use the centroids `X_centroid` and `Y_centroid`.
+We will focus on imaging of tissue section 97 of sample CRC1 described in [the manuscript](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9) in detail (see e.g. Figure 1C). This tissue section is HTAN biospecimen `HTA13_1_101`. An excellent [interactive guide](https://www.cycif.org/data/lin-wang-coy-2021/osd-crc-case-1-ffpe-cycif-stack.html#s=0#w=0#g=0#m=-1#a=-100_-100#v=0.5_0.5_0.5#o=-100_-100_1_1#p=Q) to the to multiplex imaging data for this biospecimen has been made available.  The data for this and the other CRC1 tissue sections is found in Google BigQuery table `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`, which contains estimated marker intensity following cell segmentation using three kinds of masks. Here we will use the mask "cellRingMask". The tables also contain data on location of geometry of segmented cells. Here we will use the cell locations in terms of the centroids `X_centroid` and `Y_centroid`.
 
 ### 4.1 Investigate cell locations 
 
 We begin by querying for the coordinates of the centroids for the relevant tissue slice `HTA13_1_101`.
 
 ```r
-if (FALSE){
 sql <- "SELECT X_centroid, Y_centroid FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'"
 tb <- bq_project_query(billing, sql)
-df <- bq_table_download(tb)
-}
+```
 
-df <- read_csv("/Users/vthorsson/HTAN/HMS/coords.csv",show_col_types = FALSE)
+```
+## ! Using an auto-discovered, cached token.
+```
+
+```
+##   To suppress this message, modify your code or options to clearly consent to
+##   the use of a cached token.
+```
+
+```
+##   See gargle's "Non-interactive auth" vignette for more details:
+```
+
+```
+##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
+```
+
+```
+## ℹ The bigrquery package is using a cached token for
+##   'thorsson@systemsbiology.org'.
+```
+
+```r
+df <- bq_table_download(tb)
+
 df <- df %>% rename(X="X_centroid",Y="Y_centroid")
 ```
-This gives a table as an R data frame. One row per cell, with X and Y centroid coordinates as columns.
+This gives a table as an R data frame. Each row corresponds to once cell, and columns are the corresponding X and Y coordinates.
 
 How many cells are there? 
 
@@ -88,34 +108,49 @@ nrow(df)
 ```
 ## [1] 1287131
 ```
-Now let's do a scatter plot of the centroids. (This may take a few seconds as there are a lot of cells!)
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
-
-OK so now we see all the cell locations, but the appearance is not visibly consistent with manuscript images (Figure 1C, e.g).
-
-This can be improved with a horizontal flip:
-
+Now let's do a scatter plot of the centroids. (With over a million cells (!), this will take a few seconds.)
 
 ```r
-df <- df %>% mutate(Y_flipped=-Y+min(Y)+max(Y))
+ggplot(df, aes(X,Y)) +
+ geom_point(size=0.01) +
+  theme_classic()
+```
+
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+
+X and Y coordinates are in units of pixels. To see how these relate to physical units, enter `HTA13_1_101` in file search on the [HTAN Data Portal](https://data.humantumoratlas.org/explore?tab=file#), "View Details" for the Image you will see that one pixel is 0.65 micrometers (wide and high) and that the originating image is 26,139 x 27,120 pixels, thus 2.6 mm x 1.8mm.
+
+OK, so now we see all the cell locations, but the overall appearance is not visibly consistent with manuscript images (Figure 1C, e.g).
+
+This can be improved with a simple horizontal flip:
+
+```r
+Y_total_pixels <- 27120
+df <- df %>% mutate(Y_flipped=-Y+Y_total_pixels)
+```
+
+Replot
+
+```r
+ggplot(df, aes(X,Y_flipped)) +
+ geom_point(size=0.01) + ylab("Y") +
+  ggtitle("Cellular locations for biospecimen \n HTA13_1_101,CRC1 slice 97") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_classic()
 ```
 
 <img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
-This looks better. Let's use these Y coordinates from now on.
+This looks better. Let's use these transformed Y coordinates from now on.
 
-### 4.2 Which areas are tumor rich?
+### 4.2 Which regions are tumor rich?
 
-Now we augment the query to include the marker for keratin: `Keratin_570_cellRingMask`.
+Keratin is used as marker for tumor cells in this study. We augment the table query to include the marker for keratin: `Keratin_570_cellRingMask`.
 
 
 ```r
-if (FALSE){
 sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'"
 tb <- bq_project_query(billing, sql)
 df <- bq_table_download(tb)
-}
-
-df <- read_csv("/Users/vthorsson/HTAN/HMS/coords_keratin.csv",show_col_types = FALSE)
 df <- df %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
 df <- df %>% mutate(Y_flipped=-Y+min(Y)+max(Y)) %>% select(-Y) %>% rename(Y=Y_flipped)  
 ```
@@ -124,7 +159,7 @@ What is the distribution of Keratin values over all cells?
 
 ```r
 ggplot(df,aes(Keratin)) + geom_histogram(binwidth = 1000) +
-  ggtitle("Distribution of Keratin Values") +
+  ggtitle("Distribution of Keratin in Cells for HTA13_1_101") +
   theme_classic()
 ```
 
@@ -135,69 +170,128 @@ Let's threshold the Keratin as being positive above the 3rd quartile.
 third.quartile <- summary(df$Keratin)[["3rd Qu."]]
 df <- df %>% mutate(Keratin_status = c("Neg","Pos")[(Keratin > third.quartile)+1])
 ```
-This has generated a new categorical variable, `Keratin_status`, designated as Low or High for every cell. A more sophisticated thresholding scheme is employed in the manuscript and described in the coresponding methods section.
+This has generated a new categorical variable, `Keratin_status`, designated as Low or High for every cell. A more sophisticated thresholding scheme is employed in the [manuscript](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9) and described in the corresponding methods section.
 
 Where are the Keratin-high cells on the image?
+
+```r
+ggplot(df, aes(X,Y)) +
+ geom_point(aes(color=Keratin_status),size=0.3,show.legend = FALSE) +   
+  scale_color_manual(values=c("gray90","yellow")) +
+  ggtitle("Keratin-high regions in biospecimen \n HTA13_1_101,CRC1 slice 97") +
+  theme_classic()
+```
+
 <img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 This is consistent with keratin-rich regions described in the manuscript (see manuscript Figure 1C).
 
-### 4.3 Correlations
-The manuscript describes how spatial correlation functions are calculated for a pair of cell markers. Examining this correlation as a function of distance yields estimates of the spatial extent of cancer-associated cellular structures. Distance scales with cellular neighborhoods expressed as number of neighbors. As an example we calculate keratin correlation for 10 nearest neighbhors (in the manuscript methods C_AB(r), with A=Keratin,B=Keratin, and r=10)
+### 4.3 Spatial Neighbhorhoods
+Spatial neighborhoods are used in the analysis of tissue imaging to yield insight into how different tissue regions compare in cellular content, cellular function, and cellular interactions. A neighborhood is usually defined in terms of specified geometric extent, e.g cells within a specified radial distance from the center of a reference cell, or in terms of a set of nearest neighbors of a designated number ("100 nearest neighbhors" e.g.).
 
-As the pairwise distance calculation is resource intenstive for the entire collection of 1.2 million cells, we limit the illustration to square-shaped subregion.
+As an example we identify the 10 nearest neighbhors for each cell. As the pairwise distance calculation is resource intenstive for the entire collection of 1.2 million cells, we limit the illustration to square-shaped subregion.
 
 Definition of subregion 
 
 ```r
 df_small <- df %>% filter(X>5000) %>% filter(X<7500) %>% filter(Y>5000) %>% filter(Y<7500)
 ```
-There are 27963 cells within this region. 
 
-Keratin high low values in the region
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
+
+```r
+sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask 
+FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'
+AND X_centroid > 5000 AND X_centroid < 7500
+AND Y_centroid > 20000 AND Y_centroid < 22500"
+tb <- bq_project_query(billing, sql)
+```
+
+```
+## ! Using an auto-discovered, cached token.
+```
+
+```
+##   To suppress this message, modify your code or options to clearly consent to
+##   the use of a cached token.
+```
+
+```
+##   See gargle's "Non-interactive auth" vignette for more details:
+```
+
+```
+##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
+```
+
+```
+## ℹ The bigrquery package is using a cached token for
+##   'thorsson@systemsbiology.org'.
+```
+
+```r
+df_small <- bq_table_download(tb)
+df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
+```
+
+There are 26229 cells within this region. 
 
 Keratin values in the region
 <img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
-The first step is to identify the 10 nearest neighbors of each cell. We calculate all pairwise distances and then find the (row) indices of the nearest neighbors. 
+The first step is to identify the 10 nearest neighbors of each cell. To do so we calculate all pairwise distances among cells. We then find the (row) indices of the nearest neighbors. 
 
 ```r
-j <- rdist::pdist(df_small[,c("X","Y")])
-jj <- as.dist(j)
-b <- dbscan::kNN(jj,10)
+k <- 10
+point_distances <- rdist::pdist(df_small[,c("X","Y")])
+point_distances_dist_object <- as.dist(point_distances)
+nearest_neighbors <- dbscan::kNN(point_distances_dist_object,k)
 ```
 
 
-10 nearest neighbors of the first data point, and the keratin values thereof, and their mean
+```r
+kable(head(nearest_neighbors$id))
+```
 
-Now we can march through the cells, get the neighbors of each, and calculate the mean value of the neighbors, and that value to our data frame.
+
+
+|    1|    2|    3|    4|    5|    6|    7|    8|    9|   10|
+|----:|----:|----:|----:|----:|----:|----:|----:|----:|----:|
+| 1521|   50| 1963| 1827| 1952| 1725| 1305|  433|  564|   13|
+|   75|  533| 1907| 1091|  148| 1934|  361| 1334| 1822|  975|
+| 1066| 1205| 1988|  641| 1203| 1586|  937|  326|  726| 1432|
+| 1501| 1952|  799| 1765|   13| 1955| 1360| 1610| 1535|   50|
+|  272|  517| 1036| 1282|  154| 1100|  165| 1997|  104|  409|
+|  625|  753| 1880| 1794|  310| 1081| 1082| 1727|  921|  758|
+The top row shows the (row) indices of the nearest neighbors to the first cell in the data frame, and so on.
+
+### 4.4 Spatial correlations among cells
+The manuscript describes how spatial correlation functions are calculated for a pair of cell markers. Examining this correlation as a function of distance yields estimates of the spatial extent of cancer-associated cellular structures. As an example we calculate keratin-keratin correlation for 10 nearest neighbhors (in the manuscript methods this corresponds to C_AB(r), with A=Keratin,B=Keratin, and r=10)
+
+Now we can march through the cells, get the neighbors of each, and calculate the mean Keratin value of the neighbors, and add that value to our data frame.
 
 ```r
 collect <- numeric()
 for (index in 1:nrow(df_small) ){
   ##Mean of Neighbors
-  meanz <- df_small[b$id[index,],"Keratin"] %>% pluck("Keratin") %>% mean()
+  meanz <- df_small[nearest_neighbors$id[index,],"Keratin"] %>% pluck("Keratin") %>% mean()
   collect <- c(collect,meanz)
 }
 df_small <- df_small %>% add_column(Keratin_10NN_mean=collect)
 ```
 
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
+This shows the relation between the cell values and the mean value of neighbors
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
 
-
+We can now calculate the correlation.
 
 ```r
-df_small %>% summarize(cor(Keratin,Keratin_10NN_mean))
+df_small %>% summarize(cor(Keratin,Keratin_10NN_mean)) %>% pluck(1)
 ```
 
 ```
-## # A tibble: 1 × 1
-##   `cor(Keratin, Keratin_10NN_mean)`
-##                               <dbl>
-## 1                             0.806
+## [1] 0.8469181
 ```
-The correlation is fairly high and in line with results shown in the manuscript (Figure 2B).
+The correlation is fairly high and in line with results shown in the manuscript (Figure 2B). To calculate the correlation length, one needs to look at this for different k, correpsonding to varying distance, as described in the manuscript.
 
 
 # 5. Citations and Links
