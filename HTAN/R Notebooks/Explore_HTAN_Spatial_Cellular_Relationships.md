@@ -118,14 +118,26 @@ ggplot(df, aes(X,Y)) +
 
 <img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
-X and Y coordinates are in units of pixels. To see how these relate to physical units, enter `HTA13_1_101` in file search on the [HTAN Data Portal](https://data.humantumoratlas.org/explore?tab=file#), "View Details" for the Image you will see that one pixel is 0.65 micrometers (wide and high) and that the originating image is 26,139 x 27,120 pixels, thus 2.6 mm x 1.8mm.
+X and Y coordinates enumerate pixels in the originating image. To see how pixels relate to physical units, enter `HTA13_1_101` in file search on the [HTAN Data Portal](https://data.humantumoratlas.org/explore?tab=file#), "View Details" for the Image you will see that one pixel is 0.65 micrometers (wide and high) and that the originating image is 26,139 pixels x 27,120 pixels.
+
+Pixels and physical dimensions
+
+```r
+micron_per_pixel=0.65
+X_total_pixels=26139
+Y_total_pixels=27120
+total_megapixels=X_total_pixels*Y_total_pixels/10^6
+X_total_physical_dimension_mm=X_total_pixels*micron_per_pixel/10^3
+Y_total_physical_dimension_mm=Y_total_pixels*micron_per_pixel/10^3
+whole_slide_dimension_mm_squared=X_total_physical_dimension_mm * Y_total_physical_dimension_mm
+```
+The whole slide is image is `total_megapixels`=708.88968 Megapixels, and is `X_total_physical_dimension_mm`=16.99035 mm wide and `Y_total_physical_dimension_mm`=17.628 mm high.
 
 OK, so now we see all the cell locations, but the overall appearance is not visibly consistent with manuscript images (Figure 1C, e.g).
 
 This can be improved with a simple horizontal flip:
 
 ```r
-Y_total_pixels <- 27120
 df <- df %>% mutate(Y_flipped=-Y+Y_total_pixels)
 ```
 
@@ -139,7 +151,7 @@ ggplot(df, aes(X,Y_flipped)) +
   theme_classic()
 ```
 
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 This looks better. Let's use these transformed Y coordinates from now on.
 
 ### 4.2 Which regions are tumor rich?
@@ -150,6 +162,35 @@ Keratin is used as marker for tumor cells in this study. We augment the table qu
 ```r
 sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'"
 tb <- bq_project_query(billing, sql)
+```
+
+```
+## ! Using an auto-discovered, cached token.
+```
+
+```
+##   To suppress this message, modify your code or options to clearly consent to
+##   the use of a cached token.
+```
+
+```
+##   See gargle's "Non-interactive auth" vignette for more details:
+```
+
+```
+##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
+```
+
+```
+## ℹ The bigrquery package is using a cached token for
+##   'thorsson@systemsbiology.org'.
+```
+
+```
+## Auto-refreshing stale OAuth token.
+```
+
+```r
 df <- bq_table_download(tb)
 df <- df %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
 df <- df %>% mutate(Y_flipped=-Y+min(Y)+max(Y)) %>% select(-Y) %>% rename(Y=Y_flipped)  
@@ -163,7 +204,7 @@ ggplot(df,aes(Keratin)) + geom_histogram(binwidth = 1000) +
   theme_classic()
 ```
 
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 Let's threshold the Keratin as being positive above the 3rd quartile.
 
 ```r
@@ -182,20 +223,18 @@ ggplot(df, aes(X,Y)) +
   theme_classic()
 ```
 
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
 This is consistent with keratin-rich regions described in the manuscript (see manuscript Figure 1C).
 
 ### 4.3 Spatial Neighbhorhoods
 Spatial neighborhoods are used in the analysis of tissue imaging to yield insight into how different tissue regions compare in cellular content, cellular function, and cellular interactions. A neighborhood is usually defined in terms of specified geometric extent, e.g cells within a specified radial distance from the center of a reference cell, or in terms of a set of nearest neighbors of a designated number ("100 nearest neighbhors" e.g.).
 
-As an example we identify the 10 nearest neighbhors for each cell. As the pairwise distance calculation is resource intenstive for the entire collection of 1.2 million cells, we limit the illustration to square-shaped subregion.
+As an example we identify the 10 nearest neighbhors for each cell. As the pairwise distance calculation is resource intenstive for the entire collection of 1.2 million cells, we limit the illustration to square of 2500 pixels each side, or 1625 micrometers per side.
+
+square-shaped subregion of size 2500 pixels 
 
 Definition of subregion 
-
-```r
-df_small <- df %>% filter(X>5000) %>% filter(X<7500) %>% filter(Y>5000) %>% filter(Y<7500)
-```
 
 
 ```r
@@ -262,6 +301,7 @@ kable(head(nearest_neighbors$id))
 | 1501| 1952|  799| 1765|   13| 1955| 1360| 1610| 1535|   50|
 |  272|  517| 1036| 1282|  154| 1100|  165| 1997|  104|  409|
 |  625|  753| 1880| 1794|  310| 1081| 1082| 1727|  921|  758|
+
 The top row shows the (row) indices of the nearest neighbors to the first cell in the data frame, and so on.
 
 ### 4.4 Spatial correlations among cells
