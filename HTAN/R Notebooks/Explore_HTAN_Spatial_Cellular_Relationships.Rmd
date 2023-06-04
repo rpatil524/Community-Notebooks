@@ -116,6 +116,16 @@ ggplot(df, aes(X,Y_flipped)) +
 ```
 This looks better. Let's use these transformed Y coordinates from now on.
 
+Where is the greatest density of cells?
+```{r fig.width=6, fig.height=5}
+d <- ggplot(df,aes(X,Y_flipped))
+d + geom_hex() + ylab("Y") +
+  ggtitle("Cellular density for biospecimen \n HTA13_1_101,CRC1 slice 97") +
+  theme_classic()
+```
+
+
+
 ### 4.2 Which regions are tumor rich?
 
 Keratin is used as marker for tumor cells in this study. We augment the table query to include the marker for keratin: `Keratin_570_cellRingMask`.
@@ -174,7 +184,7 @@ df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=
 There are `r nrow(df_small)` cells within this region. 
 
 Keratin values in the region
-```{r echo=F, fig.width=5, fig.height=5}
+```{r echo=F, fig.width=6, fig.height=5}
 ggplot(df_small, aes(X,Y)) +
  geom_point(aes(color=Keratin),size=0.3) +   
   theme_classic()
@@ -220,7 +230,6 @@ We can now calculate the correlation.
 df_small %>% summarize(cor(Keratin,Keratin_10NN_mean)) %>% pluck(1)
 ```
 The correlation is fairly high and in line with results shown in the manuscript (Figure 2B). To calculate the correlation length, one needs to look at this for different k, correpsonding to varying distance, as described in the manuscript.
-
 
 # 5. Citations and Links
 

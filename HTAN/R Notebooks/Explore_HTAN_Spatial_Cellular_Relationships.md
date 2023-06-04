@@ -154,6 +154,19 @@ ggplot(df, aes(X,Y_flipped)) +
 <img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 This looks better. Let's use these transformed Y coordinates from now on.
 
+Where is the greatest density of cells?
+
+```r
+d <- ggplot(df,aes(X,Y_flipped))
+d + geom_hex() + ylab("Y") +
+  ggtitle("Cellular density for biospecimen \n HTA13_1_101,CRC1 slice 97") +
+  theme_classic()
+```
+
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+
+
+
 ### 4.2 Which regions are tumor rich?
 
 Keratin is used as marker for tumor cells in this study. We augment the table query to include the marker for keratin: `Keratin_570_cellRingMask`.
@@ -186,10 +199,6 @@ tb <- bq_project_query(billing, sql)
 ##   'thorsson@systemsbiology.org'.
 ```
 
-```
-## Auto-refreshing stale OAuth token.
-```
-
 ```r
 df <- bq_table_download(tb)
 df <- df %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
@@ -204,7 +213,7 @@ ggplot(df,aes(Keratin)) + geom_histogram(binwidth = 1000) +
   theme_classic()
 ```
 
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 Let's threshold the Keratin as being positive above the 3rd quartile.
 
 ```r
@@ -223,7 +232,7 @@ ggplot(df, aes(X,Y)) +
   theme_classic()
 ```
 
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 This is consistent with keratin-rich regions described in the manuscript (see manuscript Figure 1C).
 
@@ -243,31 +252,6 @@ FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA1
 AND X_centroid > 5000 AND X_centroid < 7500
 AND Y_centroid > 20000 AND Y_centroid < 22500"
 tb <- bq_project_query(billing, sql)
-```
-
-```
-## ! Using an auto-discovered, cached token.
-```
-
-```
-##   To suppress this message, modify your code or options to clearly consent to
-##   the use of a cached token.
-```
-
-```
-##   See gargle's "Non-interactive auth" vignette for more details:
-```
-
-```
-##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
-```
-
-```
-## ℹ The bigrquery package is using a cached token for
-##   'thorsson@systemsbiology.org'.
-```
-
-```r
 df_small <- bq_table_download(tb)
 df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
 ```
@@ -275,7 +259,7 @@ df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=
 There are 26229 cells within this region. 
 
 Keratin values in the region
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 The first step is to identify the 10 nearest neighbors of each cell. To do so we calculate all pairwise distances among cells. We then find the (row) indices of the nearest neighbors. 
 
@@ -320,7 +304,7 @@ df_small <- df_small %>% add_column(Keratin_10NN_mean=collect)
 ```
 
 This shows the relation between the cell values and the mean value of neighbors
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" />
 
 We can now calculate the correlation.
 
@@ -332,7 +316,6 @@ df_small %>% summarize(cor(Keratin,Keratin_10NN_mean)) %>% pluck(1)
 ## [1] 0.8469181
 ```
 The correlation is fairly high and in line with results shown in the manuscript (Figure 2B). To calculate the correlation length, one needs to look at this for different k, correpsonding to varying distance, as described in the manuscript.
-
 
 # 5. Citations and Links
 
