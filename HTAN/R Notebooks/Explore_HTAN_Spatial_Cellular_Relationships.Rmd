@@ -287,14 +287,16 @@ df_small <- df_small %>% mutate(Phenotype=phenotype(Keratin,CD45))
 ```
  
 Let's see how the cell phentoypes are distributed in the region.
-```{r fig.width=5, fig.height=5}
+```{r fig.width=6, fig.height=5}
 ggplot(df_small, aes(X,Y)) +
  geom_point(aes(color=Phenotype),size=0.3) +
   scale_color_manual(values=c("blue","magenta","gray90","yellow")) +
   theme_classic()
 ```
 
-We can find tumor cells that have a predominance of immune cells in their neighborhood.
+We can find tumor cells that have a predominance of immune cells in their neighborhood. 
+
+Suggested exercise: Use nearest neighbor matrix above to find which tumor cells have the greatest number of immune cells nearby.  Plot those . 
 
 # 5. Citations and Links
 

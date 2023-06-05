@@ -175,31 +175,6 @@ Keratin is used as marker for tumor cells in this study. We augment the table qu
 ```r
 sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'"
 tb <- bq_project_query(billing, sql)
-```
-
-```
-## ! Using an auto-discovered, cached token.
-```
-
-```
-##   To suppress this message, modify your code or options to clearly consent to
-##   the use of a cached token.
-```
-
-```
-##   See gargle's "Non-interactive auth" vignette for more details:
-```
-
-```
-##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
-```
-
-```
-## ℹ The bigrquery package is using a cached token for
-##   'thorsson@systemsbiology.org'.
-```
-
-```r
 df <- bq_table_download(tb)
 df <- df %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
 df <- df %>% mutate(Y_flipped=-Y+min(Y)+max(Y)) %>% select(-Y) %>% rename(Y=Y_flipped)  
@@ -250,31 +225,6 @@ FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA1
 AND X_centroid > 5000 AND X_centroid < 7500
 AND Y_centroid > 20000 AND Y_centroid < 22500"
 tb <- bq_project_query(billing, sql)
-```
-
-```
-## ! Using an auto-discovered, cached token.
-```
-
-```
-##   To suppress this message, modify your code or options to clearly consent to
-##   the use of a cached token.
-```
-
-```
-##   See gargle's "Non-interactive auth" vignette for more details:
-```
-
-```
-##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
-```
-
-```
-## ℹ The bigrquery package is using a cached token for
-##   'thorsson@systemsbiology.org'.
-```
-
-```r
 df_small <- bq_table_download(tb)
 df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
 ```
@@ -425,7 +375,9 @@ ggplot(df_small, aes(X,Y)) +
 
 <img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" />
 
-We can find tumor cells that have a predominance of immune cells in their neighborhood.
+We can find tumor cells that have a predominance of immune cells in their neighborhood. 
+
+Suggested exercise: Use nearest neighbor matrix above to find which tumor cells have the greatest number of immune cells nearby.  Plot those . 
 
 # 5. Citations and Links
 
