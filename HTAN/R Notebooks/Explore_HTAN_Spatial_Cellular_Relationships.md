@@ -59,7 +59,7 @@ if (billing == 'my-projectr') {
 
 # 4. Explore Spatial Cellular and Molecular Relationsips
 
-We will focus on imaging of tissue section 97 of sample CRC1 described in [the manuscript](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9) in detail (see e.g. Figure 1C). This tissue section is HTAN biospecimen `HTA13_1_101`. An excellent [interactive guide](https://www.cycif.org/data/lin-wang-coy-2021/osd-crc-case-1-ffpe-cycif-stack.html#s=0#w=0#g=0#m=-1#a=-100_-100#v=0.5_0.5_0.5#o=-100_-100_1_1#p=Q) to the to multiplex imaging data for this biospecimen has been made available.  The data for this and the other CRC1 tissue sections is found in Google BigQuery table `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`, which contains estimated marker intensity following cell segmentation using three kinds of masks. Here we will use the mask "cellRingMask". The tables also contain data on location of geometry of segmented cells. Here we will use the cell locations in terms of the centroids `X_centroid` and `Y_centroid`.
+We will focus on imaging of tissue section 97 of sample CRC1 described in [the manuscript](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9) in detail (see e.g. Figure 1C). This tissue section is HTAN biospecimen `HTA13_1_101`. An excellent [interactive guide](https://www.cycif.org/data/lin-wang-coy-2021/osd-crc-case-1-ffpe-cycif-stack.html#s=0#w=0#g=0#m=-1#a=-100_-100#v=0.5_0.5_0.5#o=-100_-100_1_1#p=Q) to the to multiplex imaging data for this biospecimen is available.  The data for this and the other CRC1 tissue sections is found in Google BigQuery table `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`. This table contains estimated marker intensity following cell segmentation using three kinds of masks. Here we will use the mask "cellRingMask". The tables also contain data on location of geometry of segmented cells. Here we will use the cell locations in terms of the centroids `X_centroid` and `Y_centroid`.
 
 ### 4.1 Investigate cell locations 
 
@@ -236,14 +236,12 @@ ggplot(df, aes(X,Y)) +
 
 This is consistent with keratin-rich regions described in the manuscript (see manuscript Figure 1C).
 
-### 4.3 Spatial Neighbhorhoods
+### 4.3 Spatial neighbhorhoods
 Spatial neighborhoods are used in the analysis of tissue imaging to yield insight into how different tissue regions compare in cellular content, cellular function, and cellular interactions. A neighborhood is usually defined in terms of specified geometric extent, e.g cells within a specified radial distance from the center of a reference cell, or in terms of a set of nearest neighbors of a designated number ("100 nearest neighbhors" e.g.).
 
-As an example we identify the 10 nearest neighbhors for each cell. As the pairwise distance calculation is resource intenstive for the entire collection of 1.2 million cells, we limit the illustration to square of 2500 pixels each side, or 1625 micrometers per side.
+As an example we find a neighborhood defined in terms of the 10 nearest neighbors for each cell. Since the pairwise distance calculation is resource intensive we limit the illustration to square subregion of 2500 pixels each side, or 1625 micrometers per side. 
 
-square-shaped subregion of size 2500 pixels 
-
-Definition of subregion 
+We now grab the data for a spatial subregion using BigQuery (which will be a faster query than for the whole slide.)
 
 
 ```r
@@ -252,16 +250,49 @@ FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA1
 AND X_centroid > 5000 AND X_centroid < 7500
 AND Y_centroid > 20000 AND Y_centroid < 22500"
 tb <- bq_project_query(billing, sql)
+```
+
+```
+## ! Using an auto-discovered, cached token.
+```
+
+```
+##   To suppress this message, modify your code or options to clearly consent to
+##   the use of a cached token.
+```
+
+```
+##   See gargle's "Non-interactive auth" vignette for more details:
+```
+
+```
+##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
+```
+
+```
+## ℹ The bigrquery package is using a cached token for
+##   'thorsson@systemsbiology.org'.
+```
+
+```r
 df_small <- bq_table_download(tb)
 df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
 ```
 
-There are 26229 cells within this region. 
+
+```r
+df <- read_csv("/Users/vthorsson/HTAN/HMS/coords_keratin.csv",show_col_types = FALSE)
+df <- df %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
+df_small <- df %>% filter(X>5000,X<7500,Y>20000,Y<22500)
+```
+
+
+Counting rows, there are 26229 cells within this region. 
 
 Keratin values in the region
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
-The first step is to identify the 10 nearest neighbors of each cell. To do so we calculate all pairwise distances among cells. We then find the (row) indices of the nearest neighbors. 
+We now identify the 10 nearest neighbors of each cell. We first calculate all pairwise distances among cells. We then find the (row) indices of the nearest neighbors of each cell.
 
 ```r
 k <- 10
@@ -277,34 +308,33 @@ kable(head(nearest_neighbors$id))
 
 
 
-|    1|    2|    3|    4|    5|    6|    7|    8|    9|   10|
-|----:|----:|----:|----:|----:|----:|----:|----:|----:|----:|
-| 1521|   50| 1963| 1827| 1952| 1725| 1305|  433|  564|   13|
-|   75|  533| 1907| 1091|  148| 1934|  361| 1334| 1822|  975|
-| 1066| 1205| 1988|  641| 1203| 1586|  937|  326|  726| 1432|
-| 1501| 1952|  799| 1765|   13| 1955| 1360| 1610| 1535|   50|
-|  272|  517| 1036| 1282|  154| 1100|  165| 1997|  104|  409|
-|  625|  753| 1880| 1794|  310| 1081| 1082| 1727|  921|  758|
+|     1|     2|     3|     4|    5|     6|     7|     8|     9|    10|
+|-----:|-----:|-----:|-----:|----:|-----:|-----:|-----:|-----:|-----:|
+| 14774| 14858| 15028|  6491| 6074|  6417|    51| 15319| 14730| 14824|
+|   113|  6118|  6125|  6665| 6127|  6288|   181| 15272|   230|    68|
+| 14936| 14817| 14900|  6298|  192|  6164| 14699| 15252|  6034|  6578|
+|  6719|   641|  6635|   404| 6036| 14694|   138|   587|   301| 14937|
+|  6705| 15113| 15205| 15183|  380| 15215|  6309|  6725|  6328| 19050|
+| 14880|  6248|  6414|    95| 6455|   275|   358| 15307|   295|  6697|
 
 The top row shows the (row) indices of the nearest neighbors to the first cell in the data frame, and so on.
 
 ### 4.4 Spatial correlations among cells
 The manuscript describes how spatial correlation functions are calculated for a pair of cell markers. Examining this correlation as a function of distance yields estimates of the spatial extent of cancer-associated cellular structures. As an example we calculate keratin-keratin correlation for 10 nearest neighbhors (in the manuscript methods this corresponds to C_AB(r), with A=Keratin,B=Keratin, and r=10)
 
-Now we can march through the cells, get the neighbors of each, and calculate the mean Keratin value of the neighbors, and add that value to our data frame.
+For each cell, look up the neighboring cells, calculate the mean Keratin value of the neighbors, and append that value to our data frame.
 
 ```r
 collect <- numeric()
 for (index in 1:nrow(df_small) ){
-  ##Mean of Neighbors
   meanz <- df_small[nearest_neighbors$id[index,],"Keratin"] %>% pluck("Keratin") %>% mean()
   collect <- c(collect,meanz)
 }
 df_small <- df_small %>% add_column(Keratin_10NN_mean=collect)
 ```
 
-This shows the relation between the cell values and the mean value of neighbors
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" />
+This plot shows the relation between the cell values and the mean value of neighbors
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
 
 We can now calculate the correlation.
 
@@ -315,7 +345,86 @@ df_small %>% summarize(cor(Keratin,Keratin_10NN_mean)) %>% pluck(1)
 ```
 ## [1] 0.8469181
 ```
-The correlation is fairly high and in line with results shown in the manuscript (Figure 2B). To calculate the correlation length, one needs to look at this for different k, correpsonding to varying distance, as described in the manuscript.
+The correlation is fairly high and in line with results shown in the manuscript (Figure 2B). To calculate the correlation length, one needs to look at this for different k, correpsonding to varying distance, as described in the manuscript (see Figure 2B).
+
+### 4.5 Immune cells in tumor neighbhorhood
+
+Let's use BigQuery to retrieve information on leukocytes using cellular CD45 valures.
+
+
+```r
+sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask,CD45_PE_cellRingMask  
+FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'
+AND X_centroid > 5000 AND X_centroid < 7500
+AND Y_centroid > 20000 AND Y_centroid < 22500"
+tb <- bq_project_query(billing, sql)
+df_small <- bq_table_download(tb)
+
+##df <- read_csv("/Users/vthorsson/HTAN/HMS/coords_keratin_cd45.csv",show_col_types = FALSE)
+
+df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid,CD45=CD45_PE_cellRingMask)
+##df_small <- df %>% filter(X>5000,X<7500,Y>20000,Y<22500)
+```
+
+What is the distribution of CD45 values over all cells?
+
+```r
+ggplot(df_small,aes(CD45)) + geom_histogram(binwidth = 200) +
+  ggtitle("Distribution of CD45 values among cells in subregion") +
+  theme_classic()
+```
+
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
+
+
+```r
+third.quartile.keratin <- summary(df_small$Keratin)[["3rd Qu."]]
+df_small <- df_small %>% mutate(Keratin_status = c("Neg","Pos")[(Keratin > third.quartile.keratin)+1])
+third.quartile.cd45 <- summary(df_small$CD45)[["3rd Qu."]]
+df_small <- df_small %>% mutate(CD45_status = c("Neg","Pos")[(CD45 > third.quartile.cd45)+1])
+```
+
+
+```r
+kable(df_small %>% group_by(CD45_status,Keratin_status) %>% do(data.frame(Count=nrow(.))))
+```
+
+
+
+|CD45_status |Keratin_status | Count|
+|:-----------|:--------------|-----:|
+|Neg         |Neg            | 13654|
+|Neg         |Pos            |  6018|
+|Pos         |Neg            |  6018|
+|Pos         |Pos            |   539|
+Even with this crude thresholding scheme, we see that double positives are well below the random expectation of `1/4*1/4*nrow(df_small)`=1639.3125 
+
+
+
+```r
+phenotype <- function(x,y){
+  case_when(
+  x >= third.quartile.keratin & y >= third.quartile.cd45 ~ "DP",
+  x >= third.quartile.keratin & y < third.quartile.cd45 ~ "Tumor",
+  x < third.quartile.keratin & y >= third.quartile.cd45 ~ "CD45",
+  x < third.quartile.keratin & y < third.quartile.cd45 ~ "Other"
+  )
+}
+df_small <- df_small %>% mutate(Phenotype=phenotype(Keratin,CD45))
+```
+ 
+
+
+```r
+ggplot(df_small, aes(X,Y)) +
+ geom_point(aes(color=Phenotype),size=0.3) +
+  scale_color_manual(values=c("blue","magenta","gray90","yellow")) +
+  theme_classic()
+```
+
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" />
+
+We can find tumor cells that have a predominance of immune cells in their neighborhood.
 
 # 5. Citations and Links
 
