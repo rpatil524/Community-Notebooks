@@ -349,7 +349,7 @@ The correlation is fairly high and in line with results shown in the manuscript 
 
 ### 4.5 Immune cells in tumor neighbhorhood
 
-Let's use BigQuery to retrieve information on leukocytes using cellular CD45 valures.
+Let's use BigQuery to retrieve information on leukocytes using cellular CD45 values.
 
 
 ```r
@@ -360,10 +360,7 @@ AND Y_centroid > 20000 AND Y_centroid < 22500"
 tb <- bq_project_query(billing, sql)
 df_small <- bq_table_download(tb)
 
-##df <- read_csv("/Users/vthorsson/HTAN/HMS/coords_keratin_cd45.csv",show_col_types = FALSE)
-
 df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid,CD45=CD45_PE_cellRingMask)
-##df_small <- df %>% filter(X>5000,X<7500,Y>20000,Y<22500)
 ```
 
 What is the distribution of CD45 values over all cells?
@@ -377,6 +374,8 @@ ggplot(df_small,aes(CD45)) + geom_histogram(binwidth = 200) +
 <img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
 
 
+We'll use the (overly) simple definition of marker-positive cells using quartiles.
+
 ```r
 third.quartile.keratin <- summary(df_small$Keratin)[["3rd Qu."]]
 df_small <- df_small %>% mutate(Keratin_status = c("Neg","Pos")[(Keratin > third.quartile.keratin)+1])
@@ -384,6 +383,8 @@ third.quartile.cd45 <- summary(df_small$CD45)[["3rd Qu."]]
 df_small <- df_small %>% mutate(CD45_status = c("Neg","Pos")[(CD45 > third.quartile.cd45)+1])
 ```
 
+
+The distribution of CD45 positive and Keratin positive cells is as follows by this definition.
 
 ```r
 kable(df_small %>% group_by(CD45_status,Keratin_status) %>% do(data.frame(Count=nrow(.))))
@@ -399,7 +400,7 @@ kable(df_small %>% group_by(CD45_status,Keratin_status) %>% do(data.frame(Count=
 |Pos         |Pos            |   539|
 Even with this crude thresholding scheme, we see that double positives are well below the random expectation of `1/4*1/4*nrow(df_small)`=1639.3125 
 
-
+We'll phenotype the cells based on this scheme
 
 ```r
 phenotype <- function(x,y){
@@ -413,7 +414,7 @@ phenotype <- function(x,y){
 df_small <- df_small %>% mutate(Phenotype=phenotype(Keratin,CD45))
 ```
  
-
+Let's see how the cell phentoypes are distributed in the region.
 
 ```r
 ggplot(df_small, aes(X,Y)) +
