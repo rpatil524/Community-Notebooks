@@ -1,9 +1,3 @@
-#HTAN INTERNAL NOTEBOOK GUIDELINES
-This documentation contains instructions for generating Python and R notebooks for the HTAN data available in Google Cloud. 
-
-#AUTHOR
-Dar'ya Pozhidayeva
-
 #CREATED
 06-02-2022
 
@@ -17,4 +11,6 @@ HTAN_[ANALYSIS NAME]_EXAMPLE_[PART or VERSION (if applicable)]_[YEAR]
 
 
 #NOTES FOR AUTHORS
-Eventually, the authentication will need to be changed after migration.According to Vestienn: Make sure to point to staging tables.A landing page for the notebooks is TBD.
+Eventually, the authentication will need to be changed after migration.
+According to Vestienn: Make sure to point to staging tables.
+A landing page for the notebooks is TBD.
