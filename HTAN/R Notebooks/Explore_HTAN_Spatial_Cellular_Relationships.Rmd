@@ -52,7 +52,7 @@ suppressMessages(library(dbscan))
 Running the BigQuery cells in this notebook requires a Google Cloud Project. Instructions for creating a project can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console). The instance needs to be authorized to bill the project for queries. For more information on getting started in the cloud see 'Quick Start Guide to ISB-CGC' and alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
 
 ```{r}
-billing <- 'htan-dcc' # Insert your project ID in the ''
+billing <- 'my-projectr' # Insert your project ID in the ''
 if (billing == 'my-projectr') {
   print('Please update the project number with your Google Cloud Project')
 }
@@ -60,13 +60,15 @@ if (billing == 'my-projectr') {
 
 # 4. Explore Spatial Cellular and Molecular Relationsips
 
-We will focus on imaging of tissue section 97 of sample CRC1 described in [the manuscript](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9) in detail (see e.g. Figure 1C). This tissue section is HTAN biospecimen `HTA13_1_101`. An excellent [interactive guide](https://www.cycif.org/data/lin-wang-coy-2021/osd-crc-case-1-ffpe-cycif-stack.html#s=0#w=0#g=0#m=-1#a=-100_-100#v=0.5_0.5_0.5#o=-100_-100_1_1#p=Q) to the to multiplex imaging data for this biospecimen is available.  The data for this and the other CRC1 tissue sections is found in Google BigQuery table `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`. This table contains estimated marker intensity following cell segmentation using three kinds of masks. Here we will use the mask "cellRingMask". The tables also contain data on location of geometry of segmented cells. Here we will use the cell locations in terms of the centroids `X_centroid` and `Y_centroid`.
+We will focus on imaging of tissue section 97 of sample CRC1 described in [the manuscript](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9) in detail (see e.g. Figure 1C). This tissue section is HTAN biospecimen `HTA13_1_101`. An excellent [interactive guide](https://www.cycif.org/data/lin-wang-coy-2021/osd-crc-case-1-ffpe-cycif-stack.html#s=0#w=0#g=0#m=-1#a=-100_-100#v=0.5_0.5_0.5#o=-100_-100_1_1#p=Q) to the to multiplex imaging data for this biospecimen is available.  The data for this and the other CRC1 tissue sections is found in Google BigQuery table `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`. This table contains estimated marker intensity following cell segmentation using three kinds of masks. Here we will use the mask "cellRingMask". The tables also contain data on location of geometry of segmented cells. Here we will use the cell locations in terms of the centroids `X_centroid` and `Y_centroid`.
 
 ### 4.1 Investigate cell locations 
 
 We begin by querying for the coordinates of the centroids for the relevant tissue slice `HTA13_1_101`.
-```{r cache=TRUE}
-sql <- "SELECT X_centroid, Y_centroid FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'"
+```{r message=FALSE, tidy=FALSE}
+sql <- "SELECT X_centroid, Y_centroid
+FROM `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`
+WHERE HTAN_Biospecimen_ID='HTA13_1_101'"
 tb <- bq_project_query(billing, sql)
 df <- bq_table_download(tb)
 
@@ -130,16 +132,18 @@ d + geom_hex() + ylab("Y") +
 
 Keratin is used as marker for tumor cells in this study. We augment the table query to include the marker for keratin: `Keratin_570_cellRingMask`.
 
-```{r cache=T}
-sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'"
+```{r cache=T, tidy=FALSE, message=F}
+sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask 
+FROM `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`
+WHERE HTAN_Biospecimen_ID='HTA13_1_101'"
 tb <- bq_project_query(billing, sql)
 df <- bq_table_download(tb)
 df <- df %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
-df <- df %>% mutate(Y_flipped=-Y+min(Y)+max(Y)) %>% select(-Y) %>% rename(Y=Y_flipped)  
+df <- df %>% mutate(Y_flipped=-Y+min(Y)+max(Y)) %>% select(-Y) %>% rename(Y=Y_flipped)
 ```
 
 What is the distribution of Keratin values over all cells?
-```{r}
+```{r fig.width=5, fig.height=3}
 ggplot(df,aes(Keratin)) + geom_histogram(binwidth = 1000) +
   ggtitle("Distribution of Keratin in Cells for HTA13_1_101") +
   theme_classic()
@@ -169,9 +173,9 @@ As an example we find a neighborhood defined in terms of the 10 nearest neighbor
 
 We now grab the data for a spatial subregion using BigQuery (which will be a faster query than for the whole slide.)
 
-```{r}
+```{r tidy=FALSE, message=FALSE}
 sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask 
-FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'
+FROM `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`where HTAN_Biospecimen_ID='HTA13_1_101'
 AND X_centroid > 5000 AND X_centroid < 7500
 AND Y_centroid > 20000 AND Y_centroid < 22500"
 tb <- bq_project_query(billing, sql)
@@ -235,13 +239,14 @@ df_small %>% summarize(cor(Keratin,Keratin_10NN_mean)) %>% pluck(1)
 ```
 The correlation is fairly high and in line with results shown in the manuscript (Figure 2B). To calculate the correlation length, one needs to look at this for different k, correpsonding to varying distance, as described in the manuscript (see Figure 2B).
 
-### 4.5 Immune cells in tumor neighbhorhood
+### 4.5 Immune cells in the neighbhorhood of tumor cells
 
 Let's use BigQuery to retrieve information on leukocytes using cellular CD45 values.
 
-```{r}
+```{r message=FALSE,tidy=FALSE}
 sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask,CD45_PE_cellRingMask  
-FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'
+FROM `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`
+WHERE HTAN_Biospecimen_ID='HTA13_1_101'
 AND X_centroid > 5000 AND X_centroid < 7500
 AND Y_centroid > 20000 AND Y_centroid < 22500"
 tb <- bq_project_query(billing, sql)
@@ -251,9 +256,9 @@ df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=
 ```
 
 What is the distribution of CD45 values over all cells?
-```{r}
+```{r fig.width=5, fig.height=3}
 ggplot(df_small,aes(CD45)) + geom_histogram(binwidth = 200) +
-  ggtitle("Distribution of CD45 values among cells in subregion") +
+  ggtitle("CD45 values in cells in HTA13_1_101 subregion") +
   theme_classic()
 ```
 
@@ -271,9 +276,11 @@ The distribution of CD45 positive and Keratin positive cells is as follows by th
 ```{r}
 kable(df_small %>% group_by(CD45_status,Keratin_status) %>% do(data.frame(Count=nrow(.))))
 ```
-Even with this crude thresholding scheme, we see that double positives are well below the random expectation of `1/4*1/4*nrow(df_small)`=`r 0.25*0.25*nrow(df_small)` 
 
-We'll phenotype the cells based on this scheme
+
+Even with this crude thresholding scheme, we see that count for double positives is well below the random expectation of `1/4*1/4*nrow(df_small)`=`r 0.25*0.25*nrow(df_small)` 
+
+Let's phenotype the cells based on this scheme
 ```{r}
 phenotype <- function(x,y){
   case_when(
@@ -291,12 +298,13 @@ Let's see how the cell phentoypes are distributed in the region.
 ggplot(df_small, aes(X,Y)) +
  geom_point(aes(color=Phenotype),size=0.3) +
   scale_color_manual(values=c("blue","magenta","gray90","yellow")) +
+  ggtitle("Spatial distribution of tumor and immune cells \n in HTA13_1_101 region") +
   theme_classic()
 ```
 
-We can find tumor cells that have a predominance of immune cells in their neighborhood. 
+We can find tumor cells that have a predominance of immune cells in their neighborhood.
 
-Suggested exercise: Use nearest neighbor matrix above to find which tumor cells have the greatest number of immune cells nearby.  Plot those . 
+Suggested exercise: Use the nearest neighbor matrix above to find which tumor cells have the greatest number of immune cells nearby.  Display those on a plot like the one above. 
 
 # 5. Citations and Links
 

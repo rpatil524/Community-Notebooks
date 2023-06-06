@@ -51,7 +51,7 @@ Running the BigQuery cells in this notebook requires a Google Cloud Project. Ins
 
 
 ```r
-billing <- 'htan-dcc' # Insert your project ID in the ''
+billing <- 'my-projectr' # Insert your project ID in the ''
 if (billing == 'my-projectr') {
   print('Please update the project number with your Google Cloud Project')
 }
@@ -59,40 +59,17 @@ if (billing == 'my-projectr') {
 
 # 4. Explore Spatial Cellular and Molecular Relationsips
 
-We will focus on imaging of tissue section 97 of sample CRC1 described in [the manuscript](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9) in detail (see e.g. Figure 1C). This tissue section is HTAN biospecimen `HTA13_1_101`. An excellent [interactive guide](https://www.cycif.org/data/lin-wang-coy-2021/osd-crc-case-1-ffpe-cycif-stack.html#s=0#w=0#g=0#m=-1#a=-100_-100#v=0.5_0.5_0.5#o=-100_-100_1_1#p=Q) to the to multiplex imaging data for this biospecimen is available.  The data for this and the other CRC1 tissue sections is found in Google BigQuery table `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`. This table contains estimated marker intensity following cell segmentation using three kinds of masks. Here we will use the mask "cellRingMask". The tables also contain data on location of geometry of segmented cells. Here we will use the cell locations in terms of the centroids `X_centroid` and `Y_centroid`.
+We will focus on imaging of tissue section 97 of sample CRC1 described in [the manuscript](https://www.cell.com/cell/fulltext/S0092-8674(22)01571-9) in detail (see e.g. Figure 1C). This tissue section is HTAN biospecimen `HTA13_1_101`. An excellent [interactive guide](https://www.cycif.org/data/lin-wang-coy-2021/osd-crc-case-1-ffpe-cycif-stack.html#s=0#w=0#g=0#m=-1#a=-100_-100#v=0.5_0.5_0.5#o=-100_-100_1_1#p=Q) to the to multiplex imaging data for this biospecimen is available.  The data for this and the other CRC1 tissue sections is found in Google BigQuery table `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`. This table contains estimated marker intensity following cell segmentation using three kinds of masks. Here we will use the mask "cellRingMask". The tables also contain data on location of geometry of segmented cells. Here we will use the cell locations in terms of the centroids `X_centroid` and `Y_centroid`.
 
 ### 4.1 Investigate cell locations 
 
 We begin by querying for the coordinates of the centroids for the relevant tissue slice `HTA13_1_101`.
 
 ```r
-sql <- "SELECT X_centroid, Y_centroid FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'"
+sql <- "SELECT X_centroid, Y_centroid
+FROM `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`
+WHERE HTAN_Biospecimen_ID='HTA13_1_101'"
 tb <- bq_project_query(billing, sql)
-```
-
-```
-## ! Using an auto-discovered, cached token.
-```
-
-```
-##   To suppress this message, modify your code or options to clearly consent to
-##   the use of a cached token.
-```
-
-```
-##   See gargle's "Non-interactive auth" vignette for more details:
-```
-
-```
-##   <https://gargle.r-lib.org/articles/non-interactive-auth.html>
-```
-
-```
-## ℹ The bigrquery package is using a cached token for
-##   'thorsson@systemsbiology.org'.
-```
-
-```r
 df <- bq_table_download(tb)
 
 df <- df %>% rename(X="X_centroid",Y="Y_centroid")
@@ -173,11 +150,13 @@ Keratin is used as marker for tumor cells in this study. We augment the table qu
 
 
 ```r
-sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'"
+sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask 
+FROM `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`
+WHERE HTAN_Biospecimen_ID='HTA13_1_101'"
 tb <- bq_project_query(billing, sql)
 df <- bq_table_download(tb)
 df <- df %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
-df <- df %>% mutate(Y_flipped=-Y+min(Y)+max(Y)) %>% select(-Y) %>% rename(Y=Y_flipped)  
+df <- df %>% mutate(Y_flipped=-Y+min(Y)+max(Y)) %>% select(-Y) %>% rename(Y=Y_flipped)
 ```
 
 What is the distribution of Keratin values over all cells?
@@ -221,7 +200,7 @@ We now grab the data for a spatial subregion using BigQuery (which will be a fas
 
 ```r
 sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask 
-FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'
+FROM `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`where HTAN_Biospecimen_ID='HTA13_1_101'
 AND X_centroid > 5000 AND X_centroid < 7500
 AND Y_centroid > 20000 AND Y_centroid < 22500"
 tb <- bq_project_query(billing, sql)
@@ -297,14 +276,15 @@ df_small %>% summarize(cor(Keratin,Keratin_10NN_mean)) %>% pluck(1)
 ```
 The correlation is fairly high and in line with results shown in the manuscript (Figure 2B). To calculate the correlation length, one needs to look at this for different k, correpsonding to varying distance, as described in the manuscript (see Figure 2B).
 
-### 4.5 Immune cells in tumor neighbhorhood
+### 4.5 Immune cells in the neighbhorhood of tumor cells
 
 Let's use BigQuery to retrieve information on leukocytes using cellular CD45 values.
 
 
 ```r
 sql <- "SELECT X_centroid, Y_centroid, Keratin_570_cellRingMask,CD45_PE_cellRingMask  
-FROM `htan-dcc.ISB_CGC_r3.ImagingLevel4_crc_mask`where HTAN_Biospecimen_ID='HTA13_1_101'
+FROM `isb-cgc-bq.HTAN.imaging_level4_HMS_crc_mask_current`
+WHERE HTAN_Biospecimen_ID='HTA13_1_101'
 AND X_centroid > 5000 AND X_centroid < 7500
 AND Y_centroid > 20000 AND Y_centroid < 22500"
 tb <- bq_project_query(billing, sql)
@@ -317,7 +297,7 @@ What is the distribution of CD45 values over all cells?
 
 ```r
 ggplot(df_small,aes(CD45)) + geom_histogram(binwidth = 200) +
-  ggtitle("Distribution of CD45 values among cells in subregion") +
+  ggtitle("CD45 values in cells in HTA13_1_101 subregion") +
   theme_classic()
 ```
 
@@ -348,9 +328,11 @@ kable(df_small %>% group_by(CD45_status,Keratin_status) %>% do(data.frame(Count=
 |Neg         |Pos            |  6018|
 |Pos         |Neg            |  6018|
 |Pos         |Pos            |   539|
-Even with this crude thresholding scheme, we see that double positives are well below the random expectation of `1/4*1/4*nrow(df_small)`=1639.3125 
 
-We'll phenotype the cells based on this scheme
+
+Even with this crude thresholding scheme, we see that count for double positives is well below the random expectation of `1/4*1/4*nrow(df_small)`=1639.3125 
+
+Let's phenotype the cells based on this scheme
 
 ```r
 phenotype <- function(x,y){
@@ -370,14 +352,15 @@ Let's see how the cell phentoypes are distributed in the region.
 ggplot(df_small, aes(X,Y)) +
  geom_point(aes(color=Phenotype),size=0.3) +
   scale_color_manual(values=c("blue","magenta","gray90","yellow")) +
+  ggtitle("Spatial distribution of tumor and immune cells \n in HTA13_1_101 region") +
   theme_classic()
 ```
 
 <img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" />
 
-We can find tumor cells that have a predominance of immune cells in their neighborhood. 
+We can find tumor cells that have a predominance of immune cells in their neighborhood.
 
-Suggested exercise: Use nearest neighbor matrix above to find which tumor cells have the greatest number of immune cells nearby.  Plot those . 
+Suggested exercise: Use the nearest neighbor matrix above to find which tumor cells have the greatest number of immune cells nearby.  Display those on a plot like the one above. 
 
 # 5. Citations and Links
 
