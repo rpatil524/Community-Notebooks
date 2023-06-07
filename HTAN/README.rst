@@ -1,7 +1,7 @@
 =====================================================
 HTAN BigQuery Notebooks
 =====================================================
-`HTAN <https://humantumoratlas.org>`_ is a National Cancer Institute (NCI)-funded Cancer Moonshot$^{SM}$ initiative to
+`HTAN <https://humantumoratlas.org>`_ is a National Cancer Institute (NCI)-funded Cancer Moonshot<sup>SM</sup> initiative to
 construct 3-dimensional atlases of the dynamic cellular, morphological, and molecular features of human cancers as they
 evolve from precancerous lesions to advanced disease
 `(Cell, April 2020) <https://www.sciencedirect.com/science/article/pii/S0092867420303469>`_.
@@ -19,7 +19,7 @@ comprehensive data tables in the cloud, accessed using
 This folder contains example notebooks that illustrate how to query and process both file metadata and molecular data
 that are available in Google BigQuery tables.
 
-Notebooks are available in both the R programming language (R markdown) and in python (Jupyter).
+Notebooks are available in both the R programming language (R markdown) and in Python (Jupyter).
 There is a also a folder with templates, if you would like to create and share your own notebooks.
 
 Contents:
@@ -27,7 +27,18 @@ Contents:
 **R Notebooks/Explore_HTAN_Clinical_Biospecimen_Assay_Metadata.Rmd** - illustrates how to make use of HTAN Google
 BigQuery metadata tables to tabulate and plot available HTAN clinical, biospecimen, and assay metadata in R
 
-**Python Notebooks/Explore_HTAN_Clinical_Biospecimen_Assay_Metadata.Rmd** - illustrates how to make use of HTAN Google
+**R Notebooks/Explore_HTAN_Spatial_Cellular_Relationships.Rmd** - illustrates how to make use of HTAN Google 
+BigQuery cell spatial tables, which contain information on cellular locations and the estimated expression of 
+key marker proteins, based on multiplexed imaging and cell segmentation.
+
+**Python Notebooks/Analyzing_HTAN_Data_in_SB_Data_Studio.ipynb** - illustrates how open-access HTAN data can be integrated 
+with controlled-access data in CDS Data Studio. Utilizes the HTAN ID provenance BigQuery table in ISB-CGC to pull in 
+relevant files
+
+**Python Notebooks/HTAN_ID_Provenance_In_BQ.ipynb** - introduces the HTAN Google
+BigQuery ID provenance and provides example uses cases for the table in Python
+
+**Python Notebooks/Explore_HTAN_Clinical_Biospecimen_Assay_Metadata.ipynb** - illustrates how to make use of HTAN Google
 BigQuery metadata tables to tabulate and plot available HTAN clinical, biospecimen, and assay metadata in Python
 
 **Python Notebooks/Investigating_Single_Cell_HTAN_Data.ipynb** - illustrates how to query HTAN single-cell RNA
