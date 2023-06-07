@@ -208,14 +208,6 @@ df_small <- bq_table_download(tb)
 df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
 ```
 
-
-```r
-df <- read_csv("/Users/vthorsson/HTAN/HMS/coords_keratin.csv",show_col_types = FALSE)
-df <- df %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
-df_small <- df %>% filter(X>5000,X<7500,Y>20000,Y<22500)
-```
-
-
 Counting rows, there are 26229 cells within this region. 
 
 Keratin values in the region
@@ -330,7 +322,7 @@ kable(df_small %>% group_by(CD45_status,Keratin_status) %>% do(data.frame(Count=
 |Pos         |Pos            |   539|
 
 
-Even with this crude thresholding scheme, we see that count for double positives is well below the random expectation of `1/4*1/4*nrow(df_small)`=1639.3125 
+Even with this crude thresholding scheme, we see that count for double positives (DPs) is well below the random expectation of `1/4*1/4*nrow(df_small)`=1639.3125 
 
 Let's phenotype the cells based on this scheme
 
