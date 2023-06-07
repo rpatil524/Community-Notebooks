@@ -36,7 +36,7 @@ with controlled-access data in CDS Data Studio. Utilizes the HTAN ID provenance 
 relevant files
 
 **Python Notebooks/HTAN_ID_Provenance_In_BQ.ipynb** - introduces the HTAN Google
-BigQuery ID provenance and provides example uses cases for the table in Python
+BigQuery ID provenance table and provides example use cases for the table in Python
 
 **Python Notebooks/Explore_HTAN_Clinical_Biospecimen_Assay_Metadata.ipynb** - illustrates how to make use of HTAN Google
 BigQuery metadata tables to tabulate and plot available HTAN clinical, biospecimen, and assay metadata in Python
