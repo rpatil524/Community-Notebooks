@@ -1,5 +1,5 @@
 ---
-title: "Explore Spatial Cellular and Molecular Relationsips in HTAN using Google BigQuery"
+title: "Explore Spatial Cellular and Molecular Relationships in HTAN using Google BigQuery"
 author: "Vesteinn Þórsson, Institute for Systems Biology"
 date: "Created June 1, 2023"
 output:
