@@ -1,5 +1,5 @@
 ---
-title: "Explore Spatial Cellular and Molecular Relationsips in HTAN using Google BigQuery"
+title: "Explore Spatial Cellular and Molecular Relationships in HTAN using Google BigQuery"
 author: "Vesteinn Þórsson, Institute for Systems Biology"
 date: "Created June 1, 2023"
 output:
@@ -47,7 +47,7 @@ suppressMessages(library(dbscan))
 
 # 3. Google Authentication
 
-Running the BigQuery cells in this notebook requires a Google Cloud Project. Instructions for creating a project can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console). The instance needs to be authorized to bill the project for queries. For more information on getting started in the cloud see 'Quick Start Guide to ISB-CGC' and alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
+Running the BigQuery cells in this notebook requires a Google Cloud Project. Instructions for creating a project can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console). The instance needs to be authorized to bill the project for queries. For more information on getting started in the cloud see [Quick Start Guide to ISB-CGC](https://nbviewer.org/github/isb-cgc/Community-Notebooks/blob/master/Notebooks/Quick_Start_Guide_to_ISB_CGC.ipynb) and alternative authentication methods can be found in the [Google Documentation](https://cloud.google.com/resource-manager/docs/creating-managing-projects#console).
 
 
 ```r
