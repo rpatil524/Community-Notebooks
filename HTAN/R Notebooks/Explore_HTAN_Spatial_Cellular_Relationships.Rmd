@@ -103,7 +103,7 @@ The whole slide is image is `total_megapixels`=`r total_megapixels` Megapixels, 
 
 OK, so now we see all the cell locations, but the overall appearance is not visibly consistent with manuscript images (Figure 1C, e.g).
 
-This can be improved with a simple horizontal flip:
+This can be improved with simply flipping the image top to bottom:
 ```{r}
 df <- df %>% mutate(Y_flipped=-Y+Y_total_pixels)
 ```
@@ -158,8 +158,8 @@ This has generated a new categorical variable, `Keratin_status`, designated as L
 Where are the Keratin-high cells on the image?
 ```{r fig.width=5, fig.height=5}
 ggplot(df, aes(X,Y)) +
- geom_point(aes(color=Keratin_status),size=0.3,show.legend = FALSE) +   
-  scale_color_manual(values=c("gray90","yellow")) +
+ geom_point(aes(color=Keratin_status),size=0.01,show.legend = FALSE) +   
+  scale_color_manual(values=c("gray90","darkblue")) +
   ggtitle("Keratin-high regions in biospecimen \n HTA13_1_101,CRC1 slice 97") +
   theme_classic()
 ```
@@ -257,7 +257,7 @@ ggplot(df_small,aes(CD45)) + geom_histogram(binwidth = 200) +
 ```
 
 
-We'll use the (overly) simple definition of marker-positive cells using quartiles.
+We'll use the (overly) simple definition of marker-positive cells as exceeding the 3rd quartile of the cell value distribution for each marker.
 ```{r}
 third.quartile.keratin <- summary(df_small$Keratin)[["3rd Qu."]]
 df_small <- df_small %>% mutate(Keratin_status = c("Neg","Pos")[(Keratin > third.quartile.keratin)+1])

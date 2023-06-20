@@ -112,7 +112,7 @@ The whole slide is image is `total_megapixels`=708.88968 Megapixels, and is `X_t
 
 OK, so now we see all the cell locations, but the overall appearance is not visibly consistent with manuscript images (Figure 1C, e.g).
 
-This can be improved with a simple horizontal flip:
+This can be improved with simply flipping the image top to bottom:
 
 ```r
 df <- df %>% mutate(Y_flipped=-Y+Y_total_pixels)
@@ -180,8 +180,8 @@ Where are the Keratin-high cells on the image?
 
 ```r
 ggplot(df, aes(X,Y)) +
- geom_point(aes(color=Keratin_status),size=0.3,show.legend = FALSE) +   
-  scale_color_manual(values=c("gray90","yellow")) +
+ geom_point(aes(color=Keratin_status),size=0.01,show.legend = FALSE) +   
+  scale_color_manual(values=c("gray90","darkblue")) +
   ggtitle("Keratin-high regions in biospecimen \n HTA13_1_101,CRC1 slice 97") +
   theme_classic()
 ```
@@ -208,10 +208,11 @@ df_small <- bq_table_download(tb)
 df_small <- df_small %>% rename(Keratin=Keratin_570_cellRingMask,X=X_centroid,Y=Y_centroid)
 ```
 
+
 Counting rows, there are 26229 cells within this region. 
 
 Keratin values in the region
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 We now identify the 10 nearest neighbors of each cell. We first calculate all pairwise distances among cells. We then find the (row) indices of the nearest neighbors of each cell.
 
@@ -229,14 +230,14 @@ kable(head(nearest_neighbors$id))
 
 
 
-|     1|     2|     3|     4|    5|     6|     7|     8|     9|    10|
-|-----:|-----:|-----:|-----:|----:|-----:|-----:|-----:|-----:|-----:|
-| 14774| 14858| 15028|  6491| 6074|  6417|    51| 15319| 14730| 14824|
-|   113|  6118|  6125|  6665| 6127|  6288|   181| 15272|   230|    68|
-| 14936| 14817| 14900|  6298|  192|  6164| 14699| 15252|  6034|  6578|
-|  6719|   641|  6635|   404| 6036| 14694|   138|   587|   301| 14937|
-|  6705| 15113| 15205| 15183|  380| 15215|  6309|  6725|  6328| 19050|
-| 14880|  6248|  6414|    95| 6455|   275|   358| 15307|   295|  6697|
+|    1|    2|    3|    4|    5|    6|    7|    8|    9|   10|
+|----:|----:|----:|----:|----:|----:|----:|----:|----:|----:|
+| 1521|   50| 1963| 1827| 1952| 1725| 1305|  433|  564|   13|
+|   75|  533| 1907| 1091|  148| 1934|  361| 1334| 1822|  975|
+| 1066| 1205| 1988|  641| 1203| 1586|  937|  326|  726| 1432|
+| 1501| 1952|  799| 1765|   13| 1955| 1360| 1610| 1535|   50|
+|  272|  517| 1036| 1282|  154| 1100|  165| 1997|  104|  409|
+|  625|  753| 1880| 1794|  310| 1081| 1082| 1727|  921|  758|
 
 The top row shows the (row) indices of the nearest neighbors to the first cell in the data frame, and so on.
 
@@ -255,7 +256,7 @@ df_small <- df_small %>% add_column(Keratin_10NN_mean=collect)
 ```
 
 This plot shows the relation between the cell values and the mean value of neighbors
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" />
 
 We can now calculate the correlation.
 
@@ -293,10 +294,10 @@ ggplot(df_small,aes(CD45)) + geom_histogram(binwidth = 200) +
   theme_classic()
 ```
 
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
 
 
-We'll use the (overly) simple definition of marker-positive cells using quartiles.
+We'll use the (overly) simple definition of marker-positive cells as exceeding the 3rd quartile of the cell value distribution for each marker.
 
 ```r
 third.quartile.keratin <- summary(df_small$Keratin)[["3rd Qu."]]
@@ -348,7 +349,7 @@ ggplot(df_small, aes(X,Y)) +
   theme_classic()
 ```
 
-<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" />
+<img src="Explore_HTAN_Spatial_Cellular_Relationships_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" />
 
 We can find tumor cells that have a predominance of immune cells in their neighborhood.
 
